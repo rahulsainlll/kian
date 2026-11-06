@@ -111,7 +111,7 @@ Kian is built for talking, and it was built by talking.
 ```
 apps/web          kian website: live self-playing demo, dashboard, components, blog, contact
 packages/ui       @kian/ui: the widget (pill, cards, waveform, hold to approve), the cast, dashboard parts
-packages/designs  the Student Intelligence designs kit (buttons, sidebar, rows, tokens, brand marks)
+packages/designs  the design system: buttons, sidebar, rows, tokens and brand marks
 docs/             research, design and architecture notes, and the README art
 scripts/          render-art.sh renders the OG image and README art with headless Chrome
 ```
@@ -148,10 +148,8 @@ To refresh the OG image and the README art after a design change, keep `pnpm dev
 ## Design
 
 Kian is meant to feel friendly, not like another enterprise tool. The cast is a flower, a speech bubble and a sun whose
-eyes change with what’s happening. Motion follows [Emil Kowalski’s animation skills](https://github.com/emilkowalski/skills):
-transform and opacity only, ease-out, nothing that pushes its neighbours, and reduced motion respected throughout.
-Framing follows benjitaylor’s stageshow rules, loading states use [skullet](https://skullet.lochie.me), and the controls
-come from the Student Intelligence designs kit with [HeroUI](https://heroui.com) where it fits.
+eyes change with what’s happening. Motion is calm and purposeful: things move only when it helps you follow what
+changed, nothing pushes its neighbours around, and reduced motion is respected throughout.
 
 ## Further reading
 
@@ -162,5 +160,5 @@ come from the Student Intelligence designs kit with [HeroUI](https://heroui.com)
   <br />
   <img src="apps/web/public/favicon.svg" alt="" width="48" />
   <br />
-  <sub>Built during Flip the Switch, November 4 to 7, 2026.</sub>
+  <sub>Built during Flip the Switch.</sub>
 </p>

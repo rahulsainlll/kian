@@ -149,7 +149,7 @@ export function Components() {
       <DashboardSpecimen />
 
       <footer className="foot">
-        <span>Motion follows emil-design-eng, framing follows stageshow, loading states use skullet.</span>
+        <span>The same components run on the website and the desktop app.</span>
         <a href="/">Back to the demo</a>
       </footer>
     </div>
@@ -279,7 +279,7 @@ function CardSpecimen() {
     <Specimen
       id="MessageCard"
       title="MessageCard"
-      blurb="One message from one room, never a list. The buttons depend on the room: done, skip and draft on the desk, yes in a deal room, and hold to approve in #approvals. Loading is a skullet skeleton measured from real text, and the reply reveals into it."
+      blurb="One message from one room, never a list. The buttons depend on the room: done, skip and draft on the desk, yes in a deal room, and hold to approve in #approvals. Loading shows a skeleton shaped like real text, and the reply reveals into it."
       controls={
         <>
           <Segmented aria-label="Kind" value={kind} options={opts(CARD_KINDS)} onValueChange={setKind} />
@@ -322,7 +322,7 @@ function ButtonsSpecimen() {
     <Specimen
       id="Buttons"
       title="Buttons"
-      blurb="From the designs kit: a lit face, a glow under it, a rim, and a 1px sink when pressed. Primary is the one thing to do on a screen. Hold to approve is Kian’s own, for the one action that must never happen by accident."
+      blurb="A lit face, a glow under it, a rim, and a 1px sink when pressed. Primary is the one thing to do on a screen. Hold to approve is Kian’s own, for the one action that must never happen by accident."
       code={`<Button variant="primary" icon={<MicIcon />}>Talk to Kian</Button>
 <ActionButton status={status} doneLabel="Connected">Connect</ActionButton>
 <HoldButton doneLabel="Approved" onConfirm={approve}>Hold to approve</HoldButton>`}

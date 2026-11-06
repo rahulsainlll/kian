@@ -53,34 +53,20 @@ function CastRow({ size = 120 }: { size?: number }) {
   )
 }
 
-/** 1200×630 share card: the logo and one line on a soft sunrise, with the cast peeking up. */
+/** 1200×630 share card: the README banner, at share size. */
 function Og() {
-  return (
-    <Frame w={1200} h={630} className="art--og">
-      <div className="og__center">
-        <Logo size={140} />
-        <p className="og__line">Your sales desk, run by agents.</p>
-        <p className="og__sub">Built on Switch</p>
-      </div>
-      <div className="og__cast" aria-hidden>
-        <span style={{ ['--r' as string]: '-10deg' }}>
-          <Mascot size={150} shape="bubble" color="#19b86b" mood="wink" />
-        </span>
-        <span style={{ ['--r' as string]: '4deg' }}>
-          <Mascot size={190} mood="look" />
-        </span>
-        <span style={{ ['--r' as string]: '12deg' }}>
-          <Mascot size={150} shape="sun" color="#ff8a1f" mood="happy" />
-        </span>
-      </div>
-    </Frame>
-  )
+  return <Banner w={1200} h={630} />
 }
 
 /** README header, 1280×560. */
 function Hero() {
+  return <Banner w={1280} h={560} />
+}
+
+/** The banner: grid band with stickers, the logo and one line, the cast peeking up. */
+function Banner({ w, h }: { w: number; h: number }) {
   return (
-    <Frame w={1280} h={560} className="art--hero">
+    <Frame w={w} h={h} className="art--hero">
       <Dots />
       <div className="hero-art__band">
         <span className="hero-art__ticket">

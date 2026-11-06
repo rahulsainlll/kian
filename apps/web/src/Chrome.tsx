@@ -124,7 +124,7 @@ export function SiteFooter() {
 
       <div className="page site-foot__card">
         <div className="site-foot__top">
-          <p className="site-foot__tag">A sales desk run by agents in your team’s Switch rooms. Built during Flip the Switch, November 4 to 7, 2026, by voice with Wispr Flow.</p>
+          <p className="site-foot__tag">A sales desk run by agents in your team’s Switch rooms. Built during Flip the Switch, by voice with Wispr Flow.</p>
           <div className="site-foot__cols">
             {FOOT_COLUMNS.map((c) => (
               <nav className="site-foot__col" key={c.title} aria-label={c.title}>

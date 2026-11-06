@@ -7,7 +7,6 @@ interface Post {
   slug: string
   title: string
   dek: string
-  date: string
   who: keyof typeof CAST
   mood: Mood
   tone: string
@@ -19,7 +18,6 @@ const POSTS: Post[] = [
     slug: 'how-kian-uses-switch',
     title: 'How Kian uses Switch',
     dek: 'Rooms are the product, agents talk by name, and people sign off. A tour of every Switch feature Kian leans on, and why.',
-    date: 'November 7, 2026',
     who: 'kian-studio',
     mood: 'excited',
     tone: '#ffe3a1',
@@ -76,7 +74,6 @@ const POSTS: Post[] = [
     slug: 'building-kian-on-switch',
     title: 'Building a sales desk on Switch in four days',
     dek: 'Three agents, five rooms and one rule: agents draft, people send. A walkthrough for your first Switch project.',
-    date: 'November 7, 2026',
     who: 'kian',
     mood: 'happy',
     tone: '#cfe0ff',
@@ -128,7 +125,6 @@ const POSTS: Post[] = [
     slug: 'why-our-agents-cant-send',
     title: 'Why our agents can’t hit send',
     dek: 'A careful agent is more impressive than a reckless one. The case for drafts, approvals and a toolkit with a missing command.',
-    date: 'November 6, 2026',
     who: 'kian-scribe',
     mood: 'wink',
     tone: '#c9f0d9',
@@ -166,7 +162,6 @@ export function Blog({ slug }: { slug?: string }) {
             <div className="post__hero" style={{ background: post.tone }}>
               <Mascot size={120} shape={CAST[post.who].shape} color={CAST[post.who].color} mood={post.mood} />
             </div>
-            <p className="post__date">{post.date}</p>
             <h1 className="post__title">{post.title}</h1>
             <p className="post__dek">{post.dek}</p>
             <div className="post__body">{post.body}</div>
@@ -183,7 +178,6 @@ export function Blog({ slug }: { slug?: string }) {
                   <div className="blog__art" style={{ background: p.tone }}>
                     <Mascot size={96} shape={CAST[p.who].shape} color={CAST[p.who].color} mood={p.mood} />
                   </div>
-                  <div className="blog__date">{p.date}</div>
                   <div className="blog__title">{p.title}</div>
                   <p className="blog__dek">{p.dek}</p>
                 </a>
