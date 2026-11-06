@@ -6,7 +6,7 @@ import { ChatApp, Phone } from '../demo/ChatApp'
 import { useAutoplay } from '../demo/useAutoplay'
 import { useDemoDesk } from '../demo/useDemoDesk'
 import { useOnScreen } from '../scenes/useScene'
-import { Cast, Everywhere, Faq, People, Story, SwitchUse } from './HomeSections'
+import { Cast, Everywhere, Faq, Story, SwitchUse, WhyKian } from './HomeSections'
 
 export function Home() {
   return (
@@ -19,11 +19,11 @@ export function Home() {
       </div>
 
       <main className="page">
+        <WhyKian />
         <Cast />
         <Story />
         <SwitchUse />
         <Everywhere />
-        <People />
         <Faq />
       </main>
 
