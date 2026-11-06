@@ -1,8 +1,6 @@
-import { Accordion } from '@heroui/react'
-import { Chip } from '@heroui/react'
-import { PersonAvatar } from '@kian/ui'
-import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { CAST, Mascot, type Mood } from '@kian/ui'
+import { Accordion, Chip } from '@heroui/react'
+import { CAST, Mascot, PersonAvatar, type Mood, type Shape } from '@kian/ui'
+import { useEffect, useState, type ReactNode } from 'react'
 import { ContentScene, MeetingScene, RoomScene } from '../scenes/Scenes'
 import { useReveal } from '../scenes/useScene'
 
@@ -193,130 +191,118 @@ export function People() {
   )
 }
 
-// ── How Kian uses Switch: a diagram that lights up per feature ──────────────
+// ── How Kian uses Switch: three bound notebook cards ───────────────────────
 
-type Part = 'people' | 'rooms' | 'agents' | 'line' | 'approvals' | 'locks' | 'bridge' | 'template'
-
-const FEATURES: { name: string; use: string; lights: Part[] }[] = [
-  { name: 'Rooms', use: 'One room per deal. Its history is the deal’s memory.', lights: ['rooms'] },
-  { name: 'Agents with roles', use: 'kian coordinates, kian-scribe writes, kian-studio posts.', lights: ['agents'] },
-  { name: 'Agents talk to agents', use: 'kian hands a draft to kian-scribe by name.', lights: ['line'] },
-  { name: 'Rules, tasks, decisions', use: '“Never send.” Steps become tasks, prices become decisions.', lights: ['approvals'] },
-  { name: 'Who can talk to whom', use: 'Only the sales lead can approve. Only you can brief kian-scribe.', lights: ['locks', 'people'] },
-  { name: 'Bridges', use: 'The desk room is on Telegram and Mattermost at once.', lights: ['bridge'] },
-  { name: 'Templates', use: 'One file creates every agent and room.', lights: ['template', 'rooms', 'agents'] },
-]
-
-export function SwitchUse() {
-  const [active, setActive] = useState(0)
-  const [held, setHeld] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
-
-  // cycle through the features while on screen, until someone points at one
-  useEffect(() => {
-    const el = ref.current
-    if (!el || held || matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    let t = 0
-    const io = new IntersectionObserver(([e]) => {
-      clearInterval(t)
-      if (e.isIntersecting) t = window.setInterval(() => setActive((a) => (a + 1) % FEATURES.length), 3200)
-    })
-    io.observe(el)
-    return () => {
-      io.disconnect()
-      clearInterval(t)
-    }
-  }, [held])
-
-  const lit = new Set(FEATURES[active].lights)
-  const on = (p: Part) => (lit.has(p) ? '' : undefined)
-
+/** Three cards bound with rings: the rooms, today's work, and a live hand-off. */
+export function SwitchNotebook() {
   return (
-    <Block id="switch" eyebrow="How Kian uses Switch" title="Take Switch away and there is no product left">
-      <div className="smap" ref={ref}>
-        <ul className="smap__list" role="tablist" aria-label="Switch features">
-          {FEATURES.map((f, i) => (
-            <li key={f.name}>
-              <button
-                role="tab"
-                aria-selected={i === active}
-                className="smap__feature"
-                onClick={() => {
-                  setActive(i)
-                  setHeld(true)
-                }}
-                onPointerEnter={() => {
-                  setActive(i)
-                  setHeld(true)
-                }}
-              >
-                <span className="smap__name">{f.name}</span>
-                <span className="smap__use">{f.use}</span>
-              </button>
+    <div className="notebook" aria-label="How Kian uses Switch">
+      <article className="nb nb--rooms">
+        <h3 className="nb__title">
+          Rooms,
+          <br />
+          one per deal
+        </h3>
+        <ul className="nb__rooms">
+          {[
+            { name: 'Desk', note: 'Your morning', shape: 'flower', color: '#3d7bf2' },
+            { name: 'Lumen Health', note: 'Annual plan', shape: 'bubble', color: '#19b86b' },
+            { name: 'Approvals', note: 'Sales lead only', shape: 'blob', color: '#ffcf1f' },
+          ].map((r) => (
+            <li key={r.name}>
+              <Mascot size={32} shape={r.shape as Shape} color={r.color} mood="happy" />
+              <span>
+                <b>{r.name}</b>
+                <small>{r.note}</small>
+              </span>
             </li>
           ))}
         </ul>
-
-        <div className="smap__stage" aria-hidden>
-          <svg className="smap__lines" viewBox="0 0 600 360" preserveAspectRatio="none">
-            <path d="M120 110 C 200 110, 200 80, 250 80" />
-            <path d="M120 250 C 200 250, 200 230, 250 230" />
-            <path d="M350 80 C 400 80, 400 90, 470 90" />
-            <path d="M350 130 C 400 130, 400 180, 470 180" />
-            <path d="M350 280 C 400 280, 400 270, 470 270" />
-            <path className="smap__handoff" data-on={on('line')} d="M500 120 C 540 135, 540 150, 500 160" />
-          </svg>
-
-          <div className="smap__col smap__col--people" data-on={on('people')}>
-            <div className="smap__node">
-              <PersonAvatar name="Yukti" size={36} />
-              <span>Yukti</span>
-              <span className="smap__lock" data-on={on('locks')}>briefs scribe</span>
-            </div>
-            <div className="smap__node">
-              <PersonAvatar name="Ravi Kapoor" size={36} />
-              <span>Ravi</span>
-              <span className="smap__lock" data-on={on('locks')}>approves</span>
-            </div>
-          </div>
-
-          <div className="smap__col smap__col--rooms" data-on={on('rooms')}>
-            <div className="smap__room">
-              desk
-              <span className="smap__bridge" data-on={on('bridge')}>
-                <PlaneGlyph /> Telegram
-              </span>
-            </div>
-            <div className="smap__room">deal · Lumen</div>
-            <div className="smap__room">deal · Kestrel</div>
-            <div className="smap__room smap__room--approvals" data-on={on('approvals')}>
-              approvals
-              <span className="smap__badge">decision</span>
-            </div>
-            <div className="smap__room">content</div>
-          </div>
-
-          <div className="smap__col smap__col--agents" data-on={on('agents')}>
-            {(['kian', 'kian-scribe', 'kian-studio'] as const).map((who) => (
-              <div className="smap__agent" key={who}>
-                <Mascot size={44} shape={CAST[who].shape} color={CAST[who].color} mood={lit.has('line') && who !== 'kian-studio' ? 'excited' : 'happy'} />
-                <span>{who}</span>
-              </div>
-            ))}
-          </div>
-
-          <div className="smap__template" data-on={on('template')}>kian.template.yaml</div>
+        <div className="nb__tags">
+          <span>History is memory</span>
+          <span>Decisions on record</span>
         </div>
-      </div>
-    </Block>
+      </article>
+
+      <article className="nb nb--work">
+        <span className="nb__rings" aria-hidden>
+          {Array.from({ length: 7 }, (_, i) => (
+            <i key={i} />
+          ))}
+        </span>
+        <h3 className="nb__title">
+          Today’s
+          <br />
+          work
+        </h3>
+        <ul className="nb__checks">
+          {[
+            ['Brief posted', true],
+            ['Draft for Priya', true],
+            ['Kestrel notes', true],
+            ['Room for Harbor', false],
+            ['Weekly post', false],
+          ].map(([label, done]) => (
+            <li key={label as string} data-done={done || undefined}>
+              <i />
+              {label}
+            </li>
+          ))}
+        </ul>
+      </article>
+
+      <article className="nb nb--live">
+        <span className="nb__rings" aria-hidden>
+          {Array.from({ length: 7 }, (_, i) => (
+            <i key={i} />
+          ))}
+        </span>
+        <h3 className="nb__title">
+          Agents talk
+          <br />
+          by name
+        </h3>
+        <div className="nb__chat">
+          <div className="nb__msg">
+            <Mascot size={28} mood="look" />
+            <span>
+              <b>@kian-scribe</b> Priya wants Tuesday. Draft it.
+            </span>
+          </div>
+          <div className="nb__msg nb__msg--right">
+            <span>Draft saved in Gmail. Not sent.</span>
+            <Mascot size={28} shape="bubble" color="#19b86b" mood="wink" />
+          </div>
+          <div className="nb__msg">
+            <PersonAvatar name="Yukti" size={28} />
+            <span>yes</span>
+          </div>
+        </div>
+      </article>
+    </div>
   )
 }
 
-function PlaneGlyph() {
+const MORE: { name: string; use: string; color: string }[] = [
+  { name: 'Rules', use: 'Every room says it: agents draft, people send.', color: '#ff7eb0' },
+  { name: 'Who can talk to whom', use: 'Only the sales lead can approve a price.', color: '#ffcf1f' },
+  { name: 'Bridges', use: 'The desk is on Telegram and Mattermost at once.', color: '#7c5cff' },
+  { name: 'One template', use: 'One YAML creates every agent and room.', color: '#19b86b' },
+]
+
+export function SwitchUse() {
   return (
-    <svg width="11" height="11" viewBox="0 0 16 16" fill="currentColor" aria-hidden>
-      <path d="M14.72 1.28a.75.75 0 0 1 .2.77l-4 12.5a.75.75 0 0 1-1.38.12L7.23 9.77 2.33 7.46a.75.75 0 0 1 .12-1.38l12.5-4a.75.75 0 0 1 .77.2Z" />
-    </svg>
+    <Block id="switch" eyebrow="How Kian uses Switch" title="Take Switch away and there is no product left">
+      <SwitchNotebook />
+      <ul className="nb-more">
+        {MORE.map((m) => (
+          <li key={m.name} style={{ ['--c' as string]: m.color }}>
+            <b>{m.name}</b>
+            <span>{m.use}</span>
+          </li>
+        ))}
+      </ul>
+    </Block>
   )
 }
 

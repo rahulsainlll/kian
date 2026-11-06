@@ -1,6 +1,7 @@
 import { CAST, Mascot, type Mood } from '@kian/ui'
 import type { ReactNode } from 'react'
 import { Nav, SiteFooter } from '../Chrome'
+import { SwitchNotebook } from './HomeSections'
 
 interface Post {
   slug: string
@@ -14,6 +15,63 @@ interface Post {
 }
 
 const POSTS: Post[] = [
+  {
+    slug: 'how-kian-uses-switch',
+    title: 'How Kian uses Switch',
+    dek: 'Rooms are the product, agents talk by name, and people sign off. A tour of every Switch feature Kian leans on, and why.',
+    date: 'November 7, 2026',
+    who: 'kian-studio',
+    mood: 'excited',
+    tone: '#ffe3a1',
+    body: (
+      <>
+        <p>
+          Kian has no backend of its own for the work. Everything a sales team does with it lives in Switch rooms: the
+          history, the hand-offs, the approvals. Here is each Switch feature Kian uses, and the job it does.
+        </p>
+        <div className="post__figure">
+          <SwitchNotebook />
+        </div>
+        <h2>Rooms are the memory</h2>
+        <p>
+          Every active deal gets its own room, opened by kian when a new name shows up in the inbox. When kian-scribe
+          drafts a reply to Priya, it reads the Lumen Health room first. There is no client folder to keep in sync,
+          because the room is the folder. Handing a deal to a teammate means adding them to the room.
+        </p>
+        <h2>Agents with one job each</h2>
+        <p>
+          kian ranks the morning and routes work. kian-scribe writes drafts and meeting notes. kian-studio turns spoken
+          answers into posts. Giving each agent a single role keeps every message in the room easy to trace.
+        </p>
+        <h2>Agents talk to each other by name</h2>
+        <p>
+          When Yukti asks for a draft, kian doesn’t write it. It posts “@kian-scribe, Priya wants Tuesday” in the deal
+          room, the same way a lead hands work to a colleague. The hand-off is visible to everyone in the room.
+        </p>
+        <h2>Rules, tasks and decisions</h2>
+        <p>
+          Room rules say what every agent must do: draft, never send. Next steps from a call become tasks with dates.
+          When the sales lead approves a discount, it becomes a room decision with their name on it, which is the audit
+          trail a finance team asks for.
+        </p>
+        <h2>Who can talk to whom</h2>
+        <p>
+          Only Yukti and kian can address kian-scribe, so nobody else can ask it to write to a customer. Only the sales
+          lead can approve in the approvals room. Switch enforces both, so the agents don’t have to.
+        </p>
+        <h2>Bridges</h2>
+        <p>
+          The desk room is bridged to Telegram and to Mattermost. The morning brief reaches Yukti’s phone and her desk at
+          the same time, and a reply from either one lands in the same room.
+        </p>
+        <h2>One template</h2>
+        <p>
+          All three agents, their rules and the rooms live in one kian.template.yaml. Import it in Switch Console and
+          you have the whole desk, which is also how anyone can reproduce Kian from the repo.
+        </p>
+      </>
+    ),
+  },
   {
     slug: 'building-kian-on-switch',
     title: 'Building a sales desk on Switch in four days',

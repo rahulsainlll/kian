@@ -61,23 +61,35 @@ export function useScene(beats: number[], { loop = true } = {}) {
   return { ref, step, inView }
 }
 
-/** Reveal-on-scroll for a section: sets data-in once, children stagger via --i. */
+/**
+ * Reveal-on-scroll for a section: sets data-in once, and children stagger in.
+ * Measured on scroll rather than with IntersectionObserver, so it still
+ * works where observers wait for painted frames (background tabs, previews).
+ */
 export function useReveal<T extends Element>() {
   const ref = useRef<T>(null)
   useEffect(() => {
     const el = ref.current
     if (!el) return
-    const io = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting) {
-          el.setAttribute('data-in', '')
-          io.disconnect()
-        }
-      },
-      { threshold: 0.15 },
-    )
-    io.observe(el)
-    return () => io.disconnect()
+    const show = () => {
+      el.setAttribute('data-in', '')
+      cleanup()
+    }
+    const check = () => {
+      const r = el.getBoundingClientRect()
+      if (r.top < innerHeight * 0.88 && r.bottom > 0) show()
+    }
+    // check again once fonts and images have settled the layout
+    const settle = window.setTimeout(() => check(), 600)
+    const cleanup = () => {
+      clearTimeout(settle)
+      removeEventListener('scroll', check)
+      removeEventListener('resize', check)
+    }
+    addEventListener('scroll', check, { passive: true })
+    addEventListener('resize', check)
+    check()
+    return cleanup
   }, [])
   return ref
 }
