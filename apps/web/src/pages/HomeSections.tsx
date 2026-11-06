@@ -115,7 +115,7 @@ export function WhyKian() {
   return (
     <section className="why reveal" id="why" ref={ref}>
       <h2 className="why__title">
-        Why
+        Why{' '}
         <br />
         Kian
       </h2>
@@ -432,8 +432,8 @@ const STEPS3: { key: string; time: string; who: keyof typeof CAST; mood: Mood; s
   },
 ]
 
-// where each moment sits on the ruler, as a share of its width
-const STOPS = ['16.66%', '50%', '83.33%']
+// three moments on the ruler; where each sits is set in CSS so phones can pull them inward
+const STOPS = [0, 1, 2]
 const TICKS = 48
 
 /** A morning as a day timeline (after Grok Bot): a ruler, a time pill, and the agent talking. */
@@ -459,7 +459,7 @@ export function Story() {
   return (
     <section className="story reveal" id="story" ref={ref}>
       <div className="tl">
-        <div className="tl__mover" style={{ ['--x' as string]: STOPS[i] }}>
+        <div className="tl__mover" data-stop={i}>
           <div className="tl__actor">
             <div className="tl__says" key={step.key}>
               {step.says}
@@ -488,7 +488,7 @@ export function Story() {
               aria-selected={n === i}
               aria-label={`${STEPS3[n].time}: ${STEPS3[n].title}`}
               className="tl__stop"
-              style={{ left: x }}
+              data-stop={n}
               onClick={() => go(n)}
             />
           ))}

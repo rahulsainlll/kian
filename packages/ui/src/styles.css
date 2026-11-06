@@ -786,3 +786,10 @@
   display: inline-flex;
   flex: none;
 }
+
+/* iOS zooms the page into inputs under 16px; keep the type bar at 16 on touch screens */
+@media (pointer: coarse) {
+  .k-type__input {
+    font-size: 16px;
+  }
+}
