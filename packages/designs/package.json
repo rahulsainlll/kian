@@ -1,0 +1,37 @@
+{
+  "name": "@kian/designs",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "The Student Intelligence designs kit, ported for Kian. Plain CSS (ds- classes) on ds tokens.",
+  "main": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./tokens.css": "./src/tokens.css",
+    "./designs.css": "./src/designs.css"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.17.0",
+    "motion": "^12.40.0",
+    "radix-ui": "^1.6.7",
+    "sonner": "^2.0.8",
+    "tailwind-merge": "^3.6.0",
+    "three": "0.186.1"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
+    "@types/three": "0.186.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "typescript": "5.9.3"
+  },
+  "peerDependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  }
+}

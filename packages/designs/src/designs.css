@@ -1,0 +1,6308 @@
+/* designs/components: the Stageshow kit's styles, ported to the app (ds- prefix,
+   app tokens, real :hover). Interaction and poster styles follow the port. */
+
+/* Tailwind's layer order, declared up front. This file can load before globals.css
+   (it ships in its own chunk), and cascade layers rank by first appearance: without
+   this line `components` would rank below `base`, and preflight would strip every
+   padding, button background and font size here. */
+@layer properties, theme, base, components, utilities;
+
+/* Field */
+
+@layer components {
+  /* Read out, never shown: a field's name where the design has no room for it */
+  .ds-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* The box never grows past the width it was given: a chip opening, or any
+     content, clips inside the text area instead of pushing the trailing
+     control and the box edge out into whatever sits next to the field */
+  .ds-field {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+  }
+
+  .ds-field__label {
+    font-size: var(--text-ds-label);
+    line-height: var(--text-ds-label--line-height);
+    letter-spacing: var(--text-ds-label--letter-spacing);
+    font-weight: var(--text-ds-label--font-weight);
+    color: var(--ds-text-strong);
+  }
+
+  /* The ring is a shadow, so focusing never moves the text */
+  .ds-field__box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: var(--ds-control-h);
+    padding: 0 11px;
+    border-radius: var(--ds-radius-md);
+    background: var(--ds-surface);
+    box-shadow: inset 0 0 0 1px var(--ds-ink-4), 0 0 0 0 transparent;
+    font-size: var(--text-ds-body);
+    line-height: var(--text-ds-body--line-height);
+    letter-spacing: var(--text-ds-body--letter-spacing);
+    font-weight: 500;
+    color: var(--ds-text-strong);
+    transition: box-shadow 0.2s ease, padding 0.35s cubic-bezier(0.45, 0, 0.1, 1);
+  }
+
+  /* A chip sits the same distance from every edge of the field: the box gives
+     up its left padding to the chip's own, at the same pace, so the text
+     inside never moves while the chip opens around it */
+  .ds-field__box:has(.ds-field__value[data-chip]) {
+    padding-left: calc((var(--ds-control-h) - 28px) / 2);
+  }
+
+  .ds-field[data-focused] .ds-field__box {
+    box-shadow: inset 0 0 0 1px var(--ds-accent), 0 0 0 1.5px var(--ds-accent-soft);
+  }
+
+  .ds-field[data-status="error"] .ds-field__box {
+    box-shadow: inset 0 0 0 2px var(--ds-danger);
+  }
+
+  .ds-field__text {
+    position: relative;
+    display: flex;
+    flex: 1;
+    align-items: center;
+    min-width: 0;
+    height: 100%;
+    overflow: hidden;
+    white-space: pre;
+  }
+
+  /* Leaves the moment the first character lands; fades back when emptied */
+  .ds-field__placeholder {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    color: var(--ds-text-faint);
+    translate: 0 -50%;
+    transition: opacity 0.2s ease;
+  }
+
+  .ds-field[data-filled] .ds-field__placeholder {
+    opacity: 0;
+    transition: none;
+  }
+
+  .ds-field__value[data-password] {
+    letter-spacing: 1.5px;
+  }
+
+  /* Committed as a chip in place: the text never swaps or changes weight; the
+     surface fades in around it, the padding opens it out, and the x grows in
+     beside it. Cleared, the whole chip fades holding its text. */
+  .ds-field__value {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    height: 28px;
+    padding: 0;
+    border-radius: var(--ds-radius-pill);
+    background-color: transparent;
+    /* Released once it has faded: out of sight, so nothing needs to move */
+    transition: none;
+  }
+
+  /* Centered on the cap height, not the line box (which reads low) or the
+     x-height (which reads high once the words have ascenders: an email, a
+     name). Cap to baseline is what a real text field centers. The
+     placeholder is centered the same way, so they share a line. */
+  .ds-field__chars,
+  .ds-field__placeholder {
+    line-height: 1;
+    text-box: trim-both cap alphabetic;
+  }
+
+  .ds-field__chars {
+    display: block;
+  }
+
+  .ds-field__value[data-chip] {
+    padding: 0 calc(11px - (var(--ds-control-h) - 28px) / 2);
+    background-color: var(--ds-chip-bg, var(--ds-accent-soft));
+    color: var(--ds-chip-text, var(--ds-text-strong));
+    transition:
+      padding 0.35s cubic-bezier(0.45, 0, 0.1, 1),
+      background-color 0.3s ease,
+      color 0.3s ease;
+  }
+
+  .ds-field__value[data-chip][data-removable] {
+    padding-right: 4px;
+  }
+
+  .ds-field__value[data-leaving] {
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  /* The placeholder waits for a cleared chip to finish fading, never crossing it */
+  .ds-field:has(.ds-field__value[data-leaving]) .ds-field__placeholder {
+    opacity: 0;
+    transition: none;
+  }
+
+  .ds-field__x {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    /* Always whole: it slides out from under the text's end by margin, so its
+       icon is never sliced while the chip opens */
+    width: 16px;
+    height: 16px;
+    margin-left: -16px;
+    border-radius: 50%;
+    color: inherit;
+    opacity: 0;
+    transition: background-color 0.15s ease;
+  }
+
+  .ds-field__value[data-chip] .ds-field__x {
+    margin-left: 4px;
+    opacity: 0.75;
+    transition:
+      margin 0.35s cubic-bezier(0.45, 0, 0.1, 1),
+      opacity 0.25s ease 0.12s,
+      background-color 0.15s ease;
+  }
+
+
+  .ds-field__value[data-chip] + .ds-field__caret {
+    margin-left: 6px;
+  }
+
+  /* Solid while typing (each keystroke remounts it), blinking once it rests */
+  .ds-field__caret {
+    flex-shrink: 0;
+    transition: margin 0.35s cubic-bezier(0.45, 0, 0.1, 1);
+    width: 1.5px;
+    height: 16px;
+    margin-left: 1px;
+    border-radius: 1px;
+    background: var(--ds-accent);
+    animation: ds-caret 1.06s steps(1) 0.5s infinite;
+  }
+
+  
+
+  .ds-field__ok {
+    flex-shrink: 0;
+  }
+
+  .ds-field__ok path {
+    fill: none;
+    stroke: var(--ds-success);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 1;
+    /* Drawn at rest, so a still (animations off) still shows it */
+    animation: ds-draw 0.35s cubic-bezier(0.65, 0, 0.35, 1) both;
+  }
+
+  /* Reduced motion: a steady caret, and the tick already drawn */
+  @media (prefers-reduced-motion: reduce) {
+    .ds-field__caret,
+    .ds-field__ok path {
+      animation: none;
+    }
+  }
+}
+
+/* Segmented */
+
+@layer components {
+  .ds-seg {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(var(--n), 1fr);
+    padding: 2px;
+    border-radius: var(--ds-radius-md);
+    background: var(--ds-ink-2);
+  }
+
+  .ds-seg__thumb {
+    position: absolute;
+    top: 2px;
+    bottom: 2px;
+    left: 2px;
+    width: calc((100% - 4px) / var(--n));
+    border-radius: calc(var(--ds-radius-md) - 2px);
+    background: var(--ds-raised);
+    box-shadow: 0 1px 2px var(--color-ds-thumb-drop), 0 0 0 0.5px var(--color-ds-thumb-edge);
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .ds-seg__option {
+    position: relative;
+    display: grid;
+    place-items: center;
+    height: var(--ds-row-h);
+    padding: 0 10px;
+    font-size: var(--text-ds-label);
+    line-height: var(--text-ds-label--line-height);
+    letter-spacing: var(--text-ds-label--letter-spacing);
+    font-weight: var(--text-ds-label--font-weight);
+    color: var(--ds-text);
+    transition: color 0.2s ease;
+  }
+
+  .ds-seg__option[data-on] {
+    color: var(--ds-text-strong);
+  }
+}
+
+/* Toggle */
+
+@layer components {
+  .ds-toggle {
+    position: relative;
+    display: inline-block;
+    flex-shrink: 0;
+    width: 36px;
+    height: 22px;
+    border-radius: 11px;
+    background: var(--ds-ink-5);
+    transition: background-color 0.2s ease;
+  }
+
+  .ds-toggle[data-state="checked"] {
+    background: var(--ds-accent);
+  }
+
+  .ds-toggle__knob {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 18px;
+    height: 18px;
+    background: var(--color-ds-white);
+    /* Light and tight: a heavy shadow grays the track beside the knob, so
+       the accent reads as see-through */
+    box-shadow: 0 0.5px 1.5px var(--color-ds-knob-drop), 0 0 0 0.5px var(--color-ds-knob-edge);
+    /* The knob's stretch on hover (Linear's: ~14% of its width), and how far it travels */
+    --ds-knob-stretch: 3px;
+    --ds-knob-travel: 14px;
+    border-radius: 9px;
+    transition:
+      transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+      width 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .ds-toggle[data-state="checked"] .ds-toggle__knob {
+    transform: translateX(var(--ds-knob-travel));
+  }
+
+  /* Pressed: the knob stretches toward the side it would go, its far edge pinned to the end */
+  .ds-toggle:not(:disabled):not([data-settled]):active .ds-toggle__knob {
+    width: calc(18px + var(--ds-knob-stretch));
+  }
+
+  .ds-toggle[data-state="checked"]:not(:disabled):not([data-settled]):active .ds-toggle__knob {
+    transform: translateX(calc(var(--ds-knob-travel) - var(--ds-knob-stretch)));
+  }
+
+
+
+  /* On blueprint the accent is white, so the knob takes the ground */
+
+}
+
+/* Tabs */
+
+@layer components {
+  .ds-tabs {
+    position: relative;
+    display: flex;
+    gap: 18px;
+    border-bottom: 1px solid var(--ds-line);
+  }
+
+  .ds-tabs__tab {
+    padding-bottom: 11px;
+    font-size: var(--text-ds-label);
+    line-height: var(--text-ds-label--line-height);
+    letter-spacing: var(--text-ds-label--letter-spacing);
+    font-weight: var(--text-ds-label--font-weight);
+    color: var(--ds-text);
+    transition: color 0.2s ease;
+  }
+
+  .ds-tabs__tab[data-on] {
+    color: var(--ds-text-strong);
+  }
+
+  .ds-tabs__bar {
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 1px;
+    height: 2px;
+    background: var(--ds-text-strong);
+    transform-origin: 0 0;
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+
+/* Badge */
+
+@layer components {
+  /* Small boxes with text keep a layer of their own. Pushed by a row opening
+     above them, or carried along by anything that moves by layout, their text
+     would step whole pixels while the fill glides, and hop about inside it */
+  .ds-badge {
+    will-change: transform;
+  }
+
+  .ds-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 24px;
+    padding: 0 9px;
+    border-radius: var(--ds-radius-pill);
+    background: var(--ds-ink-2);
+    font-size: var(--text-ds-caption);
+    line-height: var(--text-ds-caption--line-height);
+    letter-spacing: var(--text-ds-caption--letter-spacing);
+    font-weight: 500;
+    color: var(--ds-text-strong);
+    white-space: nowrap;
+    /* A tone change (Working to Ready) eases on the same pill, no swap */
+    transition: background-color 0.35s ease, color 0.35s ease;
+  }
+
+  /* A round mark before the words reads as further in than text does, so
+     its side is 2px tighter: the dot and the last letter then sit the same
+     distance from their ends */
+  .ds-badge[data-lead] {
+    padding-left: 7px;
+  }
+
+  .ds-badge[data-tone="accent"] { background: var(--ds-accent-soft); color: var(--ds-accent-text); }
+
+  .ds-badge[data-tone="success"] { background: var(--ds-success-soft); color: var(--ds-success-text); }
+
+  .ds-badge[data-tone="danger"] { background: var(--ds-danger-soft); color: var(--ds-danger-text); }
+
+  .ds-badge[data-tone="warning"] { background: var(--ds-warning-soft); color: var(--ds-warning-text); }
+
+  /* The label's line box trimmed to cap height and baseline, so the words
+     center on their own ink; a plain line box keeps descender room and sits
+     the text about 2px low in a 20px pill */
+  .ds-badge__label {
+    display: block;
+    text-box: trim-both cap alphabetic;
+  }
+
+  .ds-badge__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+}
+
+/* Slot */
+
+@layer components {
+  .ds-slot {
+    flex-shrink: 0;
+    border-radius: var(--ds-radius-md);
+    transition: height 0.45s cubic-bezier(0.45, 0, 0.2, 1), margin-top 0.45s cubic-bezier(0.45, 0, 0.2, 1);
+  }
+
+  /* The dashed mark is drawn at the slot's full height and only fades: a
+     dashed border on a box whose height animates re-lays its dashes every
+     frame, and they flicker. It fades in as the slot finishes opening (the
+     clip only guards the last few pixels), and leaves first when it closes. */
+  .ds-slot {
+    position: relative;
+  }
+
+  .ds-slot__clip {
+    position: absolute;
+    inset: 0;
+    overflow: clip;
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  .ds-slot__mark {
+    position: absolute;
+    inset: 0 0 auto;
+    border: 1.5px dashed var(--ds-ink-5);
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.15s ease-out;
+  }
+
+  .ds-slot[data-open][data-dashed] .ds-slot__mark {
+    opacity: 1;
+    transition: opacity 0.16s ease-out 0.3s;
+  }
+}
+
+/* Check */
+
+@layer components {
+  .ds-check {
+    display: inline-grid;
+    flex-shrink: 0;
+    place-items: center;
+  }
+
+  .ds-check svg {
+    overflow: visible;
+  }
+
+  .ds-check__ring {
+    fill: none;
+    stroke: var(--ds-ink-4);
+    stroke-width: 1.5;
+    transition: opacity 0.2s ease;
+  }
+
+  /* Pending: an arc turning inside the ring */
+  .ds-check__arc {
+    fill: none;
+    stroke: var(--ds-text-strong);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-dasharray: 0.28 1;
+    opacity: 0;
+    transform-origin: 8px 8px;
+    animation: ds-spin 0.8s linear infinite;
+    transition: opacity 0.18s ease;
+  }
+
+  .ds-check[data-pending] .ds-check__arc {
+    opacity: 1;
+  }
+
+  /* Done: a solid disc grows from the center over the ring, then the tick
+     draws on it. No frame is a half-faded fill under a fading spinner. */
+  .ds-check__fill {
+    fill: var(--ds-success);
+    opacity: 0;
+    transform: scale(0.35);
+    transform-origin: 8px 8px;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  .ds-check[data-on] .ds-check__fill {
+    opacity: 1;
+    transform: scale(1);
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0s;
+  }
+
+  /* The arc gets out of the way as the disc starts */
+  .ds-check[data-on] .ds-check__arc {
+    transition-duration: 0.08s;
+  }
+
+  .ds-check[data-on] .ds-check__ring {
+    opacity: 0;
+  }
+
+  .ds-check__tick {
+    fill: none;
+    stroke: var(--color-ds-white);
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  /* On blueprint the disc is white, so the tick takes the ground */
+
+
+  /* The tick draws in once the disc is mostly there, and fades out intact */
+  .ds-check[data-on] .ds-check__tick {
+    stroke-dashoffset: 0;
+    opacity: 1;
+    transition: stroke-dashoffset 0.32s cubic-bezier(0.65, 0, 0.35, 1) 0.16s, opacity 0.01s 0.16s;
+  }
+
+
+
+  @media (prefers-reduced-motion: reduce) {
+    .ds-check__arc { animation: none; }
+  }
+}
+
+/* Avatar */
+
+@layer components {
+  /* Small boxes with text keep a layer of their own. Pushed by a row opening
+     above them, or carried along by anything that moves by layout, their text
+     would step whole pixels while the fill glides, and hop about inside it */
+  .ds-avatar {
+    will-change: transform;
+  }
+
+  .ds-avatar {
+    display: inline-grid;
+    flex-shrink: 0;
+    place-items: center;
+    overflow: hidden;
+    border-radius: 50%;
+    /* Opaque: avatars overlap in a pile, and a translucent fill onion-skins */
+    background: var(--ds-fill, var(--ds-ink-3));
+    color: var(--ds-text-strong);
+    font-weight: 600;
+    line-height: 1;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+
+  .ds-avatar[data-tone="accent"] {
+    background: var(--ds-accent);
+    color: var(--color-ds-white);
+  }
+
+  /* The iOS contact monogram: Apple's gray-blue, lighter at the top */
+  .ds-avatar[data-tone="ios"] {
+    background: linear-gradient(180deg, var(--color-ds-ios-top), var(--color-ds-ios-bottom));
+    color: var(--color-ds-white);
+    font-family: ui-rounded, 'SF Pro Rounded', -apple-system, system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+
+  .ds-avatar[data-tone="success"] {
+    background: var(--ds-success);
+    color: var(--color-ds-white);
+  }
+
+  /* The line box trimmed to cap height and baseline, so a capital centers on
+     its own ink in any font (a plain line box drops system-ui caps ~7% low) */
+  .ds-avatar__initial {
+    display: block;
+    text-box: trim-both cap alphabetic;
+  }
+
+  .ds-avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    object-fit: cover;
+  }
+
+  /* A ring with a gap cut from whatever the avatar sits on (the gap is the
+     surface color, so set --ds-ring-bg on a tinted row) */
+  .ds-avatar[data-ring] {
+    box-shadow: 0 0 0 1.5px var(--ds-ring-bg, var(--ds-surface)), 0 0 0 3px var(--ds-ring, var(--ds-ink-3));
+    transition: box-shadow 0.35s ease;
+  }
+
+  .ds-avatar[data-ring="confirmed"] { --ds-ring: var(--ds-success); }
+
+  .ds-avatar[data-ring="declined"] { --ds-ring: var(--ds-danger); }
+
+  /* Waiting: the quiet ring, with an accent arc traveling round it (a
+     person being asked, a call ringing). It turns smoothly at a steady
+     pace; the arc fades out as the ring settles to confirmed or declined */
+  .ds-avatar[data-ring] {
+    position: relative;
+    overflow: visible;
+  }
+
+  .ds-avatar[data-ring]::after {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, transparent 0 62%, var(--ds-accent) 100%);
+    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 1.5px), black calc(100% - 1.5px));
+    mask: radial-gradient(farthest-side, transparent calc(100% - 1.5px), black calc(100% - 1.5px));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    animation: ds-avatar-wait 1.1s linear infinite;
+    pointer-events: none;
+  }
+
+  .ds-avatar[data-ring="waiting"]::after {
+    opacity: 1;
+  }
+
+  @keyframes ds-avatar-wait {
+    to { transform: rotate(1turn); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ds-avatar[data-ring]::after { animation: none; }
+  }
+}
+
+/* Facepile */
+
+@layer components {
+  /* Facepile: each face is cut out where the next overlaps it (a mask, not a ring) */
+  .ds-facepile {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .ds-facepile__face {
+    display: flex;
+  }
+
+  .ds-facepile__face + .ds-facepile__face {
+    margin-left: var(--ds-overlap);
+  }
+}
+
+/* Chip */
+
+@layer components {
+  /* Small boxes with text keep a layer of their own. Pushed by a row opening
+     above them, or carried along by anything that moves by layout, their text
+     would step whole pixels while the fill glides, and hop about inside it */
+  .ds-chip {
+    will-change: transform;
+  }
+
+  .ds-chip-slot {
+    display: inline-flex;
+    flex: none;
+    overflow: hidden;
+    border-radius: var(--ds-radius-pill);
+    opacity: 0;
+    /* Closing, it fades first and the gap closes behind it, so the narrowing
+       edge never slices a visible chip */
+    transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) 0.1s, margin 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) 0.1s, opacity 0.14s ease;
+  }
+
+  /* Opening, it shows once the slot is nearly its width, so the edge never
+     slices a visible chip */
+  .ds-chip-slot[data-show] {
+    opacity: 1;
+    transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), margin 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.22s ease 0.16s;
+  }
+
+  .ds-chip-slot > .ds-chip {
+    flex: none;
+  }
+
+  .ds-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 28px;
+    padding: 0 10px;
+    border-radius: var(--ds-radius-pill);
+    background: var(--ds-accent-soft);
+    color: var(--ds-text-strong);
+    font-size: var(--text-ds-label);
+    line-height: var(--text-ds-label--line-height);
+    letter-spacing: var(--text-ds-label--letter-spacing);
+    font-weight: var(--text-ds-label--font-weight);
+    white-space: nowrap;
+  }
+
+  /* The x's round hover sits as far from the end as the label from the start, optically */
+  .ds-chip[data-removable] {
+    padding-right: 4px;
+  }
+
+  .ds-chip__x {
+    display: inline-grid;
+    place-items: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    color: var(--ds-text);
+    transition: background-color 0.15s ease;
+  }
+
+}
+
+/* Menu */
+
+@layer components {
+  .ds-menu {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ds-menu__item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: var(--ds-row-h);
+    padding: 0 8px;
+    border-radius: var(--ds-radius-sm);
+    font-size: var(--text-ds-label);
+    line-height: var(--text-ds-label--line-height);
+    letter-spacing: var(--text-ds-label--letter-spacing);
+    font-weight: 400;
+    color: var(--ds-text-strong);
+    transition: background-color 0.12s ease;
+  }
+
+  .ds-menu__item[data-active] {
+    background-color: var(--ds-ink-2);
+  }
+
+  /* The item under the cursor highlights, as in a real menu; fast in, eased out */
+  .ds-menu__item {
+    transition: background-color 0.15s ease;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .ds-menu__item:hover {
+      background-color: var(--ds-ink-2);
+      transition-duration: 0s;
+    }
+  }
+}
+
+/* Meter */
+
+@layer components {
+  .ds-meter {
+    display: block;
+    height: 6px;
+    overflow: hidden;
+    border-radius: 3px;
+    background: var(--ds-ink-1);
+  }
+
+  .ds-meter__fill {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--ds-accent), var(--ds-accent-2, var(--ds-accent)));
+    transition: clip-path 0.8s cubic-bezier(0.45, 0, 0.2, 1);
+  }
+
+  /* Tones are a layer over the accent gradient that fades in and out: a
+     gradient can't transition to a flat color, so swapping backgrounds snaps */
+  .ds-meter__fill {
+    position: relative;
+  }
+
+  .ds-meter__fill::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: var(--ds-meter-tone, var(--ds-accent));
+    opacity: 0;
+    transition: opacity 0.4s ease, background-color 0.4s ease;
+  }
+
+  .ds-meter[data-tone="danger"] { --ds-meter-tone: var(--ds-danger); }
+
+  .ds-meter[data-tone="warning"] { --ds-meter-tone: var(--ds-warning); }
+
+  .ds-meter[data-tone="success"] { --ds-meter-tone: var(--ds-success); }
+
+  .ds-meter[data-tone="ink"] { --ds-meter-tone: var(--ds-ink-5); }
+
+  .ds-meter:not([data-tone="accent"]) .ds-meter__fill::after {
+    opacity: 1;
+  }
+}
+
+/* Spinner */
+
+@layer components {
+  .ds-spinner {
+    flex: none;
+    animation: ds-spin 0.8s linear infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ds-spinner { animation: none; }
+  }
+}
+
+/* Toast */
+
+@layer components {
+  .ds-toast {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: var(--ds-radius-lg);
+    background: var(--ds-toast);
+    box-shadow: var(--ds-shadow-satellite);
+    color: var(--ds-toast-ink);
+    font-size: var(--text-ds-small);
+    line-height: var(--text-ds-small--line-height);
+    letter-spacing: var(--text-ds-small--letter-spacing);
+    font-weight: var(--text-ds-small--font-weight);
+    opacity: 0;
+    /* Rises by margin on a layer it keeps: the equal and opposite margins move
+       it the same whether it's placed by its top, its bottom or the flow, and
+       nothing around it moves. The layer moves box and text as one picture;
+       without it the text steps whole pixels inside the gliding box */
+    will-change: transform;
+    margin-block: var(--ds-toast-rise, 10px) calc(-1 * var(--ds-toast-rise, 10px));
+    transition: opacity 0.35s ease, margin 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .ds-toast[data-show] { opacity: 1; margin-block: 0; }
+
+  .ds-toast__icon { display: grid; opacity: 0.8; }
+
+  .ds-toast__action { margin-left: 6px; color: var(--color-ds-toast-action); font-weight: 500; }
+
+
+}
+
+/* Tooltip */
+
+@layer components {
+  .ds-tooltip {
+    position: absolute;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    height: 26px;
+    padding: 0 8px;
+    border-radius: var(--ds-radius-sm);
+    background: var(--color-ds-tooltip);
+    color: var(--color-ds-white);
+    font-size: var(--text-ds-caption);
+    line-height: var(--text-ds-caption--line-height);
+    letter-spacing: var(--text-ds-caption--letter-spacing);
+    font-weight: 500;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-50%, -2px);
+    transition: opacity 0.1s ease, transform 0.1s ease;
+  }
+
+  .ds-tooltip[data-side='above'] {
+    transform: translate(-50%, calc(-100% + 2px));
+  }
+
+  .ds-tooltip[data-show] {
+    opacity: 1;
+    transform: translate(-50%, 0);
+    transition-duration: 0.15s;
+  }
+
+  .ds-tooltip[data-side='above'][data-show] {
+    transform: translate(-50%, -100%);
+  }
+
+  /* Centered on its letters, not its line box */
+  .ds-tooltip__label {
+    display: block;
+    text-box: trim-both cap alphabetic;
+  }
+}
+
+/* Pin */
+
+@layer components {
+  /* The rim and the face share one shape: a rounded square whose pointed
+     corner is square. Percentage radii keep the inner shape nested inside
+     the outer one at any size, so the corner never pokes out */
+  .ds-pin {
+    --ds-pin-r: 50% 50% 50% 0;
+    position: relative;
+    display: inline-grid;
+    flex-shrink: 0;
+    place-items: center;
+    padding: 2px;
+    box-sizing: border-box;
+    border-radius: var(--ds-pin-r);
+    background: var(--ds-surface);
+    box-shadow: 0 0 0 1px var(--color-ds-pin-edge), 0 2px 6px -1px var(--color-ds-pin-drop);
+    will-change: transform;
+    transition: box-shadow 0.3s ease;
+  }
+
+  .ds-pin[data-corner="br"] { --ds-pin-r: 50% 50% 0 50%; }
+  .ds-pin[data-corner="tl"] { --ds-pin-r: 0 50% 50% 50%; }
+  .ds-pin[data-corner="tr"] { --ds-pin-r: 50% 0 50% 50%; }
+
+  .ds-pin__face {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: var(--ds-pin-r);
+    background: var(--ds-ink-3);
+    color: var(--ds-text-strong);
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .ds-pin[data-tone="accent"] .ds-pin__face {
+    background: var(--ds-accent);
+    color: var(--color-ds-white);
+  }
+
+  .ds-pin__face img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* The open pin: a ring in its own color, with the surface showing between */
+  .ds-pin[data-selected] {
+    box-shadow: 0 0 0 1.5px var(--ds-surface), 0 0 0 3px var(--ds-accent), 0 2px 6px -1px var(--color-ds-pin-drop);
+  }
+
+  .ds-pin[data-selected][data-tone="ink"] {
+    box-shadow: 0 0 0 1.5px var(--ds-surface), 0 0 0 3px var(--ds-ink-5), 0 2px 6px -1px var(--color-ds-pin-drop);
+  }
+}
+
+/* Icon */
+
+@layer components {
+  .ds-icon {
+    display: block;
+    flex-shrink: 0;
+  }
+}
+
+/* BrandMark */
+
+@layer components {
+  .ds-brand {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .ds-brand[data-tile] {
+    background: var(--ds-surface);
+    box-shadow: inset 0 0 0 1px var(--ds-line);
+  }
+
+  .ds-brand[data-tile][data-light-tile] {
+    background: var(--color-ds-white);
+    box-shadow: inset 0 0 0 1px var(--ds-ink-3);
+  }
+
+  /* Logos are optically smaller than their tile, aspect kept */
+  .ds-brand img {
+    display: block;
+    flex: none;
+    min-width: 0;
+    min-height: 0;
+    width: 62%;
+    height: 62%;
+    object-fit: contain;
+  }
+
+  .ds-brand__initial {
+    color: var(--ds-text-strong);
+    font-weight: 600;
+  }
+}
+
+@layer components {
+  /* Bare, the mark is the whole footprint */
+  .ds-brand:not([data-tile]) img {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+/* Row */
+
+@layer components {
+  /* A grid: the lead sits in the first row beside the title and subtitle
+     and is centered on exactly those two lines, whatever their size; any
+     further lines (preview bars) go under the text, not under the lead */
+  .ds-row {
+    --ds-row-pad: 12px;
+    /* The type scale: desktop sizes by default, iOS sizes on a phone screen */
+    --ds-row-title: var(--text-ds-title);
+    --ds-row-subtitle: var(--text-ds-small);
+    --ds-row-meta: var(--text-ds-caption);
+    --ds-row-line: var(--text-ds-title--line-height);
+    --ds-row-line-2: var(--text-ds-small--line-height);
+    --ds-row-gap: 2px;
+    --ds-row-dot: 6px;
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: center;
+    column-gap: 10px;
+    padding: var(--ds-row-pad) var(--ds-row-pad);
+    border-radius: var(--ds-radius-lg);
+    will-change: transform;
+    transition: background 0.2s ease;
+  }
+
+  /* An unread dot hangs in the margin, 7px left of the lead (below): it
+     never moves the row. The list needs a few px of its own padding for the
+     dot to sit in. A product that reserves a dot column on every row (Mail,
+     Messages) pads the whole list; never only the unread rows */
+
+  .ds-row[data-selected] {
+    background: var(--ds-ink-1);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .ds-row[data-interactive]:hover {
+      background: var(--ds-ink-1);
+    }
+  }
+
+  /* The lead and the dot sit on the name and its line, not the middle of
+     the row: a row that runs to three or four lines keeps them up with the
+     name, the way Mail does */
+  .ds-row[data-lead] {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  /* Anything else in the row (a toggle, a chevron, a badge) trails on the
+     first line's row, at the end, centered on the pair */
+  .ds-row > :not(.ds-row__lead):not(.ds-row__body):not(.ds-row__dot):not(.ds-row__preview) {
+    grid-row: 1;
+    align-self: center;
+    justify-self: end;
+  }
+
+  /* The dot takes the first cell as its box, so its middle is the lead's */
+  .ds-row__dot {
+    position: absolute;
+    /* Both lines named: an open end would run the box to the row's bottom */
+    grid-row: 1 / 2;
+    grid-column: 1 / 2;
+    z-index: 1;
+    /* 7px clear of the lead, whatever size the dot is */
+    left: calc(-7px - var(--ds-row-dot));
+    top: calc(50% - 3px);
+    width: var(--ds-row-dot);
+    height: var(--ds-row-dot);
+    margin-top: calc(3px - var(--ds-row-dot) / 2);
+    border-radius: 50%;
+    background: var(--ds-accent);
+  }
+
+  /* On a phone the row is an iOS list row: 17pt name, 15pt lines, a 10pt dot */
+  .ds-phone__screen .ds-row {
+    --ds-row-title: 17px;
+    --ds-row-subtitle: 15px;
+    --ds-row-meta: 15px;
+    --ds-row-line: 22px;
+    --ds-row-line-2: 20px;
+    --ds-row-gap: 0px;
+    --ds-row-dot: 10px;
+  }
+
+  .ds-row__lead {
+    grid-row: 1 / 2;
+    grid-column: 1 / 2;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* The two lines are one item: 2px between 16px line boxes gives the ink
+     4 to 6px of air; the row's padding carries the rest. A title on its own
+     is one line: the row is the title plus its padding, with no second line
+     reserved (a file list, a settings list), so one-line rows don't read fat */
+  .ds-row__body {
+    grid-row: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--ds-row-gap);
+    min-width: 0;
+    justify-content: center;
+  }
+
+  /* With a subtitle or preview lines the body holds the two-line pitch even
+     when a line is a bar or shorter type, so rows in one list line up */
+  .ds-row:has(.ds-row__subtitle, .ds-row__preview) .ds-row__body {
+    min-height: calc(var(--ds-row-line) + var(--ds-row-line-2) + var(--ds-row-gap));
+  }
+
+  .ds-row__head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: var(--ds-row-line);
+  }
+
+  .ds-row__title {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: var(--ds-row-title);
+    font-weight: var(--text-ds-title--font-weight);
+    letter-spacing: var(--text-ds-title--letter-spacing);
+    line-height: var(--ds-row-line);
+    color: var(--ds-text-strong);
+  }
+
+  .ds-row__meta {
+    flex: none;
+    font-size: var(--ds-row-meta);
+    line-height: var(--ds-row-line);
+    letter-spacing: var(--text-ds-caption--letter-spacing);
+    color: var(--ds-text-faint);
+  }
+
+  .ds-row__subtitle {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: var(--ds-row-subtitle);
+    line-height: var(--ds-row-line-2);
+    letter-spacing: var(--text-ds-small--letter-spacing);
+    color: var(--ds-text);
+  }
+
+  /* A bar standing in for a line keeps the line's pitch: 6px bar, 5px each side */
+  /* Preview lines: under the subtitle, in the text column, at its pitch */
+  .ds-row__preview {
+    grid-row: 2;
+    display: grid;
+    justify-items: start;
+    row-gap: calc(var(--ds-row-line-2) - 6px);
+    padding-top: calc((var(--ds-row-line-2) - 6px) / 2);
+  }
+
+  /* Real preview text: two lines at the subtitle's size, then an ellipsis */
+  .ds-row__preview[data-text] {
+    display: -webkit-box;
+    overflow: hidden;
+    padding-top: 0;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    font-size: var(--ds-row-subtitle);
+    line-height: var(--ds-row-line-2);
+    color: var(--ds-text);
+  }
+
+  .ds-row[data-lead] .ds-row__preview {
+    grid-column: 2;
+  }
+
+  .ds-row__preview > .ds-bar {
+    display: block;
+  }
+
+  /* With preview lines the lead and the dot sit a little lower: centered on
+     the name, the subtitle and the first preview line, where Mail puts a
+     contact photo, neither hugging the name nor sunk to the row's middle */
+  .ds-row:has(.ds-row__preview) .ds-row__lead,
+  .ds-row:has(.ds-row__preview) .ds-row__dot {
+    grid-row: 1 / 3;
+    align-self: start;
+  }
+
+  /* One height for both, so a product that raises the lead (Mail centers
+     it on the sender and subject) carries the dot with it by setting
+     --ds-row-lead-h alone */
+  .ds-row:has(.ds-row__preview) {
+    --ds-row-lead-h: calc(var(--ds-row-line) + var(--ds-row-line-2) * 2 + var(--ds-row-gap));
+  }
+
+  .ds-row:has(.ds-row__preview) .ds-row__lead {
+    height: var(--ds-row-lead-h);
+  }
+
+  .ds-row:has(.ds-row__preview) .ds-row__dot {
+    top: calc(var(--ds-row-lead-h) / 2 - 3px);
+  }
+
+  .ds-row__title > .ds-bar {
+    display: block;
+    margin: calc((var(--ds-row-line) - 6px) / 2) 0;
+  }
+
+  .ds-row__subtitle > .ds-bar {
+    display: block;
+    margin: calc((var(--ds-row-line-2) - 6px) / 2) 0;
+  }
+
+  .ds-row__meta > .ds-bar {
+    display: block;
+    margin: calc((var(--ds-row-line) - 6px) / 2) 0;
+  }
+}
+
+/* Code (code.tsx). */
+
+@layer components {
+  .ds-code {
+    font: 13px/20px var(--ds-mono);
+    color: var(--ds-text-strong);
+  }
+
+
+
+
+
+  /* Lines not yet shown are laid out but hidden, so streaming never reflows */
+  .ds-code__line {
+    display: flex;
+    padding-right: 12px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .ds-code__line[data-on] {
+    opacity: 1;
+  }
+
+  .ds-code__num {
+    flex-shrink: 0;
+    width: 30px;
+    padding-right: 10px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    color: var(--ds-text-faint);
+  }
+
+  /* Wide enough that the + or − stands clear of the code after it */
+  .ds-code__mark {
+    flex-shrink: 0;
+    width: 16px;
+    color: var(--ds-text-faint);
+  }
+
+  .ds-code__text {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    white-space: pre;
+  }
+
+  /* A line longer than the block fades at its right edge, never cut hard;
+     the diff tint behind it still runs the full width */
+  .ds-code__text[data-over] {
+    mask-image: linear-gradient(to right, black calc(100% - 14px), transparent);
+  }
+
+  .ds-code__line[data-kind="add"] { background: var(--ds-success-soft); }
+
+  .ds-code__line[data-kind="add"] .ds-code__mark { color: var(--ds-success-text); }
+
+  .ds-code__line[data-kind="del"] { background: var(--ds-danger-soft); }
+
+  .ds-code__line[data-kind="del"] .ds-code__mark { color: var(--ds-danger-text); }
+
+  .ds-code__key { color: var(--ds-code-key); }
+
+  .ds-code__str { color: var(--ds-code-str); }
+
+  .ds-code__num + .ds-code__mark + .ds-code__text .ds-code__num,
+  .ds-code__text .ds-code__num { width: auto; padding: 0; text-align: inherit; color: var(--ds-code-num); }
+
+  .ds-code__fn { color: var(--ds-code-fn); }
+
+  .ds-code__com { color: var(--ds-text-faint); }
+}
+
+/* Chart (chart.tsx). */
+
+@layer components {
+  .ds-chart {
+    display: block;
+    overflow: visible;
+  }
+
+  /* Draws in: a wipe over the line and its fill, led by the dot riding the
+     curve at the wipe's edge (Chart drives both on one timeline, through an SVG
+     clip rect in the chart's own units). Hiding fades the whole chart at once. */
+  .ds-chart__draw {
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  .ds-chart[data-show] .ds-chart__draw {
+    opacity: 1;
+    transition: opacity 0.15s ease;
+  }
+
+  .ds-chart__line {
+    fill: none;
+    stroke: var(--ds-accent);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: d 0.8s cubic-bezier(0.45, 0, 0.2, 1);
+  }
+
+  .ds-chart__area {
+    transition: d 0.8s cubic-bezier(0.45, 0, 0.2, 1);
+  }
+
+  .ds-chart__dot {
+    fill: var(--ds-accent);
+    stroke: var(--ds-surface);
+    stroke-width: 2;
+    opacity: 0;
+    transform: scale(0.4);
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: opacity 0.2s ease, transform 0.2s ease, cx 0.8s cubic-bezier(0.45, 0, 0.2, 1), cy 0.8s cubic-bezier(0.45, 0, 0.2, 1);
+  }
+
+  .ds-chart[data-show] .ds-chart__dot {
+    opacity: 1;
+    transform: none;
+  }
+
+  .ds-chart__bar {
+    fill: var(--ds-accent);
+    transition: y 0.7s cubic-bezier(0.25, 0.8, 0.25, 1), height 0.7s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+
+  .ds-chart[data-still] * {
+    transition: none !important;
+  }
+}
+
+
+/* ── Real interaction: native elements in the kit's shapes ─────────────────── */
+
+@layer components {
+  :where(.ds-field, .ds-seg, .ds-toggle, .ds-tabs, .ds-badge, .ds-chip, .ds-menu, .ds-row, .ds-meter,
+    .ds-toast, .ds-tip, .ds-pin, .ds-code, .ds-window, .ds-poster) {
+    font-family: var(--ds-font);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* One keyboard focus mark for every pressable part */
+  :where(.ds-seg__option, .ds-toggle, .ds-tabs__tab, .ds-chip__x, .ds-row[data-interactive], .ds-pin[data-interactive],
+    .ds-stepper__key, .ds-action, .ds-frame, .ds-slider__thumb, .ds-select, .ds-wheel, .ds-swatch, .ds-app__tile,
+    .ds-app__remove, .ds-task__box, .ds-player__button, .ds-player__thumb):focus-visible {
+    outline: 2px solid var(--ds-accent);
+    outline-offset: 2px;
+  }
+
+  /* Small controls keep their look but take at least a 24px hit area: an invisible box
+     centred on them, never wide enough to reach a neighbour */
+  :where(.ds-field__x, .ds-chip__x, .ds-swatch, .ds-search__clear) {
+    position: relative;
+  }
+
+  :where(.ds-field__x, .ds-chip__x, .ds-app__remove, .ds-swatch, .ds-search__clear, .ds-toggle)::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: max(100%, 24px);
+    height: max(100%, 24px);
+    translate: -50% -50%;
+  }
+
+  /* An icon beside a label draws at the label's own stem weight, so the two read as one line.
+     Inter's vertical stem is 0.108em at 500 and 0.088em at 400: the stroke is set in screen
+     pixels (non-scaling), so it follows the type whatever size the glyph is drawn at */
+  :where(.ds-button:not([data-icon-only]), .ds-badge, .ds-select, .ds-chip, .ds-menu__item, .ds-tabs__tab,
+    .ds-seg__option, .ds-sidebar__item, .ds-sidebar__workspace, .ds-agent__chip, .ds-agent__skills,
+    .ds-agent-launcher, .ds-otp__message, .ds-toast) svg :is(path, line, polyline, polygon, circle, rect, ellipse) {
+    vector-effect: non-scaling-stroke;
+    stroke-width: var(--ds-label-stem, 0.108em);
+  }
+
+  :where(.ds-sidebar__workspace, .ds-agent__chip, .ds-agent__skills, .ds-otp__message) {
+    --ds-label-stem: 0.088em;
+  }
+
+  :where(.ds-seg__option, .ds-toggle, .ds-tabs__tab, .ds-chip__x, .ds-stepper__key, .ds-action, .ds-frame, .ds-select,
+    .ds-wheel, .ds-swatch, .ds-app__tile, .ds-app__remove, .ds-player__button, .ds-row[data-interactive]) {
+    margin: 0;
+    border: 0;
+    background-color: transparent;
+    font: inherit;
+    color: inherit;
+    text-align: inherit;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Field: a real input where the kit draws typed characters */
+  .ds-field__input {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+    font: inherit;
+    color: inherit;
+  }
+
+  .ds-field__input::placeholder {
+    color: var(--ds-text-faint);
+    opacity: 1;
+  }
+
+  /* Autofill tints the bare input square inside the rounded box: Chrome's own colour, and the
+     app-wide inset-shadow fix in globals.css (painted in the site's background). Drop both, so
+     the input stays transparent and the box shows through. Out-ranks that global rule. */
+  :is(.ds-field, .ds-search) :is(.ds-field__input, .ds-search__input):is(:autofill, :-webkit-autofill) {
+    box-shadow: none;
+    -webkit-text-fill-color: var(--ds-text-strong);
+    caret-color: var(--ds-text-strong);
+    transition: background-color 600000s 0s, color 600000s 0s;
+  }
+
+  .ds-field__input[type="password"]:not(:placeholder-shown) {
+    letter-spacing: 1.5px;
+  }
+
+  .ds-field:focus-within .ds-field__box {
+    box-shadow: inset 0 0 0 1px var(--ds-accent), 0 0 0 1.5px var(--ds-accent-soft);
+  }
+
+  .ds-field[data-status="error"]:focus-within .ds-field__box {
+    box-shadow: inset 0 0 0 2px var(--ds-danger);
+  }
+
+  .ds-field__hint {
+    color: var(--ds-text);
+    font-size: var(--text-ds-small);
+    line-height: var(--text-ds-small--line-height);
+    letter-spacing: var(--text-ds-small--letter-spacing);
+    font-weight: var(--text-ds-small--font-weight);
+    color: var(--ds-text);
+  }
+
+  .ds-field[data-status="error"] .ds-field__hint {
+    color: var(--ds-danger-text);
+  }
+
+  .ds-field[data-disabled] {
+    opacity: 0.5;
+  }
+
+  .ds-seg__option:disabled,
+  .ds-toggle:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  .ds-chip__x {
+    padding: 0;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .ds-chip__x:hover,
+    .ds-field__x:hover {
+      background-color: var(--ds-ink-2);
+      transition-duration: 0s;
+    }
+
+    .ds-field__x:hover {
+      opacity: 1;
+    }
+  }
+
+  /* Menu: the kit's popover surface and rows, opened by Radix */
+  .ds-popover-surface {
+    z-index: 50;
+    min-width: 160px;
+    padding: 4px;
+    border-radius: var(--ds-radius-lg);
+    background: var(--ds-raised);
+    box-shadow: var(--ds-shadow-float);
+    font-family: var(--ds-font);
+    transform-origin: var(--radix-dropdown-menu-content-transform-origin, var(--radix-select-content-transform-origin, var(--radix-popover-content-transform-origin, top left)));
+  }
+
+  /* Opens in 180ms from its trigger, on a strong ease-out; leaves faster than it came,
+     never on an ease-in (it would hang at the start, just when it's being watched) */
+  .ds-popover-surface[data-state="open"] {
+    animation: ds-pop-in 180ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .ds-popover-surface[data-state="closed"] {
+    animation: ds-pop-out 120ms cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  }
+
+  @keyframes ds-pop-in {
+    from { opacity: 0; transform: scale(0.97); }
+  }
+
+  @keyframes ds-pop-out {
+    to { opacity: 0; transform: scale(0.97); }
+  }
+
+  /* Reduced motion: a plain fade, no scale */
+  @media (prefers-reduced-motion: reduce) {
+    .ds-popover-surface[data-state="open"] {
+      animation-name: ds-fade-in;
+    }
+
+    .ds-popover-surface[data-state="closed"] {
+      animation-name: ds-fade-out;
+    }
+
+    .ds-select__chevron {
+      transition: none;
+    }
+  }
+
+  @keyframes ds-fade-in {
+    from { opacity: 0; }
+  }
+
+  @keyframes ds-fade-out {
+    to { opacity: 0; }
+  }
+
+  .ds-menu__item {
+    outline: none;
+    cursor: default;
+    user-select: none;
+  }
+
+  .ds-menu__item[data-highlighted] {
+    background-color: var(--ds-ink-2);
+    transition-duration: 0s;
+  }
+
+  .ds-menu__item[data-disabled] {
+    opacity: 0.45;
+  }
+
+  .ds-menu__icon {
+    display: grid;
+    color: var(--ds-icon);
+  }
+
+  .ds-menu__label {
+    flex: 1;
+  }
+
+  .ds-menu__shortcut {
+    color: var(--ds-text-faint);
+    font-size: var(--text-ds-caption);
+    line-height: var(--text-ds-caption--line-height);
+    letter-spacing: var(--text-ds-caption--letter-spacing);
+    font-weight: var(--text-ds-caption--font-weight);
+  }
+
+  .ds-menu__check {
+    display: grid;
+    width: 14px;
+    color: var(--ds-accent);
+  }
+
+  .ds-menu__separator {
+    height: 1px;
+    margin: 4px -4px;
+    background: var(--ds-line);
+  }
+
+  /* Tooltip: the kit's label, placed by Radix */
+  .ds-tip {
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    height: 26px;
+    padding: 0 8px;
+    border-radius: var(--ds-radius-sm);
+    background: var(--color-ds-tooltip);
+    color: var(--color-ds-white);
+    font-size: var(--text-ds-caption);
+    line-height: var(--text-ds-caption--line-height);
+    letter-spacing: var(--text-ds-caption--letter-spacing);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .ds-tip[data-state="delayed-open"],
+  .ds-tip[data-state="instant-open"] {
+    animation: ds-tip-in 0.15s ease;
+  }
+
+  @keyframes ds-tip-in {
+    from { opacity: 0; translate: 0 -2px; }
+  }
+
+  @keyframes ds-tip-fade {
+    from { opacity: 0; }
+  }
+
+  /* Reduced motion: it fades in where it stands */
+  @media (prefers-reduced-motion: reduce) {
+    .ds-tip[data-state="delayed-open"],
+    .ds-tip[data-state="instant-open"] {
+      animation-name: ds-tip-fade;
+    }
+  }
+
+  .ds-tip > span {
+    display: block;
+    text-box: trim-both cap alphabetic;
+  }
+
+  /* Toasts shown through Sonner arrive already risen */
+  [data-sonner-toast] .ds-toast {
+    opacity: 1;
+    margin-block: 0;
+  }
+
+  .ds-pin[data-interactive] {
+    cursor: pointer;
+    border: 0;
+  }
+
+  /* Window: the kit's chrome. Native (macOS lights, a bar and rule) and glass */
+  .ds-window {
+    position: relative;
+    --ds-lights-y: 19px;
+    --ds-dot: 9px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: var(--ds-radius-window);
+    background: var(--ds-canvas);
+    box-shadow: var(--ds-shadow-window);
+  }
+
+  .ds-window__bar {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 6px;
+    height: 38px;
+    padding: 0 calc(var(--ds-lights-y) - var(--ds-dot) / 2);
+    background: var(--ds-surface);
+    border-bottom: 1px solid var(--ds-line);
+  }
+
+  .ds-window__lights {
+    display: flex;
+    flex-shrink: 0;
+    gap: 6px;
+  }
+
+  .ds-window__dot {
+    width: var(--ds-dot);
+    height: var(--ds-dot);
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 0.5px var(--color-ds-light-edge);
+  }
+
+  .ds-window__dot:nth-child(1) { background: var(--color-ds-light-red); }
+  .ds-window__dot:nth-child(2) { background: var(--color-ds-light-yellow); }
+  .ds-window__dot:nth-child(3) { background: var(--color-ds-light-green); }
+
+  .ds-window[data-lights="grey"] .ds-window__dot { background: var(--color-ds-light-grey); box-shadow: none; }
+  .ds-window[data-lights="white"] .ds-window__dot { background: var(--color-ds-light-white); box-shadow: none; }
+
+  .ds-window__url {
+    flex: 1;
+    min-width: 0;
+    margin-left: 8px;
+    padding: 4px 10px;
+    overflow: hidden;
+    border-radius: calc(6px * var(--ds-corner, 1));
+    background: var(--ds-ink-1);
+    color: var(--ds-text-faint);
+    font-size: 10.5px;
+    line-height: 1.4;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .ds-window__title {
+    flex: 1;
+    margin-right: 36px;
+    text-align: center;
+    font-size: var(--text-ds-label);
+    line-height: var(--text-ds-label--line-height);
+    letter-spacing: var(--text-ds-label--letter-spacing);
+    font-weight: var(--text-ds-label--font-weight);
+    color: var(--ds-text-strong);
+  }
+
+  .ds-window__body {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .ds-window[data-chrome="glass"] {
+    background: var(--color-ds-glass-frame);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border-radius: calc(12px * var(--ds-corner, 1));
+    box-shadow: 0 0 0 1px var(--color-ds-glass-edge), 0 15px 35px var(--color-ds-glass-drop);
+  }
+
+  .ds-window[data-chrome="glass"] > .ds-window__bar {
+    display: grid;
+    grid-template-columns: 1fr minmax(0, 262px) 1fr;
+    gap: 12px;
+    height: 35px;
+    padding: 0 20px;
+    background: none;
+    border: 0;
+  }
+
+  .ds-window[data-chrome="glass"] .ds-window__lights { gap: 4px; }
+
+  .ds-window[data-chrome="glass"] .ds-window__dot { width: 8px; height: 8px; }
+
+  .ds-window[data-chrome="glass"] .ds-window__url {
+    display: flex;
+    grid-column: 2;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    height: 20px;
+    margin: 0;
+    padding: 0 8px;
+    border-radius: 999px;
+    background: var(--color-ds-glass-url);
+    box-shadow: inset 0 0 0 1px var(--color-ds-glass-edge);
+    color: var(--color-ds-glass-url-ink);
+    font-size: 10px;
+  }
+
+  .ds-window__lock { flex-shrink: 0; color: var(--color-ds-glass-lock); }
+
+  .ds-window__url-text { overflow: hidden; text-overflow: ellipsis; }
+
+  .ds-window[data-chrome="glass"] > .ds-window__body {
+    margin: 0 6px 6px;
+    overflow: hidden;
+    border-radius: calc(12px * var(--ds-corner, 1) - 6px);
+    background: var(--ds-surface);
+    box-shadow: 0 3px 6px var(--color-ds-glass-page-drop);
+  }
+}
+
+/* ── Poster parts (the hero-grid example), at its 1x sizes ───────────────────── */
+
+@layer components {
+  .ds-poster {
+    font-size: var(--text-ds-body);
+    line-height: var(--text-ds-body--line-height);
+    letter-spacing: var(--text-ds-body--letter-spacing);
+    font-weight: 500;
+    color: var(--ds-control-ink);
+  }
+
+  .ds-surface {
+    background: var(--ds-control);
+    box-shadow: 0 0 0 0.5px var(--ds-control-edge), 0 2px 6px -2px var(--ds-control-drop);
+  }
+
+  /* The grid paper the poster's controls sit on */
+  .ds-paper {
+    background-color: var(--ds-paper);
+    background-image: linear-gradient(var(--ds-grid) 1px, transparent 1px), linear-gradient(90deg, var(--ds-grid) 1px, transparent 1px);
+    background-size: 16px 16px;
+  }
+
+  /* Segmented, soft: the poster's Day / Week / Month */
+  .ds-seg[data-variant="soft"] {
+    grid-template-rows: 1fr;
+    height: 48px;
+    padding: 4px;
+    border-radius: calc(16px * var(--ds-corner, 1));
+    background: var(--ds-control);
+    box-shadow: 0 0 0 0.5px var(--ds-control-edge), 0 2px 6px -2px var(--ds-control-drop);
+  }
+
+  .ds-seg[data-variant="soft"] .ds-seg__thumb {
+    top: 4px;
+    bottom: 4px;
+    left: 4px;
+    width: calc((100% - 8px) / var(--n));
+    border-radius: calc(16px * var(--ds-corner, 1) - 4px);
+    background: var(--ds-accent-soft);
+    box-shadow: none;
+    transition: transform 350ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .ds-seg[data-variant="soft"] .ds-seg__option {
+    height: auto;
+    padding: 0 14px;
+    font-size: var(--text-ds-body);
+    line-height: var(--text-ds-body--line-height);
+    letter-spacing: var(--text-ds-body--letter-spacing);
+    font-weight: 500;
+    color: var(--ds-control-muted);
+  }
+
+  .ds-seg[data-variant="soft"] .ds-seg__option[data-on] {
+    color: var(--ds-accent);
+  }
+
+  /* Toggle at the poster's 1.6x */
+  .ds-toggle[data-size="lg"] {
+    zoom: 1.3333;
+  }
+
+  /* Stepper: Gap − 24 + */
+  .ds-stepper {
+    display: inline-flex;
+    align-items: center;
+    /* −, the number and + are one group: they sit close; the label stands apart */
+    gap: 2px;
+    /* The control height (40px) from 32px keys + 4px padding, not a height: a fieldset's
+       content box doesn't stretch to its height, so a fixed height would pin the row to the top */
+    min-inline-size: 0;
+    margin: 0;
+    padding: calc((var(--ds-control-h) - 32px) / 2);
+    padding-left: 11px;
+    border: 0;
+    border-radius: var(--ds-radius-md);
+  }
+
+  .ds-stepper__label {
+    margin-right: 6px;
+    color: var(--ds-control-muted);
+  }
+
+  .ds-stepper__key {
+    display: grid;
+    flex: none;
+    place-items: center;
+    /* Square, and inset 4px on every side of the 40px box */
+    width: 32px;
+    height: 32px;
+    /* A step tighter than the box, so the corners stay concentric */
+    border-radius: var(--ds-radius-sm);
+    transition: background-color 0.15s ease, opacity 0.15s ease, transform 120ms ease-out;
+  }
+
+  /* Pressed: a small give, so each click is felt */
+  .ds-stepper__key:not(:disabled):active {
+    transform: scale(0.95);
+  }
+
+  .ds-stepper__key:disabled {
+    cursor: default;
+    opacity: 0.3;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .ds-stepper__key:not(:disabled):hover {
+      background-color: var(--ds-ink-2);
+    }
+  }
+
+  .ds-stepper__value {
+    position: relative;
+    display: grid;
+    /* Wide enough for the widest value (tabular digits are 1ch each), so 99 → 100 never
+       pushes + out from under the pointer */
+    min-width: calc(var(--ds-stepper-digits, 3) * 1ch + 8px);
+    overflow: hidden;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    border-radius: calc(4px * var(--ds-corner, 1));
+    outline: none;
+  }
+
+  .ds-stepper__value:focus-visible {
+    outline: 2px solid var(--ds-accent);
+    outline-offset: 2px;
+  }
+
+  .ds-stepper__digit {
+    grid-area: 1 / 1;
+  }
+
+  /* Search: the poster's field */
+  .ds-search {
+    /* The ink and placeholder colors, shared by the input and its dissolve layers */
+    --ds-search-ink: var(--ds-control-ink);
+    --ds-search-placeholder: var(--ds-control-placeholder);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 48px;
+    padding: 0 14px;
+    border-radius: calc(14px * var(--ds-corner, 1));
+    color: var(--ds-control-placeholder);
+    transition: box-shadow 0.2s ease;
+  }
+
+  .ds-search:focus-within {
+    box-shadow: inset 0 0 0 1px var(--ds-accent), 0 0 0 1.5px var(--ds-accent-soft);
+  }
+
+  .ds-search svg {
+    flex: none;
+  }
+
+  .ds-search__input {
+    flex: 1;
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+    font: inherit;
+    color: var(--ds-search-ink);
+  }
+
+  /* The visible placeholder is its own layer, so it can fall in when the text clears */
+  .ds-search__input::placeholder {
+    color: transparent;
+  }
+
+  .ds-search__input::-webkit-search-cancel-button {
+    appearance: none;
+  }
+
+  /* Checklist: Design / Build / Ship */
+  .ds-tasks {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 0;
+    padding: 8px 16px;
+    border-radius: calc(16px * var(--ds-corner, 1));
+    list-style: none;
+  }
+
+  .ds-task {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 12px;
+    height: 36px;
+  }
+
+  .ds-task__box {
+    display: grid;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    cursor: pointer;
+  }
+
+  .ds-task__label {
+    flex: 1;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  /* Publish → Live: states stacked in one cell, crossfading */
+  .ds-action {
+    display: inline-grid;
+    place-items: center;
+    grid-template-areas: "stack";
+    height: 48px;
+    padding: 0 24px;
+    border-radius: calc(14px * var(--ds-corner, 1));
+    background: var(--ds-accent);
+    color: var(--color-ds-white);
+    box-shadow: 0 6px 14px -8px var(--ds-button-drop);
+    transition: scale 0.15s ease;
+  }
+
+  .ds-action:active {
+    scale: 0.98;
+  }
+
+  .ds-action:disabled {
+    cursor: default;
+  }
+
+  .ds-action__layer {
+    grid-area: stack;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    opacity: 0;
+    filter: blur(2px);
+    transition: opacity 250ms ease, filter 250ms ease;
+    text-box: trim-both cap alphabetic;
+  }
+
+  .ds-action__layer[data-on] {
+    opacity: 1;
+    filter: none;
+    transition-delay: 80ms;
+  }
+
+  .ds-action .ds-check__ring { stroke: color-mix(in srgb, var(--color-ds-white) 45%, transparent); }
+  .ds-action .ds-check__arc { stroke: var(--color-ds-white); }
+  .ds-action .ds-check__fill { fill: var(--color-ds-white); }
+  .ds-action .ds-check__tick { stroke: var(--ds-accent); }
+
+  /* Frame: a design-tool frame, selectable */
+  .ds-frame-wrap {
+    position: relative;
+    display: inline-block;
+    padding-top: 22px;
+  }
+
+  .ds-frame {
+    position: relative;
+    display: block;
+    width: 104px;
+    height: 84px;
+    padding: 0;
+    border: 1.5px dashed var(--ds-frame-edge);
+    border-radius: 0;
+    cursor: crosshair;
+    transition: border-color 200ms;
+  }
+
+  .ds-frame[aria-pressed="true"] {
+    border: 1.5px solid var(--ds-accent);
+  }
+
+  .ds-frame__name {
+    position: absolute;
+    top: 0;
+    left: -1px;
+    color: var(--ds-frame-name);
+    font: 12px/16px var(--ds-mono);
+  }
+
+  .ds-frame__detail {
+    opacity: 0;
+    transition: opacity 240ms;
+  }
+
+  .ds-frame[aria-pressed="true"] .ds-frame__detail {
+    opacity: 1;
+  }
+
+  .ds-frame__handle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    margin: -4.75px;
+    border: 1.5px solid var(--ds-accent);
+    border-radius: 2px;
+    background: var(--color-ds-white);
+  }
+
+  .ds-frame__handle[data-corner="0"] { top: 0; left: 0; }
+  .ds-frame__handle[data-corner="1"] { top: 0; right: 0; }
+  .ds-frame__handle[data-corner="2"] { bottom: 0; left: 0; }
+  .ds-frame__handle[data-corner="3"] { bottom: 0; right: 0; }
+
+  .ds-frame__size {
+    position: absolute;
+    bottom: -25px;
+    left: 50%;
+    translate: -50% 0;
+    padding: 3px 7px;
+    border-radius: calc(6px * var(--ds-corner, 1));
+    background: var(--ds-accent);
+    color: var(--color-ds-white);
+    white-space: nowrap;
+    font: 11px/15px var(--ds-mono);
+  }
+
+  /* Slider: a 40px pill. The fill reaches 4px past the thumb, so the thumb sits nested
+     in it; the fill and the travel share one formula (track minus the 40px thumb box). */
+  .ds-slider {
+    --ds-slider-h: var(--ds-control-h);
+    --ds-slider-thumb: calc(var(--ds-slider-h) - 8px);
+    --ds-slider-box: calc(var(--ds-slider-thumb) + 8px);
+    position: relative;
+    display: block;
+    width: 100%;
+    height: var(--ds-slider-h);
+    padding: 0 4px;
+    border-radius: var(--ds-radius-pill);
+    background: var(--ds-ink-2);
+    font-family: var(--ds-font);
+    touch-action: none;
+    user-select: none;
+  }
+
+  .ds-slider__fill {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(var(--ds-slider-lo) * (100% - var(--ds-slider-box)));
+    width: calc(var(--ds-slider-box) + (var(--ds-slider-hi) - var(--ds-slider-lo)) * (100% - var(--ds-slider-box)));
+    border-radius: inherit;
+    background:
+      radial-gradient(circle, color-mix(in srgb, var(--color-ds-white) 45%, transparent) 2px, transparent 2.5px) 6px center / 20px 100% repeat-x,
+      var(--ds-accent);
+    pointer-events: none;
+  }
+
+  .ds-slider__root {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+  }
+
+  .ds-slider__track {
+    position: absolute;
+    inset: 0;
+  }
+
+  .ds-slider__thumb {
+    display: grid;
+    place-items: center;
+    width: var(--ds-slider-thumb);
+    height: var(--ds-slider-thumb);
+    border-radius: 50%;
+    background: var(--color-ds-white);
+    box-shadow: 0 1px 3px var(--ds-ink-4), 0 0 0 0.5px var(--ds-ink-3);
+    cursor: grab;
+  }
+
+  .ds-slider__thumb:active {
+    cursor: grabbing;
+  }
+
+  .ds-slider__value {
+    color: var(--ds-accent);
+    font-size: var(--text-ds-label);
+    line-height: 1;
+    letter-spacing: var(--text-ds-label--letter-spacing);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ds-slider[data-disabled] {
+    opacity: 0.5;
+  }
+
+  .ds-slider[data-disabled] .ds-slider__root,
+  .ds-slider[data-disabled] .ds-slider__thumb {
+    cursor: default;
+  }
+
+  /* Select: Weekly ⌄ */
+  .ds-select {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    /* At least the poster's 128, growing for a longer label rather than clipping it */
+    min-width: 128px;
+    height: var(--ds-control-h);
+    padding: 0 11px;
+    border-radius: var(--ds-radius-md);
+    transition: background-color 0.15s ease, transform 120ms ease-out;
+  }
+
+  /* Pressed: a small give as the menu opens */
+  .ds-select:not(:disabled):active {
+    transform: scale(0.97);
+  }
+
+  /* The chevron is secondary to the choice: icon ink, and it turns over while open */
+  .ds-select__chevron {
+    display: grid;
+    color: var(--ds-icon);
+    transition: transform 200ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .ds-select[data-state="open"] .ds-select__chevron {
+    transform: rotate(180deg);
+  }
+
+  /* Never narrower than its trigger */
+  .ds-select__menu {
+    min-width: var(--radix-select-trigger-width);
+  }
+
+  /* The label first, lined up with the trigger's: the menu's 4px + 7px = the trigger's 11px.
+     The check at the far end */
+  .ds-select__menu .ds-menu__item {
+    gap: 12px;
+    padding-left: 7px;
+  }
+
+  .ds-select__check {
+    margin-left: auto;
+  }
+
+  .ds-select[data-placeholder] {
+    color: var(--ds-control-placeholder);
+  }
+
+  .ds-select:disabled {
+    cursor: default;
+    opacity: 0.5;
+  }
+
+  /* Color wheel button and its swatches */
+  .ds-wheel {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border-radius: 50%;
+  }
+
+  .ds-wheel__ring {
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: conic-gradient(var(--color-ds-wheel-1), var(--color-ds-wheel-2), var(--color-ds-wheel-3), var(--color-ds-wheel-4), var(--color-ds-wheel-5), var(--color-ds-wheel-6), var(--color-ds-wheel-7), var(--color-ds-wheel-1));
+    mask: radial-gradient(circle, transparent 6.5px, black 7px);
+  }
+
+  .ds-wheel__dot {
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+  }
+
+  .ds-swatches {
+    display: grid;
+    grid-template-columns: repeat(4, 20px);
+    gap: 8px;
+    padding: 4px;
+  }
+
+  .ds-swatch {
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 0.5px var(--ds-ink-4);
+    transition: box-shadow 0.15s ease;
+  }
+
+  .ds-swatch[aria-checked="true"] {
+    box-shadow: 0 0 0 2px var(--ds-raised), 0 0 0 3.5px var(--ds-accent);
+  }
+
+  /* People: the poster's big avatar discs */
+  .ds-people {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .ds-people > li {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 54px;
+    height: 54px;
+    margin-right: -10px;
+    overflow: hidden;
+    border-radius: 50%;
+    background: var(--ds-control);
+    box-shadow: 0 0 0 0.5px var(--ds-control-edge), 0 0 0 4px var(--ds-paper);
+    font-size: var(--text-ds-title);
+    line-height: var(--text-ds-title--line-height);
+    letter-spacing: var(--text-ds-title--letter-spacing);
+    font-weight: var(--text-ds-title--font-weight);
+  }
+
+  .ds-people img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ds-people__more {
+    color: var(--ds-control-muted);
+    font-size: var(--text-ds-body);
+    line-height: var(--text-ds-body--line-height);
+    letter-spacing: var(--text-ds-body--letter-spacing);
+    font-weight: var(--text-ds-body--font-weight);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Keycap */
+  .ds-key-tile {
+    background: linear-gradient(180deg, var(--color-ds-key-tile-top), var(--color-ds-key-tile-bottom));
+  }
+
+  .ds-key {
+    --ds-key: 44px;
+    position: relative;
+    display: inline-block;
+    flex: none;
+    width: var(--ds-key);
+    height: var(--ds-key);
+    border-radius: calc(var(--ds-key) * 0.16 * var(--ds-corner, 1));
+    background: linear-gradient(var(--color-ds-key-face), var(--color-ds-key-face-end));
+    box-shadow:
+      inset 0 1px 0 var(--color-ds-key-shine),
+      0 0 0 1px var(--color-ds-key-edge),
+      0 calc(var(--ds-key) * 0.06) 0 var(--color-ds-key-lip),
+      0 calc(var(--ds-key) * 0.16) calc(var(--ds-key) * 0.24) calc(var(--ds-key) * -0.08) var(--color-ds-key-drop);
+    font-family: var(--ds-font);
+    transition: translate 0.08s ease, box-shadow 0.08s ease;
+  }
+
+  .ds-key[data-pressed] {
+    translate: 0 calc(var(--ds-key) * 0.05);
+    box-shadow: inset 0 1px 0 var(--color-ds-key-shine), 0 0 0 1px var(--color-ds-key-edge), 0 calc(var(--ds-key) * 0.01) 0 var(--color-ds-key-lip);
+  }
+
+  .ds-key__legend {
+    position: absolute;
+    top: 3px;
+    left: 5px;
+    font-size: 10px;
+    line-height: 12px;
+    color: var(--color-ds-key-legend);
+  }
+
+  .ds-key__glyph {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding-top: 4px;
+    font-family: "Hiragino Sans", "Noto Sans JP", var(--ds-font);
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--color-ds-key-ink);
+  }
+
+  /* App icon */
+  .ds-app {
+    position: relative;
+    display: inline-grid;
+    justify-items: center;
+    gap: 6px;
+  }
+
+  .ds-app[data-editing] .ds-app__wobble {
+    animation: ds-wobble 0.32s ease-in-out infinite alternate;
+  }
+
+  .ds-app__tile {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border-radius: calc(24% * var(--ds-corner, 1));
+    box-shadow: inset 0 0 0 0.5px var(--color-ds-icon-edge), inset 0 1px 0 var(--color-ds-icon-shine), 0 6px 14px -8px var(--color-ds-icon-drop);
+    color: var(--color-ds-white);
+  }
+
+  .ds-app__tile svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .ds-app[data-tone="blue"] .ds-app__tile { background: var(--color-ds-app-blue); }
+  .ds-app[data-tone="white"] .ds-app__tile { background: var(--color-ds-white); color: var(--color-ds-app-black); }
+  .ds-app[data-tone="orange"] .ds-app__tile { background: var(--color-ds-app-orange); }
+  .ds-app[data-tone="black"] .ds-app__tile { background: var(--color-ds-app-black); }
+  .ds-app[data-tone="green"] .ds-app__tile { background: var(--color-ds-app-green); }
+  .ds-app[data-tone="purple"] .ds-app__tile { background: var(--color-ds-app-purple); }
+  .ds-app[data-tone="red"] .ds-app__tile { background: var(--color-ds-app-red); }
+  .ds-app[data-tone="sky"] .ds-app__tile { background: var(--color-ds-app-sky); }
+  .ds-app[data-tone="yellow"] .ds-app__tile { background: var(--color-ds-app-yellow); color: var(--color-ds-app-yellow-ink); }
+  .ds-app[data-tone="teal"] .ds-app__tile { background: var(--color-ds-app-teal); }
+  .ds-app[data-tone="coral"] .ds-app__tile { background: var(--color-ds-app-coral); }
+
+  .ds-app__remove {
+    position: absolute;
+    top: -6px;
+    left: -6px;
+    z-index: 1;
+    width: 16px;
+    height: 16px;
+    padding: 0;
+    border-radius: 50%;
+    background: var(--color-ds-remove);
+    box-shadow: 0 1px 2px var(--ds-ink-4);
+  }
+
+  .ds-app__remove::after {
+    content: "";
+    position: absolute;
+    inset: 7.25px 4px;
+    border-radius: 1px;
+    background: var(--color-ds-remove-ink);
+  }
+
+  .ds-app__caption {
+    max-width: 64px;
+    overflow: hidden;
+    font-size: var(--text-ds-caption);
+    line-height: var(--text-ds-caption--line-height);
+    letter-spacing: var(--text-ds-caption--letter-spacing);
+    font-weight: var(--text-ds-caption--font-weight);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ds-calendar {
+    display: grid;
+    justify-items: center;
+    gap: 1px;
+    font-size: 23px;
+    line-height: 24px;
+    font-weight: 300;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-ds-app-black);
+  }
+
+  .ds-calendar small {
+    font-size: 10px;
+    line-height: 11px;
+    font-weight: 600;
+    color: var(--color-ds-calendar-red);
+  }
+
+  /* Media player */
+  .ds-player {
+    display: flex;
+    gap: 18px;
+    height: 180px;
+    padding: 20px;
+    border-radius: calc(12px * var(--ds-corner, 1));
+    background: var(--color-ds-night);
+    color: var(--color-ds-night-ink);
+    font-family: var(--ds-font);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .ds-player__cover {
+    position: relative;
+    display: block;
+    flex: none;
+    height: 100%;
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: calc(10px * var(--ds-corner, 1));
+    box-shadow: inset 0 0 0 1px var(--color-ds-night-art-edge), 0 10px 24px -12px var(--color-ds-night-art-drop);
+  }
+
+  .ds-player__side {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: space-between;
+    min-width: 0;
+  }
+
+  .ds-player__names {
+    display: grid;
+    gap: 2px;
+  }
+
+  .ds-player__title {
+    overflow: hidden;
+    font-size: var(--text-ds-title);
+    line-height: var(--text-ds-title--line-height);
+    letter-spacing: var(--text-ds-title--letter-spacing);
+    font-weight: var(--text-ds-title--font-weight);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ds-player__artist {
+    overflow: hidden;
+    font-size: var(--text-ds-small);
+    line-height: var(--text-ds-small--line-height);
+    letter-spacing: var(--text-ds-small--letter-spacing);
+    font-weight: var(--text-ds-small--font-weight);
+    color: var(--color-ds-night-muted);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ds-player__progress {
+    display: grid;
+    gap: 7px;
+  }
+
+  .ds-player__seek {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 4px;
+    touch-action: none;
+    user-select: none;
+  }
+
+  .ds-player__rail {
+    position: relative;
+    flex: 1;
+    height: 4px;
+    overflow: hidden;
+    border-radius: 2px;
+    background: var(--color-ds-night-track);
+  }
+
+  .ds-player__fill {
+    position: absolute;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--color-ds-night-ink);
+  }
+
+  .ds-player__thumb {
+    display: block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--color-ds-night-ink);
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+
+  .ds-player__seek:hover .ds-player__thumb,
+  .ds-player__thumb:focus-visible {
+    opacity: 1;
+  }
+
+  .ds-player__times {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--text-ds-caption);
+    line-height: var(--text-ds-caption--line-height);
+    letter-spacing: var(--text-ds-caption--letter-spacing);
+    font-weight: var(--text-ds-caption--font-weight);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-ds-night-muted);
+  }
+
+  .ds-player__controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 6px;
+  }
+
+  .ds-player__button {
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border-radius: 50%;
+    color: var(--color-ds-night-ink);
+  }
+
+  .ds-player__button:disabled {
+    cursor: default;
+    opacity: 0.4;
+  }
+
+  .ds-player__button svg {
+    fill: currentColor;
+  }
+
+  .ds-player__play {
+    width: 38px;
+    height: 38px;
+    background: var(--color-ds-night-ink);
+    color: var(--color-ds-night);
+  }
+
+  /* Album art: a sun over a striped sea */
+  .ds-sunset {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(var(--color-ds-cover-top), var(--color-ds-cover-mid) 38%, var(--color-ds-cover-low) 62%);
+  }
+
+  .ds-sunset__sun {
+    position: absolute;
+    top: 62%;
+    left: 50%;
+    width: 34%;
+    aspect-ratio: 1;
+    translate: -50% -50%;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 40%, var(--color-ds-sun-core), var(--color-ds-sun-edge) 70%);
+    box-shadow: 0 0 0 6px var(--color-ds-sun-halo), 0 0 24px 6px var(--color-ds-sun-glow);
+  }
+
+  .ds-sunset__sea {
+    position: absolute;
+    inset: 62% 0 0;
+    background:
+      repeating-linear-gradient(var(--color-ds-sea-glint) 0 1.5px, transparent 1.5px 7px) 50% 4px / 30% 60% no-repeat,
+      linear-gradient(var(--color-ds-sea-top), var(--color-ds-sea-bottom));
+  }
+
+  /* Stat card: the revenue headline */
+  .ds-stat {
+    display: grid;
+    gap: 14px;
+    padding: 16px 18px;
+    background: var(--ds-surface);
+    font-family: var(--ds-font);
+  }
+
+  .ds-stat__head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ds-stat__value {
+    font-size: var(--text-ds-display);
+    line-height: var(--text-ds-display--line-height);
+    letter-spacing: var(--text-ds-display--letter-spacing);
+    font-weight: var(--text-ds-display--font-weight);
+    font-variant-numeric: tabular-nums;
+    color: var(--ds-text-strong);
+  }
+
+  .ds-stat__label {
+    font-size: var(--text-ds-small);
+    line-height: var(--text-ds-small--line-height);
+    letter-spacing: var(--text-ds-small--letter-spacing);
+    font-weight: var(--text-ds-small--font-weight);
+    color: var(--ds-text);
+  }
+
+  .ds-stat .ds-chart {
+    --ds-accent: var(--color-ds-chart-violet);
+  }
+
+  /* The glass-over-bands ground the revenue window sits on */
+  .ds-bands {
+    background: radial-gradient(circle at 104% 108%, var(--color-ds-band-1) 0 22%, var(--color-ds-band-2) 22% 36%, var(--color-ds-band-3) 36% 50%, var(--color-ds-band-4) 50% 63%, var(--color-ds-band-5) 63% 77%, var(--color-ds-band-6) 77% 91%, var(--color-ds-band-7) 91%);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ds-app[data-editing] .ds-app__wobble,
+    .ds-action__layer,
+    .ds-seg__thumb,
+    .ds-toggle__knob {
+      animation: none;
+      transition: none;
+    }
+  }
+}
+
+/* Avatar person colors, picked from the name (Avatar.tsx sets data-person) */
+@layer components {
+  .ds-avatar[data-person] { color: var(--color-ds-white); }
+  .ds-avatar[data-person="1"] { background: var(--color-ds-person-1); }
+  .ds-avatar[data-person="2"] { background: var(--color-ds-person-2); }
+  .ds-avatar[data-person="3"] { background: var(--color-ds-person-3); }
+  .ds-avatar[data-person="4"] { background: var(--color-ds-person-4); }
+  .ds-avatar[data-person="5"] { background: var(--color-ds-person-5); }
+  .ds-avatar[data-person="6"] { background: var(--color-ds-person-6); }
+}
+
+/* RowList: the spacing a list of Rows needs (RowList.tsx) */
+@layer components {
+  .ds-row-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ds-row-list-gap, 2px);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* An unread dot hangs 7px left of the lead: 6px dot + 7px clear */
+  .ds-row-list[data-gutter] {
+    padding-left: 13px;
+  }
+
+  .ds-row-list > li {
+    display: block;
+    min-width: 0;
+  }
+}
+
+/* Corners: continuous (squircle) where the browser can draw them. A squircle corner
+   covers less than a round one of the same radius, so radii scale up 1.5x with it.
+   Only rectangles take the shape: circles and pills stay round. */
+@supports (corner-shape: squircle) {
+  :root {
+    --ds-corner: 1.5;
+  }
+
+  @layer components {
+    :where(.ds-field__box, .ds-seg, .ds-seg__thumb, .ds-menu__item, .ds-popover-surface, .ds-tip,
+      .ds-toast, .ds-row, .ds-slot, .ds-slot__clip, .ds-slot__mark, .ds-window, .ds-window__body, .ds-brand[data-tile],
+      .ds-stepper, .ds-stepper__key, .ds-search, .ds-tasks, .ds-action, .ds-select, .ds-frame__size,
+      .ds-key, .ds-app__tile, .ds-player, .ds-player__cover, .ds-button),
+    .ds-window:not([data-chrome="glass"]) .ds-window__url {
+      corner-shape: squircle;
+    }
+  }
+}
+
+/* SearchField at Field's size (md); the poster's 48px look is size="lg" */
+@layer components {
+  .ds-search[data-size="md"] {
+    gap: 8px;
+    height: var(--ds-control-h);
+    padding: 0 11px;
+    border-radius: var(--ds-radius-md);
+    background: var(--ds-surface);
+    box-shadow: inset 0 0 0 1px var(--ds-ink-4);
+    color: var(--ds-text-faint);
+    font-family: var(--ds-font);
+    font-size: var(--text-ds-body);
+    line-height: var(--text-ds-body--line-height);
+    letter-spacing: var(--text-ds-body--letter-spacing);
+    font-weight: 500;
+  }
+
+  .ds-search[data-size="md"]:focus-within {
+    box-shadow: inset 0 0 0 1px var(--ds-accent), 0 0 0 1.5px var(--ds-accent-soft);
+  }
+
+  .ds-search[data-size="md"] {
+    --ds-search-ink: var(--ds-text-strong);
+    --ds-search-placeholder: var(--ds-text-faint);
+  }
+
+  .ds-search[data-size="lg"] {
+    padding-right: 10px;
+  }
+
+  .ds-search__clear {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--ds-ink-2);
+    color: var(--ds-text);
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 150ms ease, background-color 0.15s ease;
+  }
+
+  .ds-search__clear[data-shown] {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .ds-search[data-size="lg"] .ds-search__clear {
+    width: 24px;
+    height: 24px;
+  }
+
+  @media (hover: hover) {
+    .ds-search__clear:hover {
+      background: var(--ds-ink-3);
+    }
+  }
+
+  .ds-search__clear:focus-visible {
+    outline: 2px solid var(--ds-accent);
+    outline-offset: 2px;
+  }
+}
+
+/* Button (Button.tsx): a tactile face. Every variant sets six variables and one rule turns
+   them into the layers: a top-lit gradient, a 1px white highlight inside the top edge, a
+   colored glow underneath (y 3, blur 4, spread -1) and a crisp 1px darker rim. */
+@layer components {
+  .ds-button {
+    --b-top: var(--ds-surface);
+    --b-bottom: var(--ds-surface);
+    --b-glow: transparent;
+    --b-rim: transparent;
+    --b-shine: transparent;
+    --b-focus: var(--ds-accent);
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 0;
+    padding: 0 20px;
+    border: 0;
+    border-radius: var(--ds-radius-md);
+    background: linear-gradient(180deg, var(--b-top), var(--b-bottom));
+    box-shadow:
+      inset 0 1px 0 0 var(--b-shine),
+      0 3px 4px -1px var(--b-glow),
+      0 0 0 1px var(--b-rim);
+    font-family: var(--ds-font);
+    font-size: var(--text-ds-label);
+    line-height: var(--text-ds-label--line-height);
+    letter-spacing: var(--text-ds-label--letter-spacing);
+    font-weight: var(--text-ds-label--font-weight);
+    white-space: nowrap;
+    cursor: pointer;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    transition: box-shadow 0.15s ease, filter 0.15s ease, translate 0.1s ease, opacity 0.15s ease;
+  }
+
+  .ds-button[data-size="md"] { height: var(--ds-control-h); }
+  .ds-button[data-size="sm"] { height: 32px; gap: 6px; padding: 0 14px; }
+  .ds-button[data-icon-only][data-size="md"] { width: var(--ds-control-h); padding: 0; }
+  .ds-button[data-icon-only][data-size="sm"] { width: 32px; padding: 0; }
+
+  /* The accent, lit the reference's way */
+  .ds-button[data-variant="primary"] {
+    --b-top: color-mix(in srgb, var(--ds-accent), white 6%);
+    --b-bottom: var(--ds-accent);
+    --b-glow: color-mix(in srgb, color-mix(in srgb, var(--ds-accent), white 12%) 95%, transparent);
+    --b-rim: color-mix(in srgb, var(--ds-accent), black 18%);
+    --b-shine: color-mix(in srgb, var(--color-ds-white) 33%, transparent);
+    color: var(--color-ds-white);
+  }
+
+  /* Destructive: the reference's exact colors */
+  .ds-button[data-variant="danger"] {
+    --b-top: var(--color-ds-delete-top);
+    --b-bottom: var(--color-ds-delete-bottom);
+    --b-glow: color-mix(in srgb, var(--color-ds-delete-glow) 95%, transparent);
+    --b-rim: var(--color-ds-delete-rim);
+    --b-shine: color-mix(in srgb, var(--color-ds-white) 33%, transparent);
+    --b-focus: var(--color-ds-delete-top);
+    color: var(--color-ds-white);
+  }
+
+  /* Neutral: a white face, a grey rim, a soft grey shadow */
+  .ds-button[data-variant="secondary"] {
+    --b-top: color-mix(in srgb, var(--ds-surface), var(--color-ds-white) 4%);
+    --b-bottom: color-mix(in srgb, var(--ds-surface), var(--ds-text-strong) 3%);
+    /* A light edge: the rim and the drop below it stack along the bottom, so each stays faint */
+    --b-glow: var(--ds-ink-1);
+    --b-rim: var(--ds-ink-2);
+    --b-shine: color-mix(in srgb, var(--color-ds-white) 33%, transparent);
+    color: var(--ds-text-strong);
+  }
+
+  .dark .ds-button[data-variant="secondary"] {
+    --b-shine: color-mix(in srgb, var(--color-ds-white) 6%, transparent);
+  }
+
+  .ds-button[data-variant="ghost"] {
+    background: transparent;
+    box-shadow: none;
+    color: var(--ds-icon);
+  }
+
+  /* Pressed: the face sinks 1px and its glow tucks in under it */
+  .ds-button:not([data-variant="ghost"]):active:not(:disabled) {
+    translate: 0 1px;
+    filter: brightness(0.97);
+    box-shadow:
+      inset 0 1px 0 0 var(--b-shine),
+      0 1px 2px -1px var(--b-glow),
+      0 0 0 1px var(--b-rim);
+    transition-duration: 0s;
+  }
+
+  .ds-button[data-variant="ghost"]:active:not(:disabled) {
+    translate: 0 1px;
+  }
+
+  /* Focus: the rim, a band of the page, then a ring in the button's own color */
+  .ds-button:not([data-variant="ghost"]):focus-visible {
+    box-shadow:
+      inset 0 1px 0 0 var(--b-shine),
+      0 0 0 1px var(--b-rim),
+      0 0 0 3px var(--ds-surface),
+      0 0 0 4.5px var(--b-focus);
+  }
+
+  .ds-button[data-variant="ghost"]:focus-visible {
+    outline: 2px solid var(--ds-accent);
+    outline-offset: 2px;
+  }
+
+  .ds-button:disabled {
+    cursor: default;
+    opacity: 0.4;
+  }
+}
+
+/* Hover, everywhere it can be pressed. Only on devices that really hover, so a tap on a
+   phone never leaves a stuck state. It arrives at once and eases out over 150ms. */
+@layer components {
+  @media (hover: hover) and (pointer: fine) {
+    /* Buttons */
+    .ds-action:hover:not(:disabled) {
+      background: color-mix(in srgb, var(--ds-accent), black 10%);
+      transition-duration: 0s;
+    }
+
+    .ds-button:is([data-variant="primary"], [data-variant="danger"]):hover:not(:disabled):not(:active) {
+      filter: brightness(1.06);
+      transition-duration: 0s;
+    }
+
+    .ds-button[data-variant="secondary"]:hover:not(:disabled) {
+      --b-rim: var(--ds-ink-3);
+      --b-bottom: color-mix(in srgb, var(--ds-surface), var(--ds-text-strong) 5%);
+      transition-duration: 0s;
+    }
+
+    .ds-button[data-variant="ghost"]:hover:not(:disabled) {
+      background: var(--ds-ink-2);
+      color: var(--ds-text-strong);
+      transition-duration: 0s;
+    }
+
+    /* Raised poster surfaces that open or change something */
+    .ds-select:hover:not(:disabled),
+    .ds-wheel:hover {
+      background: color-mix(in srgb, var(--ds-control), var(--ds-control-ink) 4%);
+      transition-duration: 0s;
+    }
+
+    /* Choices that aren't on: the ink comes up */
+    .ds-seg__option:not([data-on]):not(:disabled):hover {
+      color: var(--ds-text-strong);
+      transition-duration: 0s;
+    }
+
+    .ds-seg[data-variant="soft"] .ds-seg__option:not([data-on]):not(:disabled):hover {
+      color: var(--ds-control-ink);
+    }
+
+    .ds-tabs__tab:not([data-on]):not(:disabled):hover {
+      color: var(--ds-text-strong);
+      transition-duration: 0s;
+    }
+
+    /* Toggle: the track deepens a step, off or on */
+    .ds-toggle:not(:disabled):hover {
+      background: color-mix(in srgb, var(--ds-ink-5), var(--ds-text-strong) 12%);
+      transition-duration: 0s;
+    }
+
+    .ds-toggle[data-state="checked"]:not(:disabled):hover {
+      background: color-mix(in srgb, var(--ds-accent), black 10%);
+    }
+
+    /* ...and the knob stretches toward the other side, its outer edge pinned (as Linear's).
+       Not once it's been flipped: it rests until the pointer leaves and hovers again */
+    .ds-toggle:not(:disabled):not([data-settled]):hover .ds-toggle__knob {
+      width: calc(18px + var(--ds-knob-stretch));
+    }
+
+    .ds-toggle[data-state="checked"]:not(:disabled):not([data-settled]):hover .ds-toggle__knob {
+      transform: translateX(calc(var(--ds-knob-travel) - var(--ds-knob-stretch)));
+    }
+
+    /* Fields: the edge darkens until focus takes over */
+    .ds-field:not([data-disabled]):not(:focus-within) .ds-field__box:hover,
+    .ds-search[data-size="md"]:not(:focus-within):hover {
+      box-shadow: inset 0 0 0 1px var(--ds-ink-5);
+    }
+
+    /* Checklist: the empty ring darkens over the whole row */
+    .ds-task:hover .ds-check:not([data-on]) .ds-check__ring {
+      stroke: var(--ds-text);
+    }
+
+    /* Design-tool frame: an unselected frame outlines in accent, as it would on a canvas */
+    .ds-frame:not([aria-pressed="true"]):hover {
+      border-color: color-mix(in srgb, var(--ds-accent) 60%, transparent);
+    }
+
+    /* Small round targets grow a touch */
+    .ds-slider__thumb:hover,
+    .ds-swatch:hover,
+    .ds-pin[data-interactive]:hover {
+      scale: 1.08;
+    }
+
+    .ds-slider__thumb,
+    .ds-swatch,
+    .ds-pin[data-interactive] {
+      transition: scale 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .ds-app__tile:is(button):hover {
+      filter: brightness(1.06);
+    }
+
+    /* Player transport on the dark card */
+    .ds-player__button:not(.ds-player__play):not(:disabled):hover {
+      opacity: 0.7;
+    }
+
+    .ds-player__play:hover {
+      scale: 1.05;
+    }
+
+    .ds-player__button {
+      transition: opacity 0.15s ease, scale 0.15s ease;
+    }
+  }
+}
+
+/* Badge, medallion style: a soft tint, a rim of the same tone, then a band of the page and
+   a faint neutral ring around it, with the glyph in the tone's saturated color.
+   Each tone sets --ds-badge-tone; fill, rim and glyph derive from it. The halo is a
+   shadow (no layout), so leave ~10px between badges. Set --ds-badge-halo to the color
+   of the surface it sits on if that isn't the default surface. */
+@layer components {
+  .ds-badge {
+    --ds-badge-tone: var(--ds-text);
+    --ds-badge-fill: var(--ds-ink-2);
+    background: var(--ds-badge-fill);
+    box-shadow:
+      inset 0 0 0 1px color-mix(in srgb, var(--ds-badge-tone) 22%, transparent),
+      0 0 0 2px var(--ds-badge-halo, var(--ds-surface)),
+      0 0 0 3px var(--ds-ink-3);
+    transition: background-color 0.35s ease, color 0.35s ease, box-shadow 0.35s ease;
+  }
+
+  .ds-badge[data-tone="accent"] { --ds-badge-tone: var(--ds-accent); --ds-badge-fill: var(--ds-accent-soft); }
+  .ds-badge[data-tone="success"] { --ds-badge-tone: var(--ds-success); --ds-badge-fill: var(--ds-success-soft); }
+  .ds-badge[data-tone="warning"] { --ds-badge-tone: var(--ds-warning); --ds-badge-fill: var(--ds-warning-soft); }
+  .ds-badge[data-tone="danger"] { --ds-badge-tone: var(--ds-danger); --ds-badge-fill: var(--ds-danger-soft); }
+
+  /* The glyph is the saturated mark; the words keep the tone's darker text color */
+  .ds-badge__dot {
+    background: var(--ds-badge-tone);
+  }
+
+  .ds-badge > .ds-icon {
+    color: var(--ds-badge-tone);
+  }
+}
+
+/* LevelSlider (LevelSlider.tsx): a stepped slider on a card. Every mark on the track sits
+   where the thumb's center lands: half a thumb in from each end, then a proportional step. */
+@layer components {
+  .ds-level {
+    --ds-level-t: 32px;
+    --ds-level-tone: var(--ds-accent-2);
+    /* The thumb takes a second hue so it reads against the fill */
+    --ds-level-thumb: var(--color-ds-wheel-7);
+    display: grid;
+    gap: 14px;
+    padding: 20px;
+    border-radius: var(--ds-radius-window);
+    background: var(--ds-raised);
+    box-shadow: 0 0 0 1px var(--ds-ink-3), 0 8px 24px -16px var(--ds-ink-5);
+    font-family: var(--ds-font);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .ds-level[data-disabled] {
+    opacity: 0.5;
+  }
+
+  .ds-level__head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--text-ds-title);
+    line-height: var(--text-ds-title--line-height);
+    letter-spacing: var(--text-ds-title--letter-spacing);
+  }
+
+  .ds-level__title {
+    color: var(--ds-text);
+    font-weight: 400;
+  }
+
+  .ds-level__current {
+    color: var(--ds-text-strong);
+    font-weight: 500;
+  }
+
+  .ds-level__help {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    margin: -4px -4px -4px auto;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--ds-text-faint);
+    cursor: pointer;
+    transition: color 0.15s ease, background-color 0.15s ease;
+  }
+
+  .ds-level__help:focus-visible {
+    outline: 2px solid var(--ds-accent);
+    outline-offset: 1px;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .ds-level__help:hover {
+      background: var(--ds-ink-2);
+      color: var(--ds-text-strong);
+      transition-duration: 0s;
+    }
+  }
+
+  .ds-level__ends {
+    display: flex;
+    justify-content: space-between;
+    color: var(--ds-text);
+    font-size: var(--text-ds-small);
+    line-height: var(--text-ds-small--line-height);
+    letter-spacing: var(--text-ds-small--letter-spacing);
+  }
+
+  .ds-level__track {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: var(--ds-level-t);
+    touch-action: none;
+    user-select: none;
+    cursor: pointer;
+  }
+
+  .ds-level[data-disabled] .ds-level__track {
+    cursor: default;
+  }
+
+  .ds-level__rail {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: var(--ds-radius-pill);
+    background: var(--ds-ink-2);
+  }
+
+  /* Warms from nothing at the left to the tone at the thumb */
+  .ds-level__fill {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    /* Runs half a thumb past the thumb's centre, ending in a rounded cap hidden under the glyph */
+    width: calc(var(--ds-level-t) + var(--ds-level-value) * (100% - var(--ds-level-t)));
+    border-radius: 0 var(--ds-radius-pill) var(--ds-radius-pill) 0;
+    /* Warms from mauve at the low levels to lavender at the top, and strengthens with it */
+    --ds-level-hue: color-mix(in oklab, var(--color-ds-level-warm) calc((1 - var(--ds-level-value)) * 100%), var(--color-ds-level-cool));
+    background: linear-gradient(90deg, color-mix(in srgb, var(--ds-level-hue) 4%, transparent), color-mix(in srgb, var(--ds-level-hue) calc(45% + var(--ds-level-value) * 30%), transparent));
+    transition: width 0.25s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+  }
+
+  .ds-level__step {
+    position: absolute;
+    top: 50%;
+    left: calc(var(--ds-level-t) / 2 + var(--ds-level-p) * (100% - var(--ds-level-t)));
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--ds-text-faint);
+    translate: -50% -50%;
+    pointer-events: none;
+  }
+
+  .ds-level__step[data-recommended] {
+    width: 3px;
+    height: 12px;
+    border-radius: 2px;
+    background: var(--ds-text);
+  }
+
+  /* Radix places the thumb in a wrapper with an inline left; ease it between steps */
+  .ds-level__track > span:has(> .ds-level__thumb) {
+    transition: left 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .ds-level__thumb {
+    display: grid;
+    place-items: center;
+    width: var(--ds-level-t);
+    height: var(--ds-level-t);
+    border-radius: 50%;
+    outline: none;
+    /* The glyph fills with currentColor; its outline is the darker stroke below */
+    position: relative;
+    isolation: isolate;
+    color: color-mix(in srgb, var(--ds-level-thumb) 50%, var(--color-ds-white));
+    cursor: grab;
+    transition: scale 0.15s ease;
+  }
+
+  /* The fill body and lucide's strokes stack, centred on the thumb. The glyph is bigger
+     than the thumb's 32px hit box; absolute centring lets it spill evenly on every side
+     (a grid cell would push the overflow right and down) */
+  .ds-level__thumb > svg:not(.ds-level__rays) {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+  }
+
+  .ds-level__thumb > svg:last-child {
+    fill: none;
+    stroke: color-mix(in srgb, var(--ds-level-thumb), black 55%);
+    /* The glow is the glyph's own hue: a soft bloom that fades out, no hard edge */
+    filter: drop-shadow(0 0 2px color-mix(in srgb, var(--ds-level-thumb) 35%, transparent)) drop-shadow(0 0 6px color-mix(in srgb, var(--ds-level-thumb) 22%, transparent));
+    transition: color 0.3s ease, stroke 0.3s ease, filter 0.3s ease;
+  }
+
+  .ds-level__thumb:active {
+    cursor: grabbing;
+    scale: 1.08;
+  }
+
+  .ds-level__thumb:focus-visible {
+    box-shadow: 0 0 0 2px var(--ds-raised), 0 0 0 3.5px var(--ds-accent);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .ds-level__thumb:hover {
+      scale: 1.08;
+    }
+  }
+
+  .ds-level__notes {
+    position: relative;
+    height: var(--text-ds-small--line-height);
+    margin-top: -4px;
+  }
+
+  .ds-level__note {
+    position: absolute;
+    top: 0;
+    left: calc(var(--ds-level-t) / 2 + var(--ds-level-p) * (100% - var(--ds-level-t)));
+    translate: -50% 0;
+    color: var(--ds-text);
+    font-size: var(--text-ds-small);
+    line-height: var(--text-ds-small--line-height);
+    letter-spacing: var(--text-ds-small--letter-spacing);
+    white-space: nowrap;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ds-level__fill,
+    .ds-level__track > span:has(> .ds-level__thumb) {
+      transition: none;
+    }
+  }
+}
+
+/* LevelSlider: the first step has no fill, and the galaxy level */
+@layer components {
+  .ds-level[data-first] .ds-level__fill {
+    opacity: 0;
+  }
+
+  .ds-level__galaxy {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+  }
+
+  .ds-level__step {
+    transition: opacity 0.3s ease;
+  }
+
+  .ds-level[data-effect="galaxy"] .ds-level__galaxy {
+    opacity: 1;
+  }
+
+  .ds-level[data-effect="galaxy"] :is(.ds-level__fill, .ds-level__step) {
+    opacity: 0;
+  }
+
+  /* The header turns light blue with a slow shimmer running through it */
+  .ds-level[data-effect="galaxy"] .ds-level__current {
+    background: linear-gradient(90deg, var(--color-ds-galaxy-label) 0%, var(--color-ds-galaxy-pink) 50%, var(--color-ds-galaxy-label) 100%) 0 0 / 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: ds-level-shimmer 3.2s linear infinite;
+  }
+
+  /* The thumb: a violet brain with an indigo outline, a purple glow and dotted rays */
+  .ds-level[data-effect="galaxy"] .ds-level__thumb {
+    color: var(--color-ds-galaxy-brain);
+  }
+
+  .ds-level[data-effect="galaxy"] .ds-level__thumb > svg:last-child {
+    stroke: var(--color-ds-galaxy-brain-ink);
+    filter: drop-shadow(0 0 0.5px var(--color-ds-galaxy-brain-ink)) drop-shadow(0 0 6px color-mix(in srgb, var(--color-ds-galaxy-glow) 60%, transparent));
+  }
+
+  .ds-level__glow {
+    position: absolute;
+    inset: -26px;
+    z-index: -1;
+    border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in srgb, var(--color-ds-galaxy-glow) 38%, transparent) 0%, transparent 62%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+  }
+
+  .ds-level__rays {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: -1;
+    width: 124px;
+    height: 124px;
+    translate: -50% -50%;
+    overflow: visible;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+  }
+
+  /* Filled by the burst's gradient (set on the rays' group in LevelSlider.tsx) */
+  .ds-level__ray-dot {
+    opacity: 0.06;
+  }
+
+  .ds-level[data-effect="galaxy"] .ds-level__glow {
+    opacity: 1;
+    animation: ds-level-pulse 2.4s ease-in-out infinite alternate;
+  }
+
+  /* The whole burst sits back: one dial for every dot, base and tip keep their balance */
+  .ds-level[data-effect="galaxy"] .ds-level__rays {
+    opacity: 0.5;
+  }
+
+  /* The base of every ray holds steady, fading gently outward */
+  .ds-level__ray-dot[data-k="0"] { opacity: 0.85; }
+  .ds-level__ray-dot[data-k="1"] { opacity: 0.78; }
+  .ds-level__ray-dot[data-k="2"] { opacity: 0.71; }
+  .ds-level__ray-dot[data-k="3"] { opacity: 0.64; }
+  .ds-level__ray-dot[data-k="4"] { opacity: 0.57; }
+  .ds-level__ray-dot[data-k="5"] { opacity: 0.5; }
+  .ds-level__ray-dot[data-k="6"] { opacity: 0.43; }
+  .ds-level__ray-dot[data-k="7"] { opacity: 0.36; }
+
+  /* Only the tip flickers: each tip dot runs its keyframe on its ray's clock */
+  .ds-level[data-effect="galaxy"] .ds-level__ray-dot[data-tip] {
+    animation-duration: var(--ray-duration, 1.6s);
+    animation-delay: var(--ray-delay, 0s);
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+  }
+  .ds-level[data-effect="galaxy"] .ds-level__ray-dot[data-tip="0"] { animation-name: ds-ray-tip-0; }
+  .ds-level[data-effect="galaxy"] .ds-level__ray-dot[data-tip="1"] { animation-name: ds-ray-tip-1; }
+  .ds-level[data-effect="galaxy"] .ds-level__ray-dot[data-tip="2"] { animation-name: ds-ray-tip-2; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ds-level[data-effect="galaxy"] :is(.ds-level__current, .ds-level__glow, .ds-level__rays) {
+      animation: none;
+    }
+
+    /* Still frame: tips hold their steady opacity */
+    .ds-level[data-effect="galaxy"] .ds-level__ray-dot {
+      animation: none;
+    }
+  }
+}
+
+@keyframes ds-level-shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes ds-level-pulse {
+  from {
+    scale: 0.85;
+    opacity: 0.7;
+  }
+  to {
+    scale: 1.1;
+    opacity: 1;
+  }
+}
+
+
+
+/* LevelSlider brain body: gradient stops (the thumb color unless the galaxy level sets
+   them) and the sparkles that twinkle on it at the galaxy level */
+@layer components {
+  .ds-level__thumb {
+    --ds-brain-from: currentColor;
+    --ds-brain-to: currentColor;
+  }
+
+  .ds-level__brain-from { stop-color: var(--ds-brain-from); }
+  .ds-level__brain-to { stop-color: var(--ds-brain-to); }
+
+  .ds-level[data-effect="galaxy"] .ds-level__thumb {
+    --ds-brain-from: var(--color-ds-galaxy-brain-from);
+    --ds-brain-to: var(--color-ds-galaxy-brain-to);
+  }
+
+  .ds-level__spark {
+    fill: var(--color-ds-galaxy-star);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .ds-level[data-effect="galaxy"] .ds-level__spark {
+    animation: ds-level-twinkle 1.6s ease-in-out infinite alternate;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ds-level[data-effect="galaxy"] .ds-level__spark {
+      animation: none;
+      opacity: 0.7;
+    }
+  }
+}
+
+@keyframes ds-level-twinkle {
+  from {
+    opacity: 0.1;
+  }
+  to {
+    opacity: 0.95;
+  }
+}
+
+/* LevelSlider rays: the tip dots extend and retract in turn (LevelSlider.tsx, GalaxyRays) */
+@keyframes ds-ray-tip-0 {
+  0%, 6.5% { opacity: 0.05; }
+  12.5%, 87.5% { opacity: 0.8; }
+  93.5%, 100% { opacity: 0.05; }
+}
+
+@keyframes ds-ray-tip-1 {
+  0%, 19.0% { opacity: 0.05; }
+  25.0%, 75.0% { opacity: 0.65; }
+  81.0%, 100% { opacity: 0.05; }
+}
+
+@keyframes ds-ray-tip-2 {
+  0%, 31.5% { opacity: 0.05; }
+  37.5%, 62.5% { opacity: 0.5; }
+  68.5%, 100% { opacity: 0.05; }
+}
+
+/* SearchField's clear dissolve (SearchField.tsx): the input sits in a field with three
+   layers over it. The mirror shows the old text only while it falls out; the placeholder
+   is a layer of its own so it can fall in; the glow is a streak under the words. */
+@layer components {
+  .ds-search__field {
+    position: relative;
+    display: flex;
+    flex: 1;
+    align-items: center;
+    min-width: 0;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .ds-search__layer {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    white-space: pre;
+    pointer-events: none;
+  }
+
+  .ds-search__mirror {
+    color: var(--ds-search-ink);
+    opacity: 0;
+  }
+
+  .ds-search__field[data-clearing] .ds-search__mirror {
+    opacity: 1;
+  }
+
+  .ds-search__mirror > span {
+    flex: none;
+  }
+
+  .ds-search__placeholder {
+    color: var(--ds-search-placeholder);
+  }
+
+  .ds-search[data-filled] .ds-search__placeholder {
+    opacity: 0;
+  }
+
+  /* Darkens on light, lightens on dark */
+  .ds-search__glow {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    mix-blend-mode: multiply;
+    pointer-events: none;
+  }
+
+  .dark .ds-search__glow {
+    mix-blend-mode: screen;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ds-search__glow {
+      display: none;
+    }
+  }
+}
+
+/* LearnMore: transitions.dev's "Learn more hover". A soft pill whose chevron nudges right
+   while its two arms open about the tip; the same move on keyboard focus. */
+@layer components {
+  .ds-learn {
+    --ds-learn-shift: 2px;
+    --ds-learn-spread: 8deg;
+    --ds-learn-in: 350ms;
+    --ds-learn-out: 350ms;
+    --ds-learn-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: var(--ds-control-h);
+    padding: 8px 10px 8px 16px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--ds-surface);
+    box-shadow: var(--ds-shadow-pill);
+    color: var(--ds-text-strong);
+    /* The Button's type: the label step */
+    font-family: var(--ds-font);
+    font-size: var(--text-ds-label);
+    line-height: var(--text-ds-label--line-height);
+    letter-spacing: var(--text-ds-label--letter-spacing);
+    font-weight: var(--text-ds-label--font-weight);
+    -webkit-font-smoothing: antialiased;
+    white-space: nowrap;
+    text-decoration: none;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .ds-learn:focus-visible {
+    outline: 2px solid var(--ds-accent);
+    outline-offset: 2px;
+  }
+
+  .ds-learn__chevron {
+    display: inline-flex;
+    flex: none;
+    width: 16px;
+    height: 16px;
+    color: var(--ds-icon);
+    transition: transform var(--ds-learn-out) var(--ds-learn-ease);
+  }
+
+  .ds-learn__chevron svg {
+    display: block;
+    overflow: visible;
+  }
+
+  .ds-learn__arm {
+    transform-box: view-box;
+    transform-origin: 10px 8px;
+    vector-effect: non-scaling-stroke;
+    transition: transform var(--ds-learn-out) var(--ds-learn-ease);
+  }
+
+  .ds-learn:focus-visible .ds-learn__chevron {
+    transform: translateX(var(--ds-learn-shift));
+    transition-duration: var(--ds-learn-in);
+  }
+
+  .ds-learn:focus-visible .ds-learn__arm {
+    transition-duration: var(--ds-learn-in);
+  }
+
+  .ds-learn:focus-visible .ds-learn__arm[data-arm="top"] {
+    transform: rotate(var(--ds-learn-spread));
+  }
+
+  .ds-learn:focus-visible .ds-learn__arm[data-arm="bottom"] {
+    transform: rotate(calc(var(--ds-learn-spread) * -1));
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .ds-learn:hover .ds-learn__chevron {
+      transform: translateX(var(--ds-learn-shift));
+      transition-duration: var(--ds-learn-in);
+    }
+
+    .ds-learn:hover .ds-learn__arm {
+      transition-duration: var(--ds-learn-in);
+    }
+
+    .ds-learn:hover .ds-learn__arm[data-arm="top"] {
+      transform: rotate(var(--ds-learn-spread));
+    }
+
+    .ds-learn:hover .ds-learn__arm[data-arm="bottom"] {
+      transform: rotate(calc(var(--ds-learn-spread) * -1));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ds-learn__chevron,
+    .ds-learn__arm {
+      transition: none;
+    }
+  }
+}
+
+/* AddButton: LearnMore's pill with a plus before the label. On hover the plus warms to the
+   accent (a crossfade to a blue copy) while its arms reach out a little; a press gives the
+   pill a small give. Only opacity and transform animate, both composited on the GPU, at
+   200ms: a hover is seen often, so it answers at once and stays small. */
+@layer components {
+  .ds-add {
+    --ds-add-reach: 1.12;
+    --ds-add-ease: cubic-bezier(0.23, 1, 0.32, 1);
+    /* The icon now leads, so the padding mirrors LearnMore's */
+    padding: 8px 16px 8px 10px;
+    transition: transform 120ms ease-out;
+  }
+
+  .ds-add:active {
+    transform: scale(0.97);
+  }
+
+  .ds-add__plus {
+    display: grid;
+    flex: none;
+    width: 16px;
+    height: 16px;
+    color: var(--ds-icon);
+  }
+
+  /* Both copies in one cell */
+  .ds-add__layer {
+    grid-area: 1 / 1;
+    display: grid;
+  }
+
+  .ds-add__layer svg {
+    display: block;
+    overflow: visible;
+  }
+
+  /* The blue copy, waiting at opacity 0 */
+  .ds-add__lit {
+    color: var(--ds-accent);
+    opacity: 0;
+    transition: opacity 200ms var(--ds-add-ease);
+  }
+
+  /* The arms grow about the centre; a non-scaling stroke keeps them from thickening */
+  .ds-add__arm {
+    transform-box: view-box;
+    transform-origin: 8px 8px;
+    vector-effect: non-scaling-stroke;
+    transition: transform 200ms var(--ds-add-ease);
+  }
+
+  .ds-add:focus-visible .ds-add__lit {
+    opacity: 1;
+  }
+
+  .ds-add:focus-visible .ds-add__arm {
+    transform: scale(var(--ds-add-reach));
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .ds-add:hover .ds-add__lit {
+      opacity: 1;
+    }
+
+    .ds-add:hover .ds-add__arm {
+      transform: scale(var(--ds-add-reach));
+    }
+  }
+
+  /* Reduced motion: the color still answers; nothing grows or gives */
+  @media (prefers-reduced-motion: reduce) {
+    .ds-add,
+    .ds-add__arm {
+      transition: none;
+    }
+
+    .ds-add:active,
+    .ds-add:focus-visible .ds-add__arm {
+      transform: none;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .ds-add:hover .ds-add__arm {
+        transform: none;
+      }
+    }
+  }
+}
+
+/* OtpField: six cells over one real input. The input lies across the cells, invisible, so
+   a tap anywhere focuses it and the phone offers the SMS code; the cells only draw. */
+@layer components {
+  .ds-otp {
+    --ds-otp-w: 44px;
+    --ds-otp-h: 52px;
+    display: inline-flex;
+    flex-direction: column;
+    gap: 10px;
+    font-family: var(--ds-font);
+  }
+
+  .ds-otp__cells {
+    position: relative;
+    display: flex;
+    gap: 8px;
+  }
+
+  .ds-otp__input {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: transparent;
+    caret-color: transparent;
+    font-size: 16px; /* never under 16px, or iOS zooms the page on focus */
+    letter-spacing: 0;
+    cursor: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .ds-otp__input::selection {
+    background: transparent;
+  }
+
+  .ds-otp__input:disabled {
+    cursor: not-allowed;
+  }
+
+  .ds-otp__slot {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* 374 – 918: the code read in two halves, the way people say it */
+  .ds-otp__dash {
+    width: 10px;
+    height: 2px;
+    margin: 0 4px;
+    border-radius: 1px;
+    background: var(--ds-text-faint);
+  }
+
+  .ds-otp__cell {
+    display: grid;
+    place-items: center;
+    width: var(--ds-otp-w);
+    height: var(--ds-otp-h);
+    border-radius: var(--ds-radius-md);
+    background: var(--ds-ink-1);
+    box-shadow: inset 0 0 0 2px transparent;
+    color: var(--ds-text-strong);
+    /* Larger than the title step: a code is read digit by digit, at a glance */
+    font-size: 20px;
+    line-height: 1;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    transition:
+      background-color 0.2s ease,
+      box-shadow 0.15s ease,
+      color 0.2s ease;
+  }
+
+  .ds-otp__placeholder {
+    color: var(--ds-text-faint);
+    opacity: 0.6;
+  }
+
+  /* A digit lands with a small settle: quick, since it happens on every key */
+  .ds-otp__digit {
+    animation: ds-otp-in 140ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  @keyframes ds-otp-in {
+    from { opacity: 0; transform: scale(0.85); }
+  }
+
+  /* The cell being typed in: one 2px stroke on its own edge, no halo, and its placeholder
+     darkens, so the next digit's place reads at a glance */
+  .ds-otp__cell[data-active] {
+    box-shadow: inset 0 0 0 2px var(--ds-accent);
+  }
+
+  .ds-otp__cell[data-active] .ds-otp__placeholder {
+    color: var(--ds-text-faint);
+    opacity: 1;
+  }
+
+  /* Error: the ring and the line in danger. Away from the field, every cell keeps a faint
+     danger edge, so the error still reads */
+  .ds-otp[data-status="error"] .ds-otp__cell[data-active] {
+    box-shadow: inset 0 0 0 2px var(--ds-danger);
+  }
+
+  .ds-otp[data-status="error"]:not([data-focused]) .ds-otp__cell {
+    box-shadow: inset 0 0 0 1px var(--ds-danger);
+  }
+
+  /* Success: every cell turns, one after another, left to right */
+  .ds-otp[data-status="success"] .ds-otp__cell {
+    background: var(--ds-success-soft);
+    color: var(--ds-success-text);
+    transition-delay: calc(var(--i, 0) * 40ms);
+  }
+
+  .ds-otp[data-status="success"] .ds-otp__input {
+    cursor: default;
+  }
+
+  .ds-otp[data-disabled] .ds-otp__cells {
+    opacity: 0.5;
+  }
+
+  /* One line, always kept, so the error or confirmation never moves what's around it */
+  .ds-otp__message {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-height: var(--text-ds-small--line-height);
+    margin: 0;
+    color: var(--ds-text-faint);
+    font-size: var(--text-ds-small);
+    line-height: var(--text-ds-small--line-height);
+    letter-spacing: var(--text-ds-small--letter-spacing);
+    font-weight: 400;
+  }
+
+  .ds-otp[data-status="error"] .ds-otp__message {
+    color: var(--ds-danger-text);
+  }
+
+  .ds-otp[data-status="success"] .ds-otp__message {
+    color: var(--ds-success-text);
+  }
+
+  /* The input lies over the cells, so the row answers the hover as one field */
+  @media (hover: hover) and (pointer: fine) {
+    .ds-otp:not([data-disabled]):not([data-status="success"]) .ds-otp__cells:hover .ds-otp__cell:not([data-active]) {
+      background: var(--ds-ink-2);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ds-otp__digit {
+      animation: none;
+    }
+
+    .ds-otp[data-status="success"] .ds-otp__cell {
+      transition-delay: 0s;
+    }
+  }
+}
+
+/* IdCard: a lanyard card, 216 wide. Measured from Lens's onboarding card: the tab, a 192
+   square photo, the handle and a name, 30px corners. Unknown text is a soft bar in place */
+@layer components {
+  .ds-idcard {
+    --ds-idcard-ease: cubic-bezier(0.23, 1, 0.32, 1);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10.8px;
+    width: 216px;
+    padding: 24px 12px 12px;
+    border-radius: 30px;
+    background: var(--ds-surface);
+    box-shadow: var(--ds-shadow-card), inset 0 0 0 1px var(--ds-ink-3);
+    font-family: var(--ds-font);
+  }
+
+  /* The slot it hangs by: a pill with a half-round bump on top */
+  .ds-idcard__tab {
+    position: relative;
+    z-index: 1;
+    width: 40px;
+    height: 13px;
+    margin: 0 auto 2px;
+    border-radius: 32px;
+    background: color-mix(in srgb, var(--ds-text-strong) 2%, var(--ds-surface));
+    box-shadow: inset 0 1.5px 3px var(--ds-ink-1), inset 0 0 0 1px var(--ds-ink-2);
+  }
+
+  .ds-idcard__tab::before {
+    content: "";
+    position: absolute;
+    top: 1px;
+    left: 50%;
+    width: 13px;
+    height: 13px;
+    border-radius: inherit;
+    background: inherit;
+    box-shadow: inherit;
+    clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
+    transform: translate(-50%, -50%);
+  }
+
+  .ds-idcard__avatar {
+    position: relative;
+    width: 192px;
+    height: 192px;
+    overflow: hidden;
+    border-radius: 16px;
+  }
+
+  .ds-idcard__avatar > :is(img, svg) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ds-idcard__ground,
+  .ds-idcard__figure {
+    transition: fill 300ms ease;
+  }
+
+  .ds-idcard__ground {
+    fill: var(--ds-ink-1);
+  }
+
+  .ds-idcard__figure {
+    fill: var(--ds-ink-3);
+  }
+
+  .ds-idcard__texture {
+    fill: none;
+    stroke: var(--ds-text-strong);
+    stroke-miterlimit: 10;
+    opacity: 0;
+    mix-blend-mode: color-burn;
+    transition: opacity 300ms ease;
+  }
+
+  .ds-idcard[data-claimed] .ds-idcard__ground {
+    fill: var(--ds-accent-soft);
+  }
+
+  .ds-idcard[data-claimed] .ds-idcard__figure {
+    fill: var(--ds-accent);
+  }
+
+  .ds-idcard[data-claimed] .ds-idcard__texture {
+    opacity: 0.1;
+  }
+
+  .ds-idcard__text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    max-width: 192px;
+  }
+
+  .ds-idcard__text > p {
+    max-width: 100%;
+    margin: 0;
+    overflow: hidden;
+    line-height: 1.2;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .ds-idcard__handle {
+    min-width: 135px;
+    color: var(--ds-text-strong);
+    font-size: var(--text-ds-title);
+    letter-spacing: var(--text-ds-title--letter-spacing);
+    font-weight: var(--text-ds-title--font-weight);
+    text-align: center;
+  }
+
+  .ds-idcard__at {
+    opacity: 0.3;
+  }
+
+  .ds-idcard__name {
+    color: var(--ds-text);
+    font-size: var(--text-ds-small);
+    letter-spacing: var(--text-ds-small--letter-spacing);
+    font-weight: 400;
+  }
+
+  /* Not known yet: the words keep the line's size, a bar stands where they'll be */
+  .ds-idcard__placeholder {
+    position: relative;
+    color: transparent;
+    user-select: none;
+  }
+
+  .ds-idcard__placeholder::before {
+    content: "";
+    position: absolute;
+    inset: 28% 0 0;
+    border-radius: 16px;
+    background: var(--ds-ink-1);
+  }
+
+  /* Filled in: the text settles where the bar was */
+  .ds-idcard__value {
+    animation: ds-idcard-in 200ms var(--ds-idcard-ease);
+  }
+
+  @keyframes ds-idcard-in {
+    from { opacity: 0; transform: translateY(4px); }
+  }
+
+  /* The wall: hairline cards on a grid, the real one in the middle, run off every edge */
+  .ds-idcard-wall {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  /* Zooming is one scale on the whole grid, so it stays on the GPU however many cards */
+  .ds-idcard-wall__grid {
+    --ds-idcard-wall-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: grid;
+    gap: 32px;
+    transform: translate(-50%, -50%) scale(var(--ds-idcard-zoom, 1));
+    transition: transform 560ms var(--ds-idcard-wall-ease);
+  }
+
+  /* An outline and an empty card share each cell: zoomed out, the card fades in over it */
+  .ds-idcard-wall__cell {
+    display: grid;
+    place-items: center;
+  }
+
+  .ds-idcard-wall__cell > * {
+    grid-area: 1 / 1;
+  }
+
+  .ds-idcard-wall__blank {
+    opacity: 0;
+    transition: opacity 200ms ease-out;
+  }
+
+  /* Coming in: the blanks fill as the wall pulls back. Going out: they go first, quicker */
+  .ds-idcard-wall[data-zoomed] .ds-idcard-wall__blank {
+    opacity: 1;
+    transition: opacity 360ms var(--ds-idcard-wall-ease) 80ms;
+  }
+
+  .ds-idcard-outline {
+    display: block;
+    stroke: var(--ds-ink-3);
+    stroke-width: 1;
+  }
+
+  .ds-idcard-outline__tab {
+    fill: var(--ds-ink-3);
+    stroke: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ds-idcard__value {
+      animation-name: ds-fade-in;
+    }
+
+    /* No travel: the wall changes size at once, the blanks still fade */
+    .ds-idcard-wall__grid {
+      transition: none;
+    }
+  }
+}
+
+/* AiBar: the message bar. Measured from the reference: a 44px pill, 28px round keys 8px
+   in from the edge, 15px type. Hover or focus darkens the edge, nothing else moves */
+@layer components {
+  .ds-ai {
+    --ds-ai-h: 44px;
+    --ds-ai-key: 28px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    height: var(--ds-ai-h);
+    padding: 0 8px;
+    border: 1px solid var(--ds-ink-4);
+    border-radius: 999px;
+    background: var(--ds-surface);
+    box-shadow: var(--ds-shadow-bar);
+    font-family: var(--ds-font);
+    transition: border-color 150ms ease;
+  }
+
+  .ds-ai:focus-within {
+    border-color: var(--ds-ink-5);
+  }
+
+  .ds-ai__input {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    margin: 0 0 0 1px;
+    padding: 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: var(--ds-text-strong);
+    font: inherit;
+    font-size: var(--text-ds-body);
+    letter-spacing: var(--text-ds-body--letter-spacing);
+  }
+
+  .ds-ai__input::placeholder {
+    color: var(--ds-text-faint);
+    opacity: 1;
+  }
+
+  .ds-ai__key {
+    position: relative;
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: var(--ds-ai-key);
+    height: var(--ds-ai-key);
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: var(--ds-ink-1);
+    box-shadow: inset 0 0 0 1px var(--ds-ink-1);
+    color: var(--ds-icon);
+    cursor: pointer;
+    transition:
+      background-color 150ms ease,
+      transform 120ms ease-out;
+  }
+
+  .ds-ai__key svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .ds-ai__key:active:not(:disabled) {
+    transform: scale(0.95);
+  }
+
+  .ds-ai__key:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 1px var(--ds-ink-1), 0 0 0 2px var(--ds-surface), 0 0 0 3.5px var(--ds-ink-5);
+  }
+
+  .ds-ai__key:disabled {
+    cursor: not-allowed;
+  }
+
+  /* The dark key: voice while empty, send once there's text */
+  .ds-ai__go {
+    background: var(--ds-text-strong);
+    box-shadow: none;
+    color: var(--ds-surface);
+  }
+
+  .ds-ai__glyph {
+    grid-area: 1 / 1;
+    display: block;
+    width: 100%;
+    height: 100%;
+    transition:
+      opacity 150ms ease-out,
+      transform 150ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .ds-ai__glyph[data-glyph="send"],
+  .ds-ai[data-ready] .ds-ai__glyph[data-glyph="voice"] {
+    opacity: 0;
+    transform: scale(0.75);
+  }
+
+  .ds-ai[data-ready] .ds-ai__glyph[data-glyph="send"] {
+    opacity: 1;
+    transform: none;
+  }
+
+  .ds-ai[data-disabled] {
+    opacity: 0.5;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .ds-ai:not([data-disabled]):hover {
+      border-color: var(--ds-ink-5);
+    }
+
+    .ds-ai__key:not(.ds-ai__go):not(:disabled):hover {
+      background: var(--ds-ink-2);
+    }
+
+    .ds-ai__go:not(:disabled):hover {
+      background: color-mix(in srgb, var(--ds-text-strong) 86%, var(--ds-surface));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ds-ai__key:active:not(:disabled) {
+      transform: none;
+    }
+
+    .ds-ai__glyph,
+    .ds-ai__glyph[data-glyph="send"],
+    .ds-ai[data-ready] .ds-ai__glyph[data-glyph="voice"] {
+      transform: none;
+    }
+  }
+}
+
+/* SplitView: a sidebar, a gutter handle, the main panel. The handle's bar is measured from
+   the reference: 4px wide, a 44px faint rest, 64px on approach, dark while dragging, and it
+   rides the pointer down the gutter */
+@layer components {
+  .ds-split {
+    --ds-split-ease: cubic-bezier(0.23, 1, 0.32, 1);
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--ds-split-size, 200px) minmax(0, 1fr);
+    width: 100%;
+    height: 100%;
+  }
+
+  .ds-split__side {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .ds-split__main {
+    min-width: 0;
+    min-height: 0;
+  }
+
+  /* The grab zone: 20px of the sidebar's edge, its centre 10px from the panel */
+  .ds-split__handle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(var(--ds-split-size, 200px) - 20px);
+    z-index: 2;
+    width: 20px;
+    outline: none;
+    cursor: col-resize;
+    touch-action: none;
+  }
+
+  .ds-split__rail {
+    position: absolute;
+    left: 50%;
+    top: clamp(48px, var(--ds-split-y, 50%), calc(100% - 48px));
+    display: block;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .ds-split__bar {
+    display: block;
+    width: 4px;
+    height: 44px;
+    border-radius: 2px;
+    background: color-mix(in srgb, var(--ds-text-strong) 15%, transparent);
+    transition:
+      height 200ms var(--ds-split-ease),
+      background-color 150ms ease;
+  }
+
+  /* Near it, or reached by keyboard: longer, a shade darker */
+  .ds-split__handle:focus-visible .ds-split__bar {
+    height: 64px;
+    background: color-mix(in srgb, var(--ds-text-strong) 28%, transparent);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .ds-split__handle:hover .ds-split__bar {
+      height: 64px;
+      background: color-mix(in srgb, var(--ds-text-strong) 28%, transparent);
+    }
+  }
+
+  /* Held: dark, and the whole view takes the resize cursor so it never flickers */
+  .ds-split[data-dragging] {
+    cursor: col-resize;
+    user-select: none;
+  }
+
+  .ds-split[data-dragging] .ds-split__main {
+    pointer-events: none;
+  }
+
+  .ds-split[data-dragging] .ds-split__bar {
+    height: 64px;
+    background: color-mix(in srgb, var(--ds-text-strong) 79%, transparent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ds-split__bar {
+      transition: background-color 150ms ease;
+    }
+  }
+}
+
+/* Sidebar: Linear's navigation, measured from Linear itself. 12px gutters, 28px rows 1px
+   apart, 13px/500 labels 6px after a 14px icon, 8px corners; hover a soft fill, the current
+   page a firmer one with a dark label. Sections sit 16px apart */
+@layer components {
+  .ds-sidebar {
+    --ds-sidebar-ink: color-mix(in srgb, var(--ds-text-strong) 78%, var(--ds-surface));
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 16px 12px 12px;
+    overflow-y: auto;
+    scrollbar-width: none;
+    color: var(--ds-sidebar-ink);
+    font-family: var(--ds-font);
+  }
+
+  .ds-sidebar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .ds-sidebar__header {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    margin-bottom: 17px;
+  }
+
+  .ds-sidebar__workspace {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    height: 28px;
+    padding: 0 9px 0 5px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: color-mix(in srgb, var(--ds-text-strong) 90%, var(--ds-surface));
+    cursor: pointer;
+    transition: background-color 120ms ease;
+  }
+
+  .ds-sidebar__mark {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    background: var(--ds-accent);
+    color: var(--ds-surface);
+    font-size: 10px;
+    font-weight: 600;
+  }
+
+  .ds-sidebar__name {
+    min-width: 0;
+    overflow: hidden;
+    font-size: 13px;
+    font-weight: 550;
+    letter-spacing: -0.1px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .ds-sidebar__chevron {
+    flex: none;
+    width: 8px;
+    height: 8px;
+  }
+
+  .ds-sidebar__actions {
+    display: flex;
+    flex: none;
+    gap: 4px;
+  }
+
+  .ds-sidebar__action {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: color-mix(in srgb, var(--ds-text-strong) 90%, var(--ds-surface));
+    cursor: pointer;
+    transition:
+      background-color 120ms ease,
+      transform 120ms ease-out;
+  }
+
+  .ds-sidebar__action svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .ds-sidebar__action[data-raised] {
+    background: var(--ds-surface);
+    box-shadow: 0 0 0 0.5px var(--ds-ink-3), 0 1px 2px var(--ds-ink-1);
+  }
+
+  .ds-sidebar__action:active {
+    transform: scale(0.95);
+  }
+
+  .ds-sidebar__section + .ds-sidebar__section {
+    margin-top: 16px;
+  }
+
+  .ds-sidebar__rows {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  .ds-sidebar__rows[hidden] {
+    display: none;
+  }
+
+  /* The small heading: 12px, nudged 5px in, its caret just after the words */
+  .ds-sidebar__heading {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    width: calc(100% - 5px);
+    height: 28px;
+    margin: 0 0 1px 5px;
+    padding: 0 4px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: inherit;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 120ms ease;
+  }
+
+  .ds-sidebar__caret {
+    flex: none;
+    width: 16px;
+    height: 16px;
+    transition: transform 150ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .ds-sidebar__section:not([data-open]) .ds-sidebar__caret {
+    transform: rotate(-90deg);
+  }
+
+  .ds-sidebar__item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    height: 28px;
+    padding: 0 9px 0 8px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: inherit;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 120ms ease;
+  }
+
+  /* A team's pages: 19px in, their icons 6px from the row's edge */
+  .ds-sidebar__item[data-nested] {
+    width: calc(100% - 19px);
+    margin-left: 19px;
+    padding-left: 6px;
+  }
+
+  .ds-sidebar__group {
+    margin-bottom: 1px;
+  }
+
+  .ds-sidebar__group .ds-sidebar__label {
+    flex: none;
+  }
+
+  .ds-sidebar__icon {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 14px;
+    height: 14px;
+  }
+
+  .ds-sidebar__icon svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .ds-sidebar__label {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .ds-sidebar__count {
+    flex: none;
+    font-size: 11px;
+    font-weight: 450;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ds-sidebar__item[data-active] {
+    background: var(--ds-ink-2);
+    color: var(--ds-text-strong);
+  }
+
+  .ds-sidebar__footer {
+    display: flex;
+    flex: none;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 16px;
+  }
+
+  .ds-sidebar :is(.ds-sidebar__item, .ds-sidebar__heading, .ds-sidebar__workspace, .ds-sidebar__action):focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 1px var(--ds-ink-5);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .ds-sidebar__item:not([data-active]):hover,
+    .ds-sidebar__heading:hover,
+    .ds-sidebar__workspace:hover,
+    .ds-sidebar__action:not([data-raised]):hover {
+      background: var(--ds-ink-1);
+      color: var(--ds-text-strong);
+    }
+
+    .ds-sidebar__action[data-raised]:hover {
+      color: var(--ds-text-strong);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ds-sidebar__caret {
+      transition: none;
+    }
+
+    .ds-sidebar__action:active {
+      transform: none;
+    }
+  }
+}
+
+/* AgentPanel: the agent's chat, measured from Linear's (400 x 600 at full size). A 48px
+   header, a body inset 4px that fades grey to white, a 72px composer 8px from the edges.
+   It grows out of its launcher's corner and goes back into it, faster on the way out */
+@layer components {
+  .ds-agent {
+    --ds-agent-ease: cubic-bezier(0.23, 1, 0.32, 1);
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    height: 600px;
+    overflow: hidden;
+    border-radius: 14px;
+    background: var(--ds-surface);
+    box-shadow: 0 0 0 1px var(--ds-ink-4), var(--ds-shadow-float);
+    font-family: var(--ds-font);
+    transform-origin: bottom right;
+    transition:
+      opacity 200ms var(--ds-agent-ease),
+      transform 200ms var(--ds-agent-ease),
+      visibility 0s;
+  }
+
+  .ds-agent[data-state="closed"] {
+    visibility: hidden;
+    opacity: 0;
+    transform: scale(0.96) translateY(6px);
+    pointer-events: none;
+    transition:
+      opacity 140ms ease-out,
+      transform 140ms ease-out,
+      visibility 0s 140ms;
+  }
+
+  .ds-agent__header {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 6px;
+    height: 48px;
+    padding: 0 10px 0 18px;
+  }
+
+  .ds-agent__title {
+    min-width: 0;
+    margin: 0;
+    overflow: hidden;
+    color: var(--ds-text-strong);
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .ds-agent__tools {
+    display: flex;
+    flex: none;
+    gap: 2px;
+    margin-left: auto;
+  }
+
+  .ds-agent__tool {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--ds-icon);
+    cursor: pointer;
+    transition:
+      background-color 120ms ease,
+      color 120ms ease,
+      transform 120ms ease-out;
+  }
+
+  .ds-agent__tool svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .ds-agent__body {
+    position: relative;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 0;
+    margin: 0 4px;
+    overflow-y: auto;
+    border-radius: 10px 10px 0 0;
+    background: linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--ds-text-strong) 4%, var(--ds-surface)),
+      var(--ds-surface) 85%
+    );
+  }
+
+  .ds-agent__welcome {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    min-height: 0;
+    padding: 0 16px 36px;
+    text-align: center;
+  }
+
+  /* The arrow field: 552 x 264, anchored at its bottom row (where the mark sits) and
+     clipped by whatever room the panel has, fading out from the mark */
+  .ds-agent__field {
+    display: flex;
+    flex: 0 1 264px;
+    justify-content: center;
+    align-items: flex-end;
+    align-self: stretch;
+    min-height: 24px;
+    margin: 0 -16px 12px;
+    overflow: hidden;
+  }
+
+  .ds-agent__grid {
+    display: grid;
+    flex: none;
+    grid-template-columns: repeat(23, 24px);
+    grid-auto-rows: 24px;
+    mask-image: radial-gradient(
+      50% 100% at 50% 85%,
+      #000,
+      rgb(0 0 0 / 0.85) 12%,
+      rgb(0 0 0 / 0.5) 30%,
+      rgb(0 0 0 / 0.15) 55%,
+      transparent 82%
+    );
+  }
+
+  .ds-agent__cell {
+    display: grid;
+    place-items: center;
+    color: var(--ds-text-strong);
+    opacity: 0.224;
+    animation: ds-agent-arrow 1.4s both;
+  }
+
+  .ds-agent__cell svg {
+    width: 14px;
+    height: 14px;
+    stroke-width: 1.5;
+  }
+
+  /* The mark itself: full strength, arriving first */
+  .ds-agent__home {
+    color: var(--ds-icon);
+    opacity: 1;
+    animation: ds-agent-home 300ms var(--ds-agent-ease) 0.15s both;
+  }
+
+  @keyframes ds-agent-arrow {
+    0% {
+      opacity: 0;
+      transform: translate(var(--tx), var(--ty)) scale(0.6);
+      animation-timing-function: cubic-bezier(0.33, 0, 0.4, 1);
+    }
+    28% {
+      opacity: var(--peak);
+      transform: translate(0, 0) scale(1);
+      animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
+    }
+    50% {
+      opacity: var(--trough);
+      transform: translate(0, 0) scale(0.985);
+    }
+    67% {
+      opacity: var(--peak2);
+      transform: translate(0, 0) scale(1);
+    }
+    100% {
+      opacity: 0.224;
+      transform: translate(0, 0) scale(1);
+    }
+  }
+
+  @keyframes ds-agent-home {
+    from { opacity: 0; transform: scale(0.8); }
+  }
+
+  .ds-agent__hello {
+    margin: 0;
+    color: var(--ds-text-strong);
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .ds-agent__lede {
+    margin: 6px 0 0;
+    color: var(--ds-text);
+    font-size: 14px;
+  }
+
+  .ds-agent__chips {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+  }
+
+  .ds-agent__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 28px;
+    padding: 0 12px 0 10px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--ds-surface);
+    box-shadow: 0 0 0 1px var(--ds-ink-4), 0 0 0 0 transparent;
+    color: var(--ds-text-strong);
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    transition:
+      background-color 120ms ease,
+      box-shadow 120ms ease,
+      transform 120ms ease-out;
+  }
+
+  .ds-agent__chip svg {
+    width: 13px;
+    height: 13px;
+    color: var(--ds-icon);
+  }
+
+  /* In a conversation the body is plain white and the thread reads from the top */
+  .ds-agent[data-chatting] .ds-agent__body {
+    justify-content: flex-start;
+    background: var(--ds-surface);
+  }
+
+  .ds-agent__thread {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+    margin: 0;
+    padding: 12px 4px 20px 14px;
+    list-style: none;
+  }
+
+  .ds-agent__stamp {
+    align-self: center;
+    margin-bottom: -2px;
+    color: var(--ds-text-faint);
+    font-size: 13px;
+  }
+
+  .ds-agent__bubble {
+    align-self: flex-end;
+    max-width: 85%;
+    padding: 8px 12px;
+    border-radius: 10px;
+    background: var(--ds-ink-1);
+    color: var(--ds-text-strong);
+    font-size: 14px;
+    line-height: 20px;
+    animation: ds-agent-in 200ms var(--ds-agent-ease);
+  }
+
+  .ds-agent__reply {
+    max-width: 92%;
+    padding-right: 10px;
+    color: var(--ds-text-strong);
+    font-size: 14px;
+    line-height: 21px;
+    animation: ds-agent-in 200ms var(--ds-agent-ease);
+  }
+
+  .ds-agent__words {
+    margin: 0;
+  }
+
+  /* Helpful, not helpful, copy: 24px keys a step apart, their glyphs lined up with the text */
+  .ds-agent__actions {
+    display: flex;
+    gap: 2px;
+    margin: 12px 0 0 -5px;
+  }
+
+  .ds-agent__action {
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--ds-icon);
+    cursor: pointer;
+    transition:
+      background-color 120ms ease,
+      color 120ms ease,
+      transform 120ms ease-out;
+  }
+
+  .ds-agent__action svg {
+    width: 14px;
+    height: 14px;
+    stroke-width: 1.75;
+  }
+
+  .ds-agent__action[data-picked] {
+    color: var(--ds-text-strong);
+  }
+
+  .ds-agent__action[data-picked] svg {
+    fill: color-mix(in srgb, currentColor 14%, transparent);
+  }
+
+  .ds-agent__action:active {
+    transform: scale(0.92);
+  }
+
+  .ds-agent__action:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 1px var(--ds-ink-5);
+  }
+
+  /* Waiting on the reply: a light sweeps across the words */
+  .ds-agent__thinking {
+    background: linear-gradient(
+        90deg,
+        var(--ds-text) 0%,
+        var(--ds-text) 40%,
+        var(--ds-text-faint) 50%,
+        var(--ds-text) 60%,
+        var(--ds-text) 100%
+      )
+      0 0 / 250% 100%;
+    background-clip: text;
+    color: transparent;
+    font-size: 14px;
+    line-height: 20px;
+    animation: ds-agent-think 1.6s linear infinite;
+  }
+
+  @keyframes ds-agent-think {
+    from { background-position: 100% 0; }
+    to { background-position: 0 0; }
+  }
+
+  @keyframes ds-agent-in {
+    from { opacity: 0; transform: translateY(6px); }
+  }
+
+  .ds-agent__composer {
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    gap: 6px;
+    margin: 0 8px 8px;
+    padding: 9px 9px 7px 11px;
+    /* A real border, not a ring: the body above sits in its own layer and would paint over
+       a shadow's top edge */
+    border: 1px solid var(--ds-ink-4);
+    border-radius: 10px;
+    background: var(--ds-surface);
+    transition: border-color 150ms ease;
+  }
+
+  .ds-agent__composer:focus-within {
+    border-color: var(--ds-ink-5);
+  }
+
+  .ds-agent__input {
+    width: 100%;
+    min-height: 20px;
+    max-height: 120px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: none;
+    resize: none;
+    background: transparent;
+    color: var(--ds-text-strong);
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 20px;
+    field-sizing: content;
+  }
+
+  .ds-agent__input::placeholder {
+    color: var(--ds-text-faint);
+  }
+
+  .ds-agent__bar {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .ds-agent__spacer {
+    flex: 1;
+  }
+
+  .ds-agent__skills {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 26px;
+    margin-left: -6px;
+    padding: 0 6px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--ds-text-strong);
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background-color 120ms ease;
+  }
+
+  .ds-agent__skills svg {
+    width: 14px;
+    height: 14px;
+    color: var(--ds-icon);
+  }
+
+  .ds-agent__send {
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: var(--ds-surface);
+    box-shadow: 0 0 0 1px var(--ds-ink-3);
+    color: var(--ds-text-strong);
+    cursor: pointer;
+    transition:
+      background-color 150ms ease,
+      color 150ms ease,
+      transform 120ms ease-out;
+  }
+
+  .ds-agent__send svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .ds-agent__stop {
+    width: 9px;
+    height: 9px;
+    border-radius: 2px;
+    background: var(--ds-text-strong);
+  }
+
+  /* Something to send: the button fills */
+  .ds-agent__send:not([data-empty]) {
+    background: var(--ds-text-strong);
+    box-shadow: none;
+    color: var(--ds-surface);
+  }
+
+  .ds-agent__send[data-empty] {
+    cursor: default;
+  }
+
+  :is(.ds-agent__tool, .ds-agent__chip, .ds-agent__send:not([data-empty])):active {
+    transform: scale(0.95);
+  }
+
+  .ds-agent :is(.ds-agent__tool, .ds-agent__chip, .ds-agent__skills, .ds-agent__send):focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 1px var(--ds-ink-5);
+  }
+
+  /* The launcher: Linear's bottom-right "Agent" pill */
+  .ds-agent-launcher {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 220px;
+    height: 28px;
+    padding: 0 12px 0 10px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: color-mix(in srgb, var(--ds-text-strong) 78%, var(--ds-surface));
+    font-family: var(--ds-font);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+      background-color 120ms ease,
+      transform 120ms ease-out;
+  }
+
+  .ds-agent-launcher svg {
+    flex: none;
+    width: 14px;
+    height: 14px;
+  }
+
+  .ds-agent-launcher__label {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  /* The one that's showing */
+  .ds-agent-launcher[data-open] {
+    background: var(--ds-ink-2);
+    color: var(--ds-text-strong);
+  }
+
+  .ds-agent-launcher:active {
+    transform: scale(0.97);
+  }
+
+  .ds-agent-launcher:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 1px var(--ds-ink-5);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .ds-agent__tool:hover,
+    .ds-agent__skills:hover {
+      background: var(--ds-ink-1);
+      color: var(--ds-text-strong);
+    }
+
+    /* Linear's: a shade of grey and a small lift, the edge unchanged */
+    .ds-agent__action:hover {
+      background: var(--ds-ink-1);
+      color: var(--ds-text-strong);
+    }
+
+    .ds-agent__chip:hover {
+      background: color-mix(in srgb, var(--ds-text-strong) 5%, var(--ds-surface));
+      box-shadow: 0 0 0 1px var(--ds-ink-4), 0 1px 2px var(--ds-ink-2);
+    }
+
+    .ds-agent__send:not([data-empty]):hover {
+      background: color-mix(in srgb, var(--ds-text-strong) 86%, var(--ds-surface));
+    }
+
+    .ds-agent-launcher:not([data-open]):hover {
+      background: var(--ds-ink-1);
+      color: var(--ds-text-strong);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ds-agent,
+    .ds-agent[data-state="closed"] {
+      transform: none;
+    }
+
+    .ds-agent__bubble,
+    .ds-agent__reply {
+      animation-name: ds-fade-in;
+    }
+
+    .ds-agent__thinking {
+      animation: none;
+      color: var(--ds-text);
+    }
+
+    /* The field is simply there, faint, with no ripple */
+    .ds-agent__cell,
+    .ds-agent__home {
+      animation: none;
+    }
+
+    :is(.ds-agent__tool, .ds-agent__chip, .ds-agent__send, .ds-agent-launcher, .ds-agent__action):active {
+      transform: none;
+    }
+  }
+}
+
+/* LocalTime: "8:21am in New Delhi, India" and a small face, after benji.org's footer. 13px in
+   the faint grey, digits that roll as the minute turns, fading in once the time is known */
+@layer components {
+  .ds-time {
+    margin: 0;
+    color: var(--ds-text-faint);
+    font-family: var(--ds-font);
+    font-size: 13px;
+    line-height: 20px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 300ms ease;
+  }
+
+  .ds-time[data-ready] {
+    opacity: 1;
+  }
+
+  .ds-time__digit {
+    position: relative;
+    display: inline-flex;
+    overflow: hidden;
+    vertical-align: bottom;
+  }
+
+  .ds-time__digit > span {
+    display: inline-block;
+  }
+
+  .ds-time__sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* 32px, sitting 6px below the line as benji.org's does */
+  .ds-time__face {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    margin: 0 0 -6px;
+    overflow: visible;
+    vertical-align: bottom;
+  }
+
+  .ds-time__glyphs path {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linejoin: round;
+  }
+
+  .ds-time__glyphs :is(circle, text) {
+    fill: currentColor;
+  }
+
+  .ds-time__eyes {
+    transition: transform 220ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .ds-time__eye {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  /* Ears twitch now and then: small flicks, then once both fold back together */
+  .ds-time__ear {
+    transform-box: fill-box;
+    transform-origin: bottom center;
+    animation: ds-time-ear-left 12s ease-in-out infinite;
+  }
+
+  .ds-time__ear[data-side="right"] {
+    animation-name: ds-time-ear-right;
+  }
+
+  @keyframes ds-time-ear-left {
+    0%, 10% { transform: rotate(0deg); }
+    13% { transform: rotate(-9deg); }
+    17%, 35% { transform: rotate(0deg); }
+    39% { transform: rotate(-12deg); }
+    43% { transform: rotate(-5deg); }
+    49%, 60% { transform: rotate(0deg); }
+    64% { transform: rotate(-26deg); }
+    71% { transform: rotate(-24deg); }
+    79%, 100% { transform: rotate(0deg); }
+  }
+
+  @keyframes ds-time-ear-right {
+    0%, 10% { transform: rotate(0deg); }
+    13% { transform: rotate(7deg); }
+    17%, 35% { transform: rotate(0deg); }
+    39% { transform: rotate(10deg); }
+    43% { transform: rotate(4deg); }
+    49%, 60% { transform: rotate(0deg); }
+    64% { transform: rotate(-26deg); }
+    71% { transform: rotate(-24deg); }
+    79%, 100% { transform: rotate(0deg); }
+  }
+
+  /* The ω: a finer line than the rest, so its two cups stay open at this size */
+  .ds-time__glyphs .ds-time__mouth {
+    stroke-width: 1.4;
+    stroke-linecap: round;
+  }
+
+  /* Woken: the 💢 pops in, throbs twice, and fades as the face nods back off */
+  .ds-time__face {
+    user-select: none;
+  }
+
+  /* The character is a button, so a keyboard can wake it too; it keeps the face's place on
+     the line and adds nothing to how it looks */
+  .ds-time__poke {
+    display: inline-block;
+    margin: 0 0 -6px;
+    padding: 0;
+    border: 0;
+    border-radius: 8px;
+    background: none;
+    color: inherit;
+    font: inherit;
+    line-height: 0;
+    vertical-align: bottom;
+    cursor: default;
+  }
+
+  .ds-time__poke .ds-time__face {
+    margin: 0;
+    vertical-align: top;
+  }
+
+  .ds-time__poke:focus-visible {
+    outline: 2px solid var(--ds-accent);
+    outline-offset: 2px;
+  }
+
+  .ds-time__glyphs .ds-time__anger {
+    stroke: var(--ds-danger);
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: ds-time-anger 2.6s cubic-bezier(0.23, 1, 0.32, 1) both;
+  }
+
+  @keyframes ds-time-anger {
+    0% { opacity: 0; scale: 0.3; }
+    10% { opacity: 1; scale: 1.2; }
+    18% { scale: 1; }
+    32% { scale: 1.14; }
+    42% { scale: 1; }
+    56% { scale: 1.14; }
+    66% { scale: 1; }
+    85% { opacity: 1; scale: 1; }
+    100% { opacity: 0; scale: 0.85; }
+  }
+
+  /* Nodding off: the eyes droop shut over its last moments awake */
+  .ds-time__face[data-drowsy] .ds-time__eye {
+    scale: 1 0.25;
+    transition: scale 1s ease-in-out;
+  }
+
+  /* Moods. Eyes first: shut, ^ ^ and > < are lines; O O are rings; @ @ spin */
+  .ds-time__face {
+    cursor: default;
+  }
+
+  .ds-time__glyphs .ds-time__lid {
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .ds-time__glyphs .ds-time__ring {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.4;
+  }
+
+  .ds-time__glyphs .ds-time__spiral {
+    stroke-width: 1.2;
+    stroke-linecap: round;
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: ds-time-spin 0.5s linear infinite;
+  }
+
+  @keyframes ds-time-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .ds-time__glyphs .ds-time__yawn {
+    stroke: currentColor;
+    stroke-width: 1.4;
+    transform-box: fill-box;
+    transform-origin: top center;
+    animation: ds-time-yawn 1.6s ease-in-out both;
+  }
+
+  @keyframes ds-time-yawn {
+    0% { scale: 1 0.2; }
+    30%, 75% { scale: 1 1; }
+    100% { scale: 1 0.2; }
+  }
+
+  .ds-time__glyphs {
+    transform-box: fill-box;
+    transform-origin: bottom center;
+  }
+
+  /* Startled: a hop */
+  .ds-time__face[data-mood="startled"] .ds-time__glyphs {
+    animation: ds-time-hop 320ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  @keyframes ds-time-hop {
+    40% { translate: 0 -3px; }
+  }
+
+  /* Dizzy: a wobble while the eyes spin */
+  .ds-time__face[data-mood="dizzy"] .ds-time__glyphs {
+    animation: ds-time-wobble 0.6s ease-in-out 3;
+  }
+
+  @keyframes ds-time-wobble {
+    25% { rotate: -6deg; }
+    75% { rotate: 6deg; }
+  }
+
+  /* Stretch: up tall, ears up, then settle */
+  .ds-time__face[data-mood="stretch"] .ds-time__glyphs {
+    animation: ds-time-stretch 1.4s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  @keyframes ds-time-stretch {
+    35%, 65% { scale: 0.96 1.1; }
+  }
+
+  /* Boop: the ears wiggle */
+  .ds-time__face[data-mood="boop"] .ds-time__ear {
+    animation: ds-time-wiggle 0.15s ease-in-out 4 alternate;
+  }
+
+  @keyframes ds-time-wiggle {
+    from { rotate: -8deg; }
+    to { rotate: 8deg; }
+  }
+
+  /* The dog's habit: a wag, shown as its ears flapping */
+  .ds-time__face[data-character="dog"][data-mood="habit"] .ds-time__ear {
+    animation: ds-time-wiggle 0.18s ease-in-out 6 alternate;
+  }
+
+  /* The bunny's habit: its nose twitches */
+  .ds-time__glyphs .ds-time__nose {
+    animation: ds-time-twitch 0.12s ease-in-out 8 alternate;
+  }
+
+  @keyframes ds-time-twitch {
+    from { translate: 0 0; }
+    to { translate: 0 -0.6px; }
+  }
+
+  /* The cat licks a paw; the bear scratches */
+  .ds-time__glyphs .ds-time__paw {
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    animation: ds-time-lick 1.5s ease-in-out both;
+  }
+
+  .ds-time__glyphs .ds-time__paw[data-side="right"] {
+    animation-name: ds-time-scratch;
+  }
+
+  /* The cat licks a paw: the head tips toward it, the paw (three toes up) rises from below
+     to its mouth and bobs as the tongue flicks out, three licks, then it all goes back down */
+  .ds-time__face[data-character="cat"][data-mood="habit"] .ds-time__glyphs {
+    animation: ds-time-tilt 1.8s ease-in-out both;
+  }
+
+  @keyframes ds-time-tilt {
+    0%, 100% { rotate: 0deg; }
+    18%, 82% { rotate: -6deg; }
+  }
+
+  /* The paw is a paw print: a round pad and three toe beans, filled */
+  .ds-time__glyphs .ds-time__lick {
+    fill: currentColor;
+    stroke: none;
+    animation: ds-time-paw 1.8s cubic-bezier(0.23, 1, 0.32, 1) both;
+  }
+
+  @keyframes ds-time-paw {
+    0% { opacity: 0; translate: 0 6px; }
+    12% { opacity: 1; }
+    22% { translate: 0 0; }
+    34% { translate: 0.4px -0.8px; }
+    46% { translate: 0 0; }
+    58% { translate: 0.4px -0.8px; }
+    70% { translate: 0 0; }
+    86% { opacity: 1; }
+    100% { opacity: 0; translate: 0 6px; }
+  }
+
+  .ds-time__glyphs .ds-time__tongue {
+    fill: color-mix(in srgb, var(--ds-danger) 75%, var(--ds-surface));
+    stroke: none;
+    transform-box: fill-box;
+    transform-origin: top center;
+    animation: ds-time-tongue 1.8s ease-in-out both;
+  }
+
+  @keyframes ds-time-tongue {
+    0%, 24%, 34%, 46%, 58%, 70%, 100% { scale: 1 0; }
+    29%, 52%, 64% { scale: 1 1; }
+  }
+
+  @keyframes ds-time-scratch {
+    0%, 100% { opacity: 0; translate: 0 2px; }
+    12%, 88% { opacity: 1; }
+    25%, 55% { translate: 0 -4px; }
+    40%, 70% { translate: 0 -1px; }
+  }
+
+  /* Petted: a little heart drifts up, again and again */
+  .ds-time__glyphs .ds-time__heart {
+    fill: var(--ds-danger);
+    stroke: none;
+    animation: ds-time-heart 1.6s ease-out infinite;
+  }
+
+  @keyframes ds-time-heart {
+    0% { opacity: 0; translate: 0 3px; scale: 0.6; }
+    25% { opacity: 1; scale: 1; }
+    100% { opacity: 0; translate: 1px -4px; }
+  }
+
+  /* Sulking: its back to you, huffing */
+  .ds-time__glyphs .ds-time__huff {
+    stroke-width: 1.3;
+    stroke-linecap: round;
+    opacity: 0.7;
+    animation: ds-time-huff 1.2s ease-in-out infinite;
+  }
+
+  @keyframes ds-time-huff {
+    50% { translate: 1.5px 0; opacity: 0.3; }
+  }
+
+  /* Seasonal: a diya whose flame flickers, or a carved pumpkin */
+  .ds-time__flame {
+    fill: var(--ds-warning);
+    transform-box: fill-box;
+    transform-origin: bottom center;
+    animation: ds-time-flicker 1.4s ease-in-out infinite;
+  }
+
+  @keyframes ds-time-flicker {
+    0%, 100% { scale: 1 1; rotate: 0deg; }
+    20% { scale: 0.92 1.08; rotate: -3deg; }
+    45% { scale: 1.05 0.94; rotate: 2deg; }
+    70% { scale: 0.96 1.05; rotate: -1deg; }
+  }
+
+  .ds-time__diya {
+    fill: currentColor;
+  }
+
+  .ds-time__pumpkin {
+    fill: var(--ds-warning);
+  }
+
+  .ds-time__stem {
+    stroke: currentColor;
+    stroke-width: 1.4;
+    stroke-linecap: round;
+  }
+
+  .ds-time__carve {
+    fill: var(--ds-text-strong);
+    stroke: var(--ds-text-strong);
+    stroke-width: 0.6;
+    stroke-linejoin: round;
+  }
+
+  /* A dog's ears hang from the top and flop instead */
+  .ds-time__face[data-character="dog"] .ds-time__ear {
+    transform-origin: top center;
+    animation-name: ds-time-flop-left;
+  }
+
+  .ds-time__face[data-character="dog"] .ds-time__ear[data-side="right"] {
+    animation-name: ds-time-flop-right;
+  }
+
+  @keyframes ds-time-flop-left {
+    0%, 10% { transform: rotate(0deg); }
+    14% { transform: rotate(10deg); }
+    19%, 52% { transform: rotate(0deg); }
+    56% { transform: rotate(14deg); }
+    60% { transform: rotate(-4deg); }
+    66%, 100% { transform: rotate(0deg); }
+  }
+
+  @keyframes ds-time-flop-right {
+    0%, 10% { transform: rotate(0deg); }
+    14% { transform: rotate(-10deg); }
+    19%, 52% { transform: rotate(0deg); }
+    56% { transform: rotate(-14deg); }
+    60% { transform: rotate(4deg); }
+    66%, 100% { transform: rotate(0deg); }
+  }
+
+  /* Asleep: the ears rest, and z's drift up and away one after another */
+  .ds-time__face[data-asleep] .ds-time__ear {
+    animation: none;
+  }
+
+  .ds-time__glyphs .ds-time__zs text {
+    font-family: var(--ds-font);
+    font-size: 7px;
+    font-weight: 600;
+    opacity: 0;
+    animation: ds-time-z 3.6s ease-out infinite;
+  }
+
+  .ds-time__zs text:nth-child(2) {
+    animation-delay: 1.2s;
+  }
+
+  .ds-time__zs text:nth-child(3) {
+    animation-delay: 2.4s;
+  }
+
+  @keyframes ds-time-z {
+    0% { opacity: 0; transform: translate(0, 0) scale(0.6); }
+    15% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { opacity: 0; transform: translate(6px, -14px) scale(1); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ds-time__ear,
+    .ds-time__glyphs .ds-time__zs text {
+      animation: none;
+    }
+
+    .ds-time__glyphs .ds-time__anger {
+      animation-name: ds-time-anger-fade;
+    }
+
+    /* The moods still show, without the motion */
+    .ds-time__glyphs,
+    .ds-time__glyphs :is(.ds-time__spiral, .ds-time__nose, .ds-time__huff, .ds-time__yawn),
+    .ds-time__flame,
+    .ds-time__face[data-mood] .ds-time__ear {
+      animation: none;
+    }
+
+    .ds-time__glyphs :is(.ds-time__paw, .ds-time__heart, .ds-time__lick) {
+      animation: none;
+      opacity: 1;
+    }
+
+    .ds-time__glyphs .ds-time__tongue {
+      animation: none;
+    }
+
+    @keyframes ds-time-anger-fade {
+      0%, 100% { opacity: 0; }
+      8%, 85% { opacity: 1; }
+    }
+
+    .ds-time__glyphs .ds-time__zs text:first-child {
+      opacity: 1;
+    }
+  }
+}
+
+/* ErrorState: soft letters on a canvas, after softle.app. The canvas fills its box; the
+   letters draw in the danger colour, the selection box in the accent, the message below */
+@layer components {
+  .ds-error {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 260px;
+    font-family: var(--ds-font);
+  }
+
+  .ds-error__canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    color: var(--ds-danger);
+    touch-action: none;
+  }
+
+  .ds-error__label {
+    position: absolute;
+    margin: 0;
+    padding: 2px 7px;
+    border-radius: 5px;
+    background: var(--ds-accent);
+    color: var(--color-ds-white);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 18px;
+    white-space: nowrap;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+}
+
+/* PatternField: a picture as tiles of bars, stirred by the pointer (after brand.base.org) */
+@layer components {
+  .ds-pattern {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 240px;
+    overflow: hidden;
+    background: var(--ds-surface);
+  }
+
+  .ds-pattern__canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+/* Globe: a striped sphere drawn in a shader, square, filling its box */
+@layer components {
+  .ds-globe {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+  }
+
+  .ds-globe__canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+/* GlobePoster: on a 768 × 748 grid, in percentages. The globe's circle sits at (32, 23), 704
+   across; the black strip runs 472–571, and below it the globe's slice, 571–689, in orange */
+@layer components {
+  .ds-globe-poster {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 768 / 748;
+    overflow: hidden;
+    background: var(--ds-globe-ground);
+    container-type: inline-size;
+  }
+
+  .ds-globe-poster__title {
+    position: absolute;
+    top: 14%;
+    left: 50%;
+    margin: 0;
+    color: var(--color-ds-white);
+    font-family: var(--ds-font);
+    font-size: 40cqw;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    white-space: nowrap;
+    transform: translateX(-50%);
+  }
+
+  .ds-globe-poster__globe {
+    position: absolute;
+    top: calc(23 / 748 * 100%);
+    left: calc(32 / 768 * 100%);
+    width: calc(704 / 768 * 100%);
+  }
+
+  /* Black from the strip down: under the slice, and where the globe would carry on */
+  .ds-globe-poster__below {
+    position: absolute;
+    inset: calc(472 / 748 * 100%) 0 0;
+    background: var(--ds-globe-strip, #000);
+  }
+
+  /* The slice: the same circle as the globe, in orange, kept to its band */
+  .ds-globe-poster__slice {
+    position: absolute;
+    top: calc(23 / 748 * 100%);
+    left: calc(32 / 768 * 100%);
+    width: calc(704 / 768 * 100%);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--ds-globe-slice);
+    clip-path: inset(calc((571 - 23) / 704 * 100%) 0 calc((727 - 689) / 704 * 100%) 0);
+  }
+
+  .ds-globe-poster__strip {
+    position: absolute;
+    top: calc(472 / 748 * 100%);
+    left: 0;
+    right: 0;
+    height: calc((571 - 472) / 748 * 100%);
+    background: var(--ds-globe-strip, #000);
+  }
+
+  .ds-globe-poster__label {
+    position: absolute;
+    top: 50%;
+    color: var(--color-ds-white);
+    font-family: var(--ds-font);
+    font-size: 5cqw;
+    font-weight: 400;
+    line-height: 1;
+    transform: translate(-50%, -50%);
+  }
+
+  .ds-globe-poster__label[data-place="left"] {
+    left: 19%;
+    font-style: italic;
+  }
+
+  .ds-globe-poster__label[data-place="centre"] {
+    left: 52%;
+  }
+
+  .ds-globe-poster__label[data-place="right"] {
+    left: 86%;
+    font-style: italic;
+  }
+}
+
+/* InviteModal: an invite as a ticket. The stub is cut from the card by two round notches
+   either side of a dashed line; the cuts are masks, so the page shows through them, and the
+   shadow is a drop-shadow on the whole, so it follows the cut edge too. */
+@layer components {
+  .ds-invite {
+    --ds-invite-cut: 12px;
+    --ds-invite-r: 28px;
+    display: flex;
+    flex-direction: column;
+    width: 360px;
+    max-width: 100%;
+    color: var(--ds-text-strong);
+    font-family: var(--ds-font);
+    text-align: center;
+    filter: drop-shadow(0 0 0.5px var(--ds-ink-5)) drop-shadow(0 10px 24px var(--color-ds-knob-drop));
+  }
+
+  .ds-invite__main,
+  .ds-invite__stub {
+    position: relative;
+    background: var(--ds-raised);
+  }
+
+  .ds-invite__main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 36px 20px 24px;
+    border-radius: var(--ds-invite-r);
+  }
+
+  .ds-invite:has(.ds-invite__stub) .ds-invite__main {
+    border-radius: var(--ds-invite-r) var(--ds-invite-r) 0 0;
+    mask:
+      radial-gradient(circle var(--ds-invite-cut) at 0 100%, transparent calc(var(--ds-invite-cut) - 0.5px), white var(--ds-invite-cut)),
+      radial-gradient(circle var(--ds-invite-cut) at 100% 100%, transparent calc(var(--ds-invite-cut) - 0.5px), white var(--ds-invite-cut));
+    mask-composite: intersect;
+  }
+
+  .ds-invite__stub {
+    display: flex;
+    justify-content: center;
+    padding: 18px 20px 22px;
+    border-radius: 0 0 var(--ds-invite-r) var(--ds-invite-r);
+    mask:
+      radial-gradient(circle var(--ds-invite-cut) at 0 0, transparent calc(var(--ds-invite-cut) - 0.5px), white var(--ds-invite-cut)),
+      radial-gradient(circle var(--ds-invite-cut) at 100% 0, transparent calc(var(--ds-invite-cut) - 0.5px), white var(--ds-invite-cut));
+    mask-composite: intersect;
+  }
+
+  /* The tear line, from notch to notch */
+  .ds-invite__stub::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: calc(var(--ds-invite-cut) + 6px);
+    left: calc(var(--ds-invite-cut) + 6px);
+    height: 4px;
+    background: var(--ds-ink-4);
+    /* Each dash a 12px stroke with round caps, 8px apart; `round` fits whole dashes only,
+       so neither end is cut square */
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='4'%3E%3Cline x1='2' y1='2' x2='10' y2='2' stroke='white' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E")
+      0 0 / 20px 4px round no-repeat;
+  }
+
+  .ds-invite__close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--ds-icon);
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  .ds-invite__close svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* The empty seat: a cat's head in dashes, the plus where a friend goes */
+  .ds-invite__seat {
+    width: 112px;
+    height: auto;
+    margin-bottom: 22px;
+    overflow: visible;
+  }
+
+  .ds-invite__seat path {
+    stroke: var(--ds-icon-faint);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .ds-invite__seat-head {
+    stroke-width: 3.5;
+    stroke-dasharray: 9 8;
+  }
+
+  .ds-invite__seat-plus {
+    stroke-width: 4.5;
+  }
+
+  .ds-invite__title {
+    margin: 0 0 8px;
+    font-size: var(--text-ds-display);
+    line-height: var(--text-ds-display--line-height);
+    letter-spacing: var(--text-ds-display--letter-spacing);
+    font-weight: 700;
+    text-wrap: balance;
+  }
+
+  .ds-invite__description {
+    max-width: 280px;
+    margin: 0 0 24px;
+    color: var(--ds-text);
+    font-size: var(--text-ds-body);
+    line-height: 21px;
+    letter-spacing: var(--text-ds-body--letter-spacing);
+    font-weight: 500;
+    text-wrap: pretty;
+  }
+
+  /* The code, in a well, with its copy button */
+  .ds-invite__code {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    align-self: stretch;
+    padding: 14px 10px 14px 18px;
+    border-radius: 18px;
+    background: var(--ds-well);
+    text-align: left;
+  }
+
+  .ds-invite__code-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  .ds-invite__code-label {
+    font-size: 13px;
+    line-height: 16px;
+    font-weight: 600;
+  }
+
+  .ds-invite__code-value {
+    overflow-wrap: anywhere;
+    font-size: 22px;
+    line-height: 26px;
+    letter-spacing: 0.04em;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ds-invite__copy {
+    position: relative;
+    flex: none;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 0;
+    border-radius: 12px;
+    background: transparent;
+    color: var(--ds-accent);
+    transition: background-color 0.15s ease, scale 200ms ease-out;
+  }
+
+  /* The copy and check glyphs swap in place: one shrinks away blurred as the other grows in */
+  .ds-invite__glyph {
+    position: absolute;
+    inset: 0;
+    width: 20px;
+    height: 20px;
+    margin: auto;
+    transition: opacity 200ms ease, scale 200ms ease, filter 200ms ease;
+  }
+
+  .ds-invite__copy [data-glyph="check"],
+  .ds-invite__copy[data-copied] [data-glyph="copy"] {
+    opacity: 0;
+    scale: 0.25;
+    filter: blur(4px);
+  }
+
+  .ds-invite__copy[data-copied] [data-glyph="check"] {
+    opacity: 1;
+    scale: 1;
+    filter: none;
+  }
+
+  .ds-invite__share {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 11px;
+    align-self: stretch;
+    height: 50px;
+    margin-top: 14px;
+    padding: 0 20px;
+    border: 0;
+    border-radius: 15px;
+    background: var(--color-ds-sky);
+    color: var(--color-ds-white);
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    transition: box-shadow 0.15s ease, scale 200ms ease-out;
+  }
+
+  /* The icon as heavy as the bold label beside it */
+  .ds-invite__share svg {
+    width: 21px;
+    height: 21px;
+  }
+
+  .ds-invite__share svg * {
+    vector-effect: non-scaling-stroke;
+    stroke-width: 2.5px;
+  }
+
+  .ds-invite__redeem {
+    padding: 8px 12px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--ds-accent-text);
+    font-size: 15px;
+    font-weight: 600;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: auto;
+  }
+
+  :is(.ds-invite__copy, .ds-invite__share):active {
+    scale: 0.97;
+  }
+
+  :is(.ds-invite__close, .ds-invite__copy, .ds-invite__share, .ds-invite__redeem):focus-visible {
+    outline: 2px solid var(--ds-accent);
+    outline-offset: 2px;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .ds-invite__close:hover {
+      background: var(--ds-ink-2);
+      color: var(--ds-text-strong);
+      transition-duration: 0s;
+    }
+
+    .ds-invite__copy:hover {
+      background: var(--ds-ink-2);
+      transition-duration: 0s, 200ms;
+    }
+
+    .ds-invite__share:hover {
+      box-shadow: inset 0 0 0 100vmax var(--ds-ink-2);
+      transition-duration: 0s, 200ms;
+    }
+
+    .ds-invite__redeem:hover {
+      text-decoration: underline;
+    }
+  }
+
+  /* As a modal: over a dimmed page, centred, in from slightly small; out quicker and softer */
+  .ds-invite-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    background: var(--ds-scrim);
+    animation: ds-invite-fade 200ms ease;
+  }
+
+  .ds-invite-scrim[data-state="closed"] {
+    animation: ds-invite-fade 150ms ease reverse forwards;
+  }
+
+  .ds-invite-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 51;
+    width: max-content;
+    max-width: calc(100vw - 32px);
+    translate: -50% -50%;
+    outline: none;
+    animation: ds-invite-in 240ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .ds-invite-modal[data-state="closed"] {
+    animation: ds-invite-out 150ms ease-out forwards;
+  }
+
+  @keyframes ds-invite-fade {
+    from { opacity: 0; }
+  }
+
+  @keyframes ds-invite-in {
+    from { opacity: 0; scale: 0.96; }
+  }
+
+  @keyframes ds-invite-out {
+    to { opacity: 0; scale: 0.98; filter: blur(4px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ds-invite-modal {
+      animation-name: ds-invite-fade;
+    }
+
+    .ds-invite-modal[data-state="closed"] {
+      animation: ds-invite-fade 150ms ease reverse forwards;
+    }
+
+    .ds-invite__glyph,
+    :is(.ds-invite__copy, .ds-invite__share) {
+      transition: none;
+    }
+
+    :is(.ds-invite__copy, .ds-invite__share):active {
+      scale: none;
+    }
+  }
+}
+
+/* SiInput: SI's own field, measured off duolingo.com's. A 48px box (2px edge, 12px corners) on
+   a soft grey; focus turns the edge blue and shows the clear button, both at once, no easing */
+@layer components {
+  .ds-si-input {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+    font-family: var(--ds-font);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .ds-si-input__label {
+    color: var(--ds-si-ink);
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 600;
+  }
+
+  .ds-si-input__box {
+    display: flex;
+    overflow: hidden;
+    border: 2px solid var(--ds-si-edge);
+    border-radius: 12px;
+    background: var(--ds-si-field);
+  }
+
+  .ds-si-input__box:focus-within {
+    border-color: var(--ds-si-focus);
+  }
+
+  .ds-si-input__field {
+    width: 100%;
+    min-width: 0;
+    height: 44px;
+    margin: 0;
+    padding: 8px 14px;
+    border: 0;
+    outline: none;
+    background: none;
+    appearance: none;
+    caret-color: var(--ds-si-focus);
+    color: var(--ds-si-ink);
+    font: inherit;
+    font-size: 20px;
+    line-height: 28px;
+  }
+
+  .ds-si-input__field::placeholder {
+    color: var(--ds-si-hint);
+    opacity: 1;
+  }
+
+  .ds-si-input__field[type="number"] {
+    appearance: textfield;
+  }
+
+  .ds-si-input__field[type="number"]::-webkit-inner-spin-button,
+  .ds-si-input__field[type="number"]::-webkit-outer-spin-button,
+  .ds-si-input__field::-webkit-search-cancel-button {
+    appearance: none;
+  }
+
+  .ds-si-input__field:disabled,
+  .ds-si-input__field:disabled::placeholder {
+    color: var(--ds-si-muted);
+    -webkit-text-fill-color: var(--ds-si-muted);
+  }
+
+  .ds-si-input__clear {
+    display: flex;
+    flex: none;
+    align-self: center;
+    margin: 0 6px 0 -6px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--ds-si-muted);
+    cursor: pointer;
+  }
+
+  .ds-si-input__box:not(:focus-within) .ds-si-input__clear {
+    display: none;
+  }
+
+  .ds-si-input__hint {
+    margin: 0;
+    color: var(--ds-si-hint);
+    font-size: 16px;
+    line-height: 24px;
+    text-wrap: pretty;
+  }
+
+  .ds-si-input__hint a {
+    color: var(--ds-si-focus);
+    font-weight: 700;
+    text-decoration: none;
+  }
+}
