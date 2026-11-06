@@ -1,0 +1,7 @@
+/* Tailwind v4 first, then HeroUI. The designs kit declares the same layer order,
+   so its components layer and Tailwind's sit together. */
+@import "tailwindcss";
+@import "@heroui/styles";
+
+/* the workspace packages use a few utilities too */
+@source "../../../packages/ui/src";
