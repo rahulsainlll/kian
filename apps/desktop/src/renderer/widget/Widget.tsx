@@ -1,12 +1,13 @@
 /*
  * The desktop widget: the shared KianWidget, fed by the desk in the main
- * process. At rest it is a thin line; hovering grows it into the pill with
- * the hotkey beside it. The hotkey or the mic starts listening; stopping
+ * process. At rest it is a small bubble with the Kian flower; hovering grows
+ * it into the pill with the hotkey beside it, and agent messages pop up from
+ * it as cards. The hotkey or the mic starts listening; stopping
  * transcribes and posts to the desk room. With no voice engine set, the type
  * bar opens so Wispr Flow or the system's dictation can type instead. The
  * window only takes clicks while the pointer is over the widget.
  */
-import { KianWidget, useSpeak, type Chip, type RoomMessage } from '@kian/ui'
+import { KianWidget, Mascot, useSpeak, type Chip, type RoomMessage } from '@kian/ui'
 import { useEffect, useRef, useState } from 'react'
 import type { DeskState } from '../../shared/types'
 import { prettyHotkey } from '../hotkey'
@@ -131,6 +132,7 @@ export function Widget() {
       <KianWidget
         orientation={side ? 'vertical' : 'horizontal'}
         collapsed={resting}
+        restIcon={<Mascot size={30} mood={desk.queued || desk.message ? 'excited' : 'happy'} />}
         hint={
           desk.hotkey ? (
             <>

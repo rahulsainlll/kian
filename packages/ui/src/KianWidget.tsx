@@ -34,6 +34,8 @@ export interface KianWidgetProps {
   collapsed?: boolean
   /** A small label beside the idle pill, e.g. the hotkey. */
   hint?: ReactNode
+  /** What the widget shows at rest instead of the plain line, e.g. the Kian flower. */
+  restIcon?: ReactNode
 }
 
 /**
@@ -86,7 +88,9 @@ export function KianWidget(p: KianWidgetProps) {
     <div className="kian k-widget dark" data-orientation={orientation}>
       <Presence item={floating} />
       <div className="k-dock" data-collapsed={(p.collapsed && !floating) || undefined}>
-        <span className="k-line" aria-hidden />
+        <span className={p.restIcon ? 'k-line k-line--icon' : 'k-line'} aria-hidden>
+          {p.restIcon}
+        </span>
         {p.hint && !floating && p.voiceState === 'idle' && <span className="k-hint">{p.hint}</span>}
         <Pill
           state={p.voiceState}

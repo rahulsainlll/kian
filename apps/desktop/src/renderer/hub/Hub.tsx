@@ -80,7 +80,7 @@ export function Hub() {
 }
 
 /** Switch's own progress notes ("Working… 20s", "Starting a session…") aren't activity. */
-const STATUS = /^(\*\*)?(working|worked for|starting a session|connecting here|joining here)/i
+const STATUS = /^(\*\*)?(working|worked for|queued|starting a session|connecting here|joining here|note: (i took|joining))/i
 
 /** Every agent gets the flower; people keep their initial. */
 const face = (e: RoomEvent) => (e.authorIsAgent ? 'kian' : e.author)

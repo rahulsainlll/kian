@@ -196,6 +196,19 @@
   opacity: 0;
 }
 
+/* At rest with an icon: a round glass bubble holding the Kian flower */
+.k-line--icon,
+.k-widget[data-orientation='vertical'] .k-line--icon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--k-surface);
+  border: 1px solid var(--k-hairline);
+  box-shadow: var(--k-shadow);
+}
+
 /* The hint beside the idle pill, e.g. "Talk ⌘⇧K" */
 .k-hint {
   position: absolute;
