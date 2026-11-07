@@ -9,17 +9,13 @@ importers:
   .: {}
 
   apps/desktop:
-    dependencies:
+    devDependencies:
       '@kian/designs':
         specifier: workspace:*
         version: link:../../packages/designs
       '@kian/ui':
         specifier: workspace:*
         version: link:../../packages/ui
-      skullet:
-        specifier: 0.0.3
-        version: 0.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-    devDependencies:
       '@types/node':
         specifier: 22.10.2
         version: 22.10.2
@@ -47,6 +43,9 @@ importers:
       react-dom:
         specifier: 19.2.4
         version: 19.2.4(react@19.2.4)
+      skullet:
+        specifier: 0.0.3
+        version: 0.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       typescript:
         specifier: 5.9.3
         version: 5.9.3
