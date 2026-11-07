@@ -21,17 +21,17 @@ interface Beat {
 const BEATS: Record<string, Beat> = {
   hello: {
     author: 'rahul-kian',
-    text: 'Good morning, Rahul. While you were away: Mayank priced the Lumen renewal, Yukti finished the pitch deck, and Mayank found a new client. Three things need you.\n→ show me',
+    text: 'Good morning, Rahul. While you were away: Mayank priced the Avenish renewal, Yukti finished the pitch deck, and Mayank found a new client. Three things need you.\n→ show me',
     next: () => ({ beat: 'discount', after: 900 }),
   },
   discount: {
     author: 'mayank-kian',
-    text: 'From Mayank: offer Lumen Health 12% off the annual plan, valid until Friday. Margin stays above our floor.\n→ approve (hold) · refuse',
+    text: 'From Mayank: offer Avenish Health 12% off the annual plan, valid until Friday. Margin stays above our floor.\n→ approve (hold) · refuse',
     next: () => ({ beat: 'deck', after: 1200 }),
   },
   deck: {
     author: 'yukti-kian',
-    text: 'From Yukti: the Lumen pitch deck is ready, 12 slides with the new pricing. Review before she shares it?\n→ looks good · edit',
+    text: 'From Yukti: the Avenish pitch deck is ready, 12 slides with the new pricing. Review before she shares it?\n→ looks good · edit',
     next: () => ({ beat: 'client', after: 1400 }),
   },
   client: {

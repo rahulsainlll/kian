@@ -14,6 +14,10 @@ export const CAST: Record<string, { shape: Shape; color: string }> = {
   kian: { shape: 'flower', color: '#3d7bf2' },
   'kian-scribe': { shape: 'bubble', color: '#19b86b' },
   'kian-studio': { shape: 'sun', color: '#ff8a1f' },
+  // the team's personal agents
+  'rahul-kian': { shape: 'flower', color: '#3d7bf2' },
+  'mayank-kian': { shape: 'sun', color: '#ff8a1f' },
+  'yukti-kian': { shape: 'bubble', color: '#19b86b' },
 }
 
 const LINES: { text: string; mood: Mood }[] = [
