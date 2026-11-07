@@ -1,0 +1,205 @@
+/*
+ * The hub's layout, in the team dashboard's palette: cream chrome, one paper
+ * panel, serif headings. Components come from @kian/designs and @kian/ui;
+ * this file only places them.
+ */
+@font-face {
+  font-family: 'Inter';
+  src: url('../../../../web/public/fonts/Inter-Variable.ttf') format('truetype');
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+:root {
+  --hub-bg: #f1ece4;
+  --hub-paper: #fbfaf7;
+  --hub-ink: #1d1b18;
+  --hub-ink-2: #5d5850;
+  --hub-line: rgba(40, 30, 10, 0.08);
+  --serif: 'Instrument Serif', Georgia, serif;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: var(--hub-bg);
+  color: var(--hub-ink);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.hub {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 12px;
+  height: 100vh;
+  padding: 12px 12px 12px 0;
+  box-sizing: border-box;
+}
+
+/* macOS draws its traffic lights over the top left; leave room and let the sidebar drag the window */
+.hub[data-platform='darwin'] .hub__side {
+  padding-top: 44px;
+  -webkit-app-region: drag;
+}
+.hub__side button,
+.hub__side kbd {
+  -webkit-app-region: no-drag;
+}
+
+.hub__side {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 16px 12px 16px 16px;
+}
+
+.hub__brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  letter-spacing: -0.02em;
+}
+
+.hub__mode {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 600;
+  color: #3d7bf2;
+  background: #e3ecff;
+  border-radius: 999px;
+  padding: 3px 8px;
+}
+
+.hub__nav {
+  display: grid;
+  gap: 2px;
+}
+
+.hub__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 34px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--hub-ink-2);
+  font: inherit;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 160ms ease-out, color 160ms ease-out;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hub__item:hover {
+    background: rgba(40, 30, 10, 0.05);
+  }
+}
+
+.hub__item[data-active] {
+  background: rgba(40, 30, 10, 0.08);
+  color: var(--hub-ink);
+  font-weight: 600;
+}
+
+.hub__hint {
+  margin-top: auto;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--hub-ink-2);
+}
+
+.hub__hint kbd {
+  font: 600 11px/1 'Inter', system-ui, sans-serif;
+  background: var(--hub-paper);
+  border: 1px solid var(--hub-line);
+  border-radius: 6px;
+  padding: 2px 6px;
+}
+
+.hub__paper {
+  overflow: auto;
+  background: var(--hub-paper);
+  border-radius: 16px;
+  box-shadow: 0 1px 0 var(--hub-line), 0 8px 30px rgba(40, 30, 10, 0.06);
+  padding: 28px 32px 40px;
+  display: grid;
+  align-content: start;
+  gap: 18px;
+}
+
+.hub__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.hub__head h1 {
+  margin: 0;
+  font: 400 40px/1 var(--serif);
+  letter-spacing: -0.01em;
+}
+
+.hub__head p {
+  margin: 8px 0 0;
+  max-width: 52ch;
+  color: var(--hub-ink-2);
+  font-size: 14px;
+}
+
+.hub__empty,
+.hub__note {
+  margin: 4px 0;
+  color: var(--hub-ink-2);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.setup__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px 16px;
+  margin-top: 8px;
+}
+
+.setup__line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 0;
+  border-top: 1px solid var(--hub-line);
+}
+
+.setup__label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.setup__hint {
+  font-size: 12px;
+  color: var(--hub-ink-2);
+}
+
+.setup__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.setup__result {
+  margin-right: auto;
+  font-size: 13px;
+  color: #b4472c;
+}
+
+.setup__result[data-ok] {
+  color: #1f6f6b;
+}

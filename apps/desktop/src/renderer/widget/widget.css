@@ -1,0 +1,38 @@
+/*
+ * The widget window's own layout: a transparent page with the widget pinned
+ * to the bottom centre, and a small notice when the rooms are unreachable.
+ */
+html.kian-widget-page,
+html.kian-widget-page body {
+  margin: 0;
+  height: 100%;
+  background: transparent;
+  overflow: hidden;
+  user-select: none;
+}
+
+#root {
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 12px;
+  box-sizing: border-box;
+}
+
+.widget-stage {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.widget-offline {
+  font: 500 12px/1 -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  color: #fafafa;
+  background: rgba(24, 24, 27, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  padding: 7px 12px;
+  cursor: pointer;
+}
