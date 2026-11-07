@@ -1,6 +1,6 @@
 # kian.template.yaml: the whole Kian sales desk as one Switch group template.
 #
-# Import it in Switch Console (Templates, New from file) and fill in the form.
+# Import it in Switch Console (Templates page, Import template), run it, and fill in the form.
 # It creates three agents (the coordinator, the writer and the storyteller),
 # a room group with the desk, approvals and content rooms, and the links
 # between them. Deal rooms are opened later by the coordinator, one per
