@@ -24,9 +24,10 @@ export function Everywhere() {
               <a className="where__btn" href={DOWNLOADS.windows}>
                 Windows
               </a>
-              <a className="where__soon" href={DOWNLOADS.all}>
-                Free · all versions
-              </a>
+              <span className="where__soon">
+                Free · how to install on <a href={DOWNLOADS.guideMac}>Mac</a> or{' '}
+                <a href={DOWNLOADS.guideWindows}>Windows</a>
+              </span>
             </div>
           </div>
           <svg className="where__art" viewBox="0 0 400 230" aria-hidden>

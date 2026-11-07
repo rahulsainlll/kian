@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Renders the /art/<name> pages to PNGs with headless Chrome: the OG image,
-# the README art and the desktop app's icons.
+# the README art, the install guides and the desktop app's icons.
 # Needs the dev server running: pnpm dev
 set -euo pipefail
 CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
@@ -24,6 +24,10 @@ render hero 1280 560 "$ROOT/docs/assets/hero.png"
 render cast 1280 440 "$ROOT/docs/assets/cast.png"
 render switch 1280 460 "$ROOT/docs/assets/switch.png"
 render widget 1280 520 "$ROOT/docs/assets/widget.png"
+
+# Install guides to share with people trying the desktop app
+render guide-mac 1200 1560 "$ROOT/docs/assets/install-mac.png"
+render guide-windows 1200 1560 "$ROOT/docs/assets/install-windows.png"
 
 # The desktop app's icons: the blue flower
 DESKTOP="$ROOT/apps/desktop"

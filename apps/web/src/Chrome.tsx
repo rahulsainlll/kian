@@ -15,7 +15,7 @@ const LINKS = [
 
 export { Logo }
 
-export function Nav({ active }: { active: 'home' | 'components' | 'dashboard' | 'blog' | 'contact' }) {
+export function Nav({ active }: { active: 'home' | 'components' | 'dashboard' | 'blog' | 'contact' | 'guide' }) {
   return (
     <>
       {/* the nav floats; this holds its place in the flow */}
@@ -62,7 +62,6 @@ export function Stage({
   )
 }
 
-
 const FOOT_COLUMNS: { title: string; links: [string, string][] }[] = [
   {
     title: 'Product',
@@ -70,6 +69,7 @@ const FOOT_COLUMNS: { title: string; links: [string, string][] }[] = [
       ['The widget', '/#demo'],
       ['Dashboard', '/dashboard'],
       ['Download', '/#download'],
+      ['Install guide', '/guide'],
       ['Components', '/components'],
     ],
   },

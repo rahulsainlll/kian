@@ -11,7 +11,15 @@ own.
 Get the latest build from [GitHub Releases](https://github.com/rahulsainlll/kian/releases/latest): a dmg for Apple
 silicon or Intel Macs, and an installer for Windows.
 
-The builds are not signed with an Apple Developer ID yet, so the first launch needs one extra step:
+The builds are not signed with an Apple Developer ID yet, so the first launch needs one extra step. These two guides
+show every screen. Send people to [kain-murex.vercel.app/guide](https://kain-murex.vercel.app/guide), or share the
+images:
+
+| macOS | Windows |
+|---|---|
+| ![Installing Kian on a Mac](../../docs/assets/install-mac.png) | ![Installing Kian on Windows](../../docs/assets/install-windows.png) |
+
+In short:
 
 - **macOS:** drag Kian to Applications and open it. When macOS says it can't verify the developer, open **System
   Settings → Privacy & Security**, scroll down and choose **Open Anyway**. (On macOS 14 and earlier, right-click the

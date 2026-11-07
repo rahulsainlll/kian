@@ -10,4 +10,7 @@ export const DOWNLOADS = {
   macIntel: `${LATEST}/download/Kian-mac-x64.dmg`,
   windows: `${LATEST}/download/Kian-Setup-x64.exe`,
   all: LATEST,
+  /** The install guides with every screen, on the site's /guide page. */
+  guideMac: '/guide/mac',
+  guideWindows: '/guide/windows',
 }
