@@ -9,8 +9,21 @@ own.
 ## Download
 
 Get the latest build from [GitHub Releases](https://github.com/rahulsainlll/kian/releases/latest): a dmg for Apple
-silicon or Intel Macs, and an installer for Windows. The builds are not signed yet. On a Mac, open it the first time
-with right-click, Open; on Windows, choose More info, Run anyway.
+silicon or Intel Macs, and an installer for Windows.
+
+The builds are not signed with an Apple Developer ID yet, so the first launch needs one extra step:
+
+- **macOS:** drag Kian to Applications and open it. When macOS says it can't verify the developer, open **System
+  Settings → Privacy & Security**, scroll down and choose **Open Anyway**. (On macOS 14 and earlier, right-click the
+  app and choose Open.)
+- **Windows:** when SmartScreen appears, choose **More info**, then **Run anyway**.
+
+If macOS says Kian **is damaged**, you have the first v0.1.0 build, which wasn't signed correctly. Download the
+latest release, or clear the download flag on the copy you have:
+
+```bash
+xattr -cr /Applications/Kian.app
+```
 
 ## Run it from source
 
@@ -68,7 +81,10 @@ pnpm --filter @kian/desktop dist:mac    # dmg for Apple silicon and Intel, in ap
 pnpm --filter @kian/desktop dist:win    # NSIS installer (build on Windows, or with Wine)
 ```
 
-Builds are unsigned unless `CSC_LINK` and `CSC_KEY_PASSWORD` are set.
+Mac builds are signed ad hoc, which gives the whole app a valid signature so macOS treats it as from an unidentified
+developer rather than damaged. To sign with an Apple Developer ID and notarize, add these repository secrets and the
+release workflow uses them: `MAC_CERT_P12_BASE64` (the certificate as base64), `MAC_CERT_PASSWORD`, `APPLE_ID`,
+`APPLE_APP_SPECIFIC_PASSWORD` and `APPLE_TEAM_ID`. Notarized builds open with no extra step.
 
 **Releasing.** Pushing a tag that matches the version in `package.json` (for 0.1.0, `v0.1.0`) runs
 `.github/workflows/desktop-release.yml`, which builds both platforms and publishes the release the website links to.
