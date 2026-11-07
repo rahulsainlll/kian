@@ -1,6 +1,6 @@
 # Kian on Switch
 
-Everything Kian needs on the Switch side: the templates, the agents' toolkit and the demo data.
+Everything Kian needs on the Switch side: the templates, the agents' toolkit and a sample workspace.
 
 **For a team, start with [TEAM.md](TEAM.md):** an agent for every person, talking to each other in one room.
 The sales desk below is one team's setup on top of it. The website and the
@@ -18,8 +18,8 @@ switch/
     ranking.py             how the morning is ranked
     demo_backend.py        fixtures.json as if it were Gmail, Calendar and Sheets
     google_backend.py      the same against a real Google account
-    seed.py                loads the demo morning into a throwaway Google account
-    fixtures.json          7 leads, 6 emails, 2 meetings, all synthetic
+    seed.py                loads the sample team into a Google account made for testing
+    fixtures.json          the sample workspace: 7 leads, 6 emails, 2 meetings
     test_toolkit.py        ranking and safety rules, no network
 ```
 
@@ -76,7 +76,7 @@ turns it into buttons. `(hold)` means press and hold, for the one action that mu
 ```bash
 git clone https://github.com/rahulsainlll/kian ~/kian
 cd ~/kian/switch/toolkit
-python3 kian_tools.py brief          # demo data, no setup needed
+python3 kian_tools.py brief          # works right away on the sample workspace
 python3 -m unittest -v               # 9 tests, no network
 ```
 
@@ -96,7 +96,7 @@ Say `morning` in **kian-desk**.
 
 ### 4. A real Google account (optional)
 
-The desk runs on demo data until you connect Google. Use a throwaway account, never one with real customers.
+The desk uses the sample workspace until you connect Google. Use an account made for testing, never one with real customers.
 
 1. In Google Cloud Console, create a project and enable the Gmail, Calendar and Sheets APIs. Create an OAuth client
    of type **Desktop app**, download it as `switch/toolkit/credentials.json`, and add your account as a test user.

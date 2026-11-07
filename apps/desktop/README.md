@@ -40,7 +40,7 @@ pnpm install
 pnpm desktop          # from the repo root
 ```
 
-It starts on the **demo morning**, with no server needed. Press <kbd>⌘⇧K</kbd> (<kbd>Ctrl+Shift+K</kbd> on Windows) or
+It opens on a **sample morning**, with no server needed. Press <kbd>⌘⇧K</kbd> (<kbd>Ctrl+Shift+K</kbd> on Windows) or
 click **Say “morning” to kian** in the hub, then answer the cards.
 
 To use your real desk, open **Setup** in the hub, choose **Switch (Mattermost)**, and enter:
