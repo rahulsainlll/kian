@@ -103,6 +103,30 @@
   color: var(--ink-2);
   font-size: 17px;
 }
+.contact__linkedin {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+  padding: 12px 20px;
+  border-radius: 999px;
+  background: #0a66c2;
+  color: #fff;
+  font-weight: 650;
+  text-decoration: none;
+  transition:
+    transform 180ms var(--ease-out),
+    background-color 180ms var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .contact__linkedin:hover {
+    background: #0b5aa8;
+    transform: translateY(-2px);
+  }
+}
+.contact__linkedin:active {
+  transform: scale(0.97);
+}
 .contact__form {
   display: flex;
   flex-direction: column;
