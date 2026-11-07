@@ -16,15 +16,27 @@ async function shoot(win: BrowserWindow | null, dir: string, name: string) {
   writeFileSync(join(dir, `${name}.png`), image.toPNG())
 }
 
-export async function captureRun(windows: { widget: () => BrowserWindow | null; hub: () => BrowserWindow | null }, say: (text: string) => Promise<void>) {
+export interface CaptureDesk {
+  say(text: string): Promise<void>
+  /** Answer the card on screen, if there is one. */
+  answer(reply: string): Promise<void>
+}
+
+export async function captureRun(windows: { widget: () => BrowserWindow | null; hub: () => BrowserWindow | null }, desk: CaptureDesk) {
   const dir = process.env.KIAN_CAPTURE
   if (!dir) return
   mkdirSync(dir, { recursive: true })
   await wait(2500)
   await shoot(windows.widget(), dir, 'widget-idle')
-  await say('morning')
+  await desk.say('morning')
   await wait(4500)
   await shoot(windows.widget(), dir, 'widget-card')
+  await desk.answer('draft')
+  await wait(7000)
+  await shoot(windows.widget(), dir, 'widget-next')
+  await desk.answer('skip')
+  await wait(1200)
+  await shoot(windows.widget(), dir, 'widget-approval')
   await shoot(windows.hub(), dir, 'hub-today')
   console.log(`[kian] captured windows into ${dir}`)
   app.quit()

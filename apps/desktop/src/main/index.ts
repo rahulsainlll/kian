@@ -121,7 +121,16 @@ if (!app.requestSingleInstanceLock()) {
     registerHotkey()
     await connect()
     if (publicSettings().backend === 'mock' && !app.isPackaged) openHub()
-    void captureRun({ widget: () => widget, hub: () => hub }, async (text) => desk?.say(text))
+    void captureRun(
+      { widget: () => widget, hub: () => hub },
+      {
+        say: async (text) => desk?.say(text),
+        answer: async (reply) => {
+          const card = desk?.state().message
+          if (card) await desk?.answer(card.id, reply)
+        },
+      },
+    )
   })
   app.on('window-all-closed', () => {
     // Stay in the tray: closing the hub doesn't quit Kian.
