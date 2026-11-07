@@ -64,6 +64,12 @@ In Switch Console, open **Templates**, choose **Import template**, give it `swit
 each person's name and Mattermost username. Four rooms appear; each agent says hello in its desk with today's agenda,
 and introduces itself in `kian-team`.
 
+### 5. The widget (optional)
+
+In the Kian desktop app, open **Settings → Connectors**, choose **Switch**, and sign in with your Mattermost account.
+Then in **Team**, set **Desk room** to your desk (`rahul-desk`). Your agent's questions arrive as cards, and the
+hotkey talks straight to it.
+
 ## Try it
 
 | Where | Say | What happens |
