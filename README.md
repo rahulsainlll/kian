@@ -145,7 +145,8 @@ python3 kian_tools.py brief      # the morning, from the demo data
 python3 -m unittest -v           # ranking and safety rules
 ```
 
-**The desktop app.** Runs on the demo morning until you connect it to Switch in its Setup screen. More in
+**The desktop app.** [Download it](https://github.com/rahulsainlll/kian/releases/latest) for macOS or Windows, or run
+it from source. It plays a demo morning until you connect it to Switch in Settings. More in
 [apps/desktop/README.md](apps/desktop/README.md).
 
 ```bash

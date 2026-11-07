@@ -6,6 +6,7 @@ import { useState, type ReactNode } from 'react'
 import { Button, Toggle } from '@kian/designs'
 import { KianWidget, Mascot } from '@kian/ui'
 import { Nav, SiteFooter } from '../Chrome'
+import { DOWNLOADS } from '../downloads'
 import { ChatApp, Phone } from '../demo/ChatApp'
 import { useAutoplay } from '../demo/useAutoplay'
 import { useDemoDesk } from '../demo/useDemoDesk'
@@ -64,11 +65,11 @@ function Hero() {
           lead list current. You just say yes.
         </p>
         <div className="hero__cta">
-          <a className="dl-btn" href="#download">
+          <a className="dl-btn" href={DOWNLOADS.macArm}>
             <AppleGlyph />
             Download for macOS
           </a>
-          <a className="dl-btn dl-btn--soft" href="#download">
+          <a className="dl-btn dl-btn--soft" href={DOWNLOADS.windows}>
             <WindowsGlyph />
             Windows
           </a>

@@ -1,6 +1,7 @@
 # electron-builder: how Kian is packaged. A dmg for macOS (Apple silicon and
 # Intel) and an NSIS installer for Windows, published to GitHub Releases.
-# Unsigned by default; set CSC_LINK / CSC_KEY_PASSWORD to sign.
+# Unsigned by default; set CSC_LINK / CSC_KEY_PASSWORD to sign. The website
+# links to these artifact names (apps/web/src/downloads.ts).
 appId: ai.kian.desktop
 productName: Kian
 copyright: Built during Flip the Switch
@@ -20,6 +21,7 @@ mac:
   hardenedRuntime: true
   entitlements: build/entitlements.mac.plist
   entitlementsInherit: build/entitlements.mac.plist
+  artifactName: Kian-mac-${arch}.${ext}
   extendInfo:
     LSUIElement: true
     NSMicrophoneUsageDescription: Kian listens only while you hold the hotkey or press the mic, to hear what you say to your desk.
@@ -29,6 +31,7 @@ win:
       arch: [x64, arm64]
   icon: build/icon.png
 nsis:
+  artifactName: Kian-Setup-${arch}.${ext}
   oneClick: true
   perMachine: false
   shortcutName: Kian
@@ -36,3 +39,5 @@ publish:
   provider: github
   owner: rahulsainlll
   repo: kian
+  # a published release, so releases/latest (the website's links) finds it
+  releaseType: release

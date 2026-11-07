@@ -3,6 +3,7 @@
  * apps Switch bridges to. Also the #download anchor for the nav button.
  */
 import { Mascot } from '@kian/ui'
+import { DOWNLOADS } from '../../downloads'
 import { Block } from './Block'
 
 export function Everywhere() {
@@ -14,9 +15,18 @@ export function Everywhere() {
             <b>Mac and Windows</b>
             <span>A small widget that listens when you talk and taps you when a room needs you.</span>
             <div className="where__dl">
-              <span className="where__btn">macOS</span>
-              <span className="where__btn">Windows</span>
-              <span className="where__soon">Builds land with v0.1</span>
+              <a className="where__btn" href={DOWNLOADS.macArm}>
+                Mac, Apple silicon
+              </a>
+              <a className="where__btn" href={DOWNLOADS.macIntel}>
+                Mac, Intel
+              </a>
+              <a className="where__btn" href={DOWNLOADS.windows}>
+                Windows
+              </a>
+              <a className="where__soon" href={DOWNLOADS.all}>
+                Free · all versions
+              </a>
             </div>
           </div>
           <svg className="where__art" viewBox="0 0 400 230" aria-hidden>
