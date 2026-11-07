@@ -4,3 +4,8 @@ dist
 .DS_Store
 *.log
 apps/web/public/readme-preview.html
+# Kian toolkit: Google sign-in and demo state stay on the machine
+switch/toolkit/credentials.json
+switch/toolkit/token*.json
+switch/toolkit/.demo/
+__pycache__/
