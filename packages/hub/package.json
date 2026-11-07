@@ -1,0 +1,28 @@
+{
+  "name": "@kian/hub",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "The Kian hub (team dashboard): one UI for the website's demo and the desktop app's live rooms.",
+  "main": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./hub.css": "./src/hub.css"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@kian/designs": "workspace:*",
+    "@kian/ui": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
+    "react": "^19.2.4",
+    "typescript": "5.9.3"
+  }
+}

@@ -1,6 +1,7 @@
 /*
  * Synthetic data for the dashboard prototype. Same people and deals as the demo morning.
  */
+import type { HubData } from '@kian/hub'
 import type { Activity, Approval, Room } from '@kian/ui'
 
 export const STATS = [
@@ -41,3 +42,29 @@ export const ROOMS: Room[] = [
   { name: 'approvals', topic: 'Only the sales lead approves', members: ['Yukti', 'Ravi Kapoor', 'kian'], unread: true, updated: '8:14' },
   { name: 'content', topic: 'Posts for this week', members: ['Yukti', 'kian-studio'], updated: 'Mon' },
 ]
+
+/** Everything the /dashboard page shows. */
+export const HUB_DEMO: HubData = {
+  greeting: 'Morning, Yukti',
+  stats: [
+    { n: '12', label: 'drafts written' },
+    { n: '3', label: 'replies waiting' },
+    { n: '11', label: 'day streak' },
+  ],
+  approvals: [APPROVAL],
+  timeline: [
+    { id: 't1', time: '9:14am', who: 'kian', text: 'Asked Ravi about 15% off for Lumen Health in #approvals.' },
+    { id: 't2', time: '9:12am', who: 'kian-scribe', text: 'Drafted a reply to Priya Shah moving the call to Tuesday. Waiting in Gmail, not sent.' },
+    { id: 't3', time: '9:05am', who: 'kian-scribe', text: 'Turned the Kestrel call into notes, next steps and a Sheet change for you to approve.' },
+    { id: 't4', time: '8:58am', who: 'kian', text: 'Opened #deal-harbor for a new sender, dana@harborfoods.example, and asked whether to add a lead row.' },
+    { id: 't5', time: '8:30am', who: 'kian', text: 'Ranked your morning: 3 replies, Rahul at 10:30 first, Northwind quiet for 6 days.' },
+    { id: 't6', time: 'Yesterday', who: 'kian-studio', text: 'Wrote this week’s LinkedIn post and an X thread from your four answers.' },
+  ],
+  rooms: ROOMS,
+  setup: [
+    { label: 'Start a Switch server', done: true },
+    { label: 'Connect Gmail and Calendar', done: true },
+    { label: 'Import your lead sheet', done: false },
+    { label: 'Bridge Telegram', done: false },
+  ],
+}

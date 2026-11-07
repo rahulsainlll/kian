@@ -1,0 +1,10 @@
+/*
+ * The team dashboard (the hub), shaped like Wispr Flow's: cream chrome, one
+ * paper panel, serif numbers, teal data and an orange call to action.
+ * Shared by the website and the desktop app. Each part lives in styles/; the import order is the cascade order.
+ */
+
+@import './styles/shell.css';
+@import './styles/today.css';
+@import './styles/insights.css';
+@import './styles/settings.css';
