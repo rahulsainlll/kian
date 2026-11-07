@@ -110,7 +110,7 @@ The desk runs on demo data until you connect Google. Use a throwaway account, ne
    ```
 
 The toolkit asks for Gmail read and compose, Calendar read, and Sheets. Compose is the scope Gmail needs for drafts.
-The code never calls send, and a test checks that no send command exists.
+`send` refuses to run without `--approved-by`, and a test checks that.
 
 ### 5. Telegram (optional)
 
@@ -131,10 +131,10 @@ contact's email (Templates, Import template, then run it); kian loads the histor
 
 ## The rules
 
-1. Never send an email or a message to a customer. Create a Gmail draft and post its link.
+1. Never send an email or a message without its owner's yes in the chat. Create a Gmail draft and post its link.
 2. Never change a price or a discount without a decision recorded in kian-approvals.
 3. Before writing to the lead Sheet, post the column, the old value and the new value, and wait for a yes.
 4. When unsure who a sender is, ask in kian-desk rather than guess.
 
-Rule 1 is enforced by the toolkit, which has no send command. Rules 2 and 3 are enforced by the room instructions
+Rule 1 is enforced by the toolkit, whose `send` needs `--approved-by`. Rules 2 and 3 are enforced by the room instructions
 and by `row apply`, which refuses to run without `--approved-by`.
