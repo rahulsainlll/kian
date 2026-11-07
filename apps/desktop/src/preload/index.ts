@@ -24,6 +24,8 @@ const kian: KianBridge = {
     dismiss: (id) => ipcRenderer.invoke('desk:dismiss', id),
     transcribe: (audio, mime) => ipcRenderer.invoke('desk:transcribe', audio, mime),
     setInteractive: (on) => ipcRenderer.send('desk:interactive', on),
+    moveBy: (dx, dy) => ipcRenderer.send('desk:move-by', dx, dy),
+    moveEnd: () => ipcRenderer.send('desk:move-end'),
     openHub: () => ipcRenderer.send('desk:open-hub'),
   },
   hub: {

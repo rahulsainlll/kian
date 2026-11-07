@@ -14,7 +14,8 @@ const WIDGET = { width: 460, height: 440 }
 const EDGE = 4
 
 /** Moves the widget window to its position on the primary display. */
-export function placeWidget(win: BrowserWindow, position: WidgetPosition) {
+export function placeWidget(win: BrowserWindow, position: WidgetPosition, dragged?: [number, number] | null) {
+  if (dragged) return win.setBounds({ x: dragged[0], y: dragged[1], ...WIDGET })
   const { workArea: a } = screen.getPrimaryDisplay()
   const { width: w, height: h } = WIDGET
   const middleX = Math.round(a.x + (a.width - w) / 2)
@@ -52,7 +53,7 @@ function externalLinks(win: BrowserWindow) {
   })
 }
 
-export function createWidget(position: WidgetPosition): BrowserWindow {
+export function createWidget(position: WidgetPosition, dragged?: [number, number] | null): BrowserWindow {
   const win = new BrowserWindow({
     ...WIDGET,
     show: false,
@@ -70,7 +71,7 @@ export function createWidget(position: WidgetPosition): BrowserWindow {
   win.setAlwaysOnTop(true, process.platform === 'darwin' ? 'floating' : 'screen-saver')
   win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })
   win.setIgnoreMouseEvents(true, { forward: true })
-  placeWidget(win, position)
+  placeWidget(win, position, dragged)
   win.once('ready-to-show', () => win.showInactive())
   externalLinks(win)
   load(win, 'widget')

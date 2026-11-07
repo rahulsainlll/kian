@@ -37,6 +37,9 @@ export function Widget() {
   const { speak, speaking, stop: stopSpeaking } = useSpeak(desk.speak)
   const seen = useRef<string | null>(null)
   const replyTo = useRef<RoomMessage | null>(null)
+  // Dragging the flower moves the window; a drag never counts as a click.
+  const drag = useRef<{ x: number; y: number; moved: boolean } | null>(null)
+  const dragged = useRef(false)
   const { voiceState, setVoiceState } = voice
   const cue = (c: Parameters<typeof play>[0]) => desk.sounds && play(c)
 
@@ -121,10 +124,34 @@ export function Widget() {
     <div
       className="widget-stage"
       data-position={desk.position}
+      data-wispr={voiceOff || undefined}
       data-connection={desk.connection}
       onPointerEnter={() => {
         setHovered(true)
         window.kian.desk.setInteractive(true)
+      }}
+      onPointerDown={(e) => {
+        if (!(e.target as HTMLElement).closest('.k-line--icon')) return
+        drag.current = { x: e.screenX, y: e.screenY, moved: false }
+        e.currentTarget.setPointerCapture(e.pointerId)
+      }}
+      onPointerMove={(e) => {
+        const d = drag.current
+        if (!d) return
+        const dx = e.screenX - d.x
+        const dy = e.screenY - d.y
+        if (!d.moved && Math.hypot(dx, dy) < 4) return
+        d.moved = true
+        d.x = e.screenX
+        d.y = e.screenY
+        window.kian.desk.moveBy(dx, dy)
+      }}
+      onPointerUp={() => {
+        if (drag.current?.moved) {
+          dragged.current = true
+          window.kian.desk.moveEnd()
+        }
+        drag.current = null
       }}
       onPointerLeave={() => {
         setHovered(false)
@@ -138,13 +165,13 @@ export function Widget() {
         restIcon={
           <Mascot
             size={40}
-            talk={voiceState === 'typing'}
             mood={voiceState === 'typing' ? 'look' : hovered ? 'excited' : desk.connection === 'offline' ? 'sleepy' : 'happy'}
           />
         }
         onRestClick={() => {
+          if (dragged.current) return void (dragged.current = false)
           cue('listen')
-          setVoiceState('typing')
+          setVoiceState(voiceState === 'typing' ? 'idle' : 'typing')
         }}
         hint={
           desk.hotkey ? (

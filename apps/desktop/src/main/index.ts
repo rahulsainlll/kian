@@ -37,7 +37,7 @@ function openHub(hash = '') {
 
 /** Settings changed: move the widget, re-register the hotkey, tell both windows. */
 function applySettings() {
-  if (widget && !widget.isDestroyed()) placeWidget(widget, publicSettings().position)
+  if (widget && !widget.isDestroyed()) placeWidget(widget, publicSettings().position, publicSettings().widgetXY)
   registerHotkey()
   desk?.refresh()
   send(hub, 'hub:settings-changed', publicSettings())
@@ -99,11 +99,19 @@ function wireIpc() {
     if (on) widget?.focus()
   })
   ipcMain.on('desk:open-hub', () => openHub())
+  ipcMain.on('desk:move-by', (_e, dx: number, dy: number) => {
+    if (!widget || widget.isDestroyed()) return
+    const [x, y] = widget.getPosition()
+    widget.setPosition(Math.round(x + dx), Math.round(y + dy))
+  })
+  ipcMain.on('desk:move-end', () => {
+    if (widget && !widget.isDestroyed()) saveSettings({ widgetXY: widget.getPosition() as [number, number] })
+  })
 
   ipcMain.handle('hub:settings', () => publicSettings())
   ipcMain.handle('hub:save', async (_e, update: SettingsUpdate) => {
     const before = publicSettings()
-    const saved = saveSettings(update)
+    const saved = saveSettings(update.position ? { ...update, widgetXY: null } : update)
     applySettings()
     // Only a change to the connection needs a reconnect.
     const reconnect = ['backend', 'url', 'team', 'username', 'agents'].some(
@@ -134,7 +142,7 @@ if (!app.requestSingleInstanceLock()) {
   app.whenReady().then(async () => {
     if (process.platform === 'darwin') app.dock?.hide()
     wireIpc()
-    widget = createWidget(publicSettings().position)
+    widget = createWidget(publicSettings().position, publicSettings().widgetXY)
     createTray({
       openHub: () => openHub(),
       openSettings: () => openHub('settings/general'),
@@ -142,7 +150,7 @@ if (!app.requestSingleInstanceLock()) {
       snooze: (minutes) => desk?.snooze(minutes),
       position: () => publicSettings().position,
       setPosition: (position: WidgetPosition) => {
-        saveSettings({ position })
+        saveSettings({ position, widgetXY: null })
         applySettings()
       },
     })
