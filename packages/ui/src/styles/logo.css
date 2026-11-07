@@ -1,0 +1,28 @@
+/*
+ * @kian/ui · logo.css
+ * The wordmark: Bricolage Grotesque at 800, tight tracking, the flower tilted
+ * beside it. Hosts load the font; the stack falls back to the system face.
+ */
+
+.logo {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 0.08em;
+  font-family: var(--display, 'Bricolage Grotesque', system-ui, sans-serif);
+  font-weight: 800;
+  letter-spacing: -0.06em;
+  line-height: 0.8;
+  color: #1d1408;
+}
+.logo__word {
+  user-select: none;
+}
+.logo__buddy {
+  font-size: 0.5em;
+  margin-bottom: 0.04em;
+  rotate: 8deg;
+}
+/* small logos need a bigger Kian to keep the eyes readable */
+.hub__logo .logo__buddy {
+  font-size: 0.72em;
+}

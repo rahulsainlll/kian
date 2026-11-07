@@ -179,29 +179,10 @@
 }
 
 /* ── the logo: wordmark + Kian ── */
-.logo {
-  display: inline-flex;
-  align-items: flex-end;
-  gap: 0.08em;
-  font-family: var(--display);
-  font-weight: 800;
-  letter-spacing: -0.06em;
-  line-height: 0.8;
-  color: #1d1408;
-}
-.logo__word {
-  user-select: none;
-}
-.logo__buddy {
-  font-size: 0.5em;
-  margin-bottom: 0.04em;
-  rotate: 8deg;
-}
 .nav__mark {
   padding: 4px 0;
 }
 /* small logos need a bigger Kian to keep the eyes readable */
-.nav .logo__buddy,
-.hub__logo .logo__buddy {
+.nav .logo__buddy {
   font-size: 0.72em;
 }
