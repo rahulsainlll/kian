@@ -221,10 +221,10 @@ export function ApprovalScene() {
 const TASKS = ['Send SOC 2 report · Fri', 'Pricing for 40 seats · Mon', 'Intro to their IT lead · Tue']
 
 export function MeetingScene() {
-  // recording, notes, tasks, sheet change
+  // recording, notes, next steps, sheet change
   const { ref, step } = useScene([2200, 900, 1300, 3800])
   return (
-    <Frame tint="orange" label="A recorded call becomes notes, tasks and a proposed Sheet change" sceneRef={ref} buddy={{ who: 'kian-scribe', mood: step === 0 ? 'look' : step >= 3 ? 'happy' : 'done' }}>
+    <Frame tint="orange" label="A recorded call becomes notes, next steps and a proposed Sheet change" sceneRef={ref} buddy={{ who: 'kian-scribe', mood: step === 0 ? 'look' : step >= 3 ? 'happy' : 'done' }}>
       <div className="meeting">
         <div className="kian dark meeting__pill">
           <Pill state={step === 0 ? 'recording' : step === 1 ? 'sending' : 'sent'} room="deal-kestrel" />

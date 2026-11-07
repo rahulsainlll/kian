@@ -9,9 +9,9 @@ import { Mascot, PersonAvatar } from '@kian/ui'
 const TIMELINE = [
   { time: '9:14am', who: 'kian', text: 'Asked Ravi about 15% off for Lumen Health in #approvals.' },
   { time: '9:12am', who: 'kian-scribe', text: 'Drafted a reply to Priya Shah moving the call to Tuesday. Waiting in Gmail, not sent.' },
-  { time: '9:05am', who: 'kian-scribe', text: 'Turned the Kestrel call into notes, two tasks and a Sheet change for you to approve.' },
+  { time: '9:05am', who: 'kian-scribe', text: 'Turned the Kestrel call into notes, next steps and a Sheet change for you to approve.' },
   { time: '8:58am', who: 'kian', text: 'Opened #deal-harbor for a new sender, dana@harborfoods.example, and asked whether to add a lead row.' },
-  { time: '8:30am', who: 'kian', text: 'Ranked your morning: 3 replies, Rahul at 10:30 first, Harbor Foods waiting 6 days.' },
+  { time: '8:30am', who: 'kian', text: 'Ranked your morning: 3 replies, Rahul at 10:30 first, Northwind quiet for 6 days.' },
   { time: 'Yesterday', who: 'kian-studio', text: 'Wrote this week’s LinkedIn post and an X thread from your four answers.' },
 ]
 

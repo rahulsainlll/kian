@@ -27,7 +27,7 @@ export const PENDING = [
 export const ACTIVITY: Activity[] = [
   { id: 'e1', actor: 'kian', text: 'asked the sales lead about a 15% discount', room: 'approvals', time: '8:14', kind: 'message' },
   { id: 'e2', actor: 'kian-scribe', text: 'drafted a reply to Priya Shah', room: 'deal-lumen', time: '8:12', kind: 'draft' },
-  { id: 'e3', actor: 'kian-scribe', text: 'turned the Kestrel call into notes and 2 tasks', room: 'deal-kestrel', time: '8:05', kind: 'task' },
+  { id: 'e3', actor: 'kian-scribe', text: 'turned the Kestrel call into notes and next steps', room: 'deal-kestrel', time: '8:05', kind: 'task' },
   { id: 'e4', actor: 'kian', text: 'opened a room for Harbor Foods', room: 'deal-harbor', time: '7:58', kind: 'message' },
   { id: 'e5', actor: 'Ravi Kapoor', text: 'approved list price for Northwind', room: 'approvals', time: 'Yesterday', kind: 'decision' },
   { id: 'e6', actor: 'kian-studio', text: 'wrote this week’s LinkedIn post', room: 'content', time: 'Yesterday', kind: 'draft' },

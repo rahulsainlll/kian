@@ -179,7 +179,7 @@ function ActionCard({ message: m, done, onAnswer }: { message: RoomMessage; done
   )
 }
 
-/** Telegram on Yukti's phone: the desk room, bridged by Switch, history included. */
+/** Telegram on Yukti's phone: kian answers in a Telegram group that Switch bridges. */
 export function Phone({ log }: { log: LogLine[] }) {
   const lines = log.filter((l) => l.room === 'kian-desk').slice(-5)
   return (

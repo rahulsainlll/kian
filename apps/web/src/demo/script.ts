@@ -19,9 +19,9 @@ const msg = (m: Omit<RoomMessage, 'id'>): RoomMessage => ({ id: `m${++seq}`, ...
 /** What the rooms already hold before the demo starts: yesterday, then the kickoff. */
 export const HISTORY: { room: string; author: string; text: string; day?: 'yesterday' }[] = [
   { room: 'kian-desk', author: 'kian', text: 'Wrapped up for today: 4 follow-ups drafted, 3 approved by you and sent from Gmail.', day: 'yesterday' },
-  { room: 'kian-desk', author: 'yukti', text: 'Thanks. Keep Harbor Foods on the list for tomorrow.', day: 'yesterday' },
+  { room: 'kian-desk', author: 'yukti', text: 'Thanks. Keep Northwind Supply on the list for tomorrow.', day: 'yesterday' },
   { room: 'deal-lumen', author: 'kian-scribe', text: 'Notes from the Lumen call are in. Next step: proposal by Friday.', day: 'yesterday' },
-  { room: 'deal-kestrel', author: 'kian-scribe', text: 'Kestrel asked for a SOC 2 report. Logged as a task.', day: 'yesterday' },
+  { room: 'deal-kestrel', author: 'kian-scribe', text: 'Kestrel asked for a SOC 2 report. Added to the deal summary as a next step.', day: 'yesterday' },
   { room: 'approvals', author: 'Ravi Kapoor', text: 'approved', day: 'yesterday' },
   { room: 'content', author: 'kian-studio', text: 'This week’s LinkedIn post is drafted. Want to record answers for the next one?', day: 'yesterday' },
   { room: 'kian-desk', author: 'kian', text: 'Morning. Desk is ready. Say “morning, Kian” whenever you are.' },
@@ -64,7 +64,7 @@ export const briefItems = (): Step[] => [
     message: msg({
       author: 'kian',
       room: 'kian-desk',
-      text: 'Harbor Foods has been quiet for 6 days since your proposal. Want a nudge drafted?',
+      text: 'Northwind Supply has been quiet for 6 days since your proposal. Want a nudge drafted?',
       chips: [done, skip, draft],
     }),
   },

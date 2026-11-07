@@ -8,7 +8,7 @@ import { Block } from './Block'
 
 const AGENTS: { who: keyof typeof CAST; mood: Mood; job: string; line: string; room: string }[] = [
   { who: 'kian', mood: 'look', job: 'The coordinator', line: 'Reads the inbox and calendar, ranks your day, opens a room for every deal.', room: 'Lives in the desk' },
-  { who: 'kian-scribe', mood: 'wink', job: 'The writer', line: 'Drafts replies in your voice and turns calls into notes and tasks.', room: 'Works in every deal room' },
+  { who: 'kian-scribe', mood: 'wink', job: 'The writer', line: 'Drafts replies in your voice and turns calls into notes and next steps.', room: 'Works in every deal room' },
   { who: 'kian-studio', mood: 'happy', job: 'The storyteller', line: 'Asks four questions and turns your answers into this week’s posts.', room: 'Lives in content' },
 ]
 

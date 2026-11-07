@@ -50,11 +50,12 @@ const POSTS: Post[] = [
           When Yukti asks for a draft, kian doesn’t write it. It posts “@kian-scribe, Priya wants Tuesday” in the deal
           room, the same way a lead hands work to a colleague. The hand-off is visible to everyone in the room.
         </p>
-        <h2>Rules, tasks and decisions</h2>
+        <h2>Rules and documents</h2>
         <p>
-          Room rules say what every agent must do: draft, never send. Next steps from a call become tasks with dates.
-          When the sales lead approves a discount, it becomes a room decision with their name on it, which is the audit
-          trail a finance team asks for.
+          Room instructions say what every agent and person in the room must do: draft, never send. Each deal room
+          keeps a Deal summary document with next steps, owners and dates. When the sales lead approves a discount, kian
+          writes it into the Decisions document with their name and the date. Only the agent that wrote a document can
+          change it, which makes it the audit trail a finance team asks for.
         </p>
         <h2>Who can talk to whom</h2>
         <p>
@@ -63,8 +64,8 @@ const POSTS: Post[] = [
         </p>
         <h2>Bridges</h2>
         <p>
-          The desk room is bridged to Telegram and to Mattermost. The morning brief reaches Yukti’s phone and her desk at
-          the same time, and a reply from either one lands in the same room.
+          The rooms live on Mattermost, and kian also answers in a Telegram group that Switch bridges. Yukti can ask for
+          her brief from her phone on the way in, and answer it at her desk.
         </p>
         <h2>One template</h2>
         <p>
@@ -77,7 +78,7 @@ const POSTS: Post[] = [
   {
     slug: 'building-kian-on-switch',
     title: 'Building a sales desk on Switch in four days',
-    dek: 'Three agents, five rooms and one rule: agents draft, people send. A walkthrough for your first Switch project.',
+    dek: 'Three agents, a room per deal and one rule: agents draft, people send. A walkthrough for your first Switch project.',
     who: 'kian',
     mood: 'happy',
     tone: '#cfe0ff',
@@ -109,7 +110,7 @@ const POSTS: Post[] = [
         <p>
           The agents reach Google through a small Python toolkit with four commands: brief, deal, draft and update-row.
           There is no send command, so an agent cannot email a customer even if it wanted to. Prices go to an approvals
-          room, and the sales lead’s answer becomes a room decision.
+          room, and the sales lead’s answer goes into a Decisions document.
         </p>
         <h2>5. Capture it as a template</h2>
         <p>
