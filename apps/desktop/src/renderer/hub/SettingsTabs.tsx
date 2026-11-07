@@ -154,16 +154,15 @@ function SwitchRows({ s, save }: { s: Settings; save: Save }) {
       )}
       <Connector
         name="Switch agents"
-        desc="kian, kian-scribe and kian-studio, from kian.template.yaml"
+        desc="Your own agent and your teammates', from team.template.yaml"
         glyph={<BoltIcon />}
         connected={live}
         onConnect={async () => (await save({ backend: 'mattermost' }), false)}
       />
       <Connector
         name="Gmail, Calendar and Sheets"
-        desc="Reached by the agents’ toolkit on the Switch machine. Drafts only."
+        desc="Each person signs in once on the Switch machine: kian_tools.py --profile NAME login"
         brand="gmail"
-        connected={live}
         onConnect={() => guide('#4-a-real-google-account-optional')}
       />
       <Connector name="Telegram" desc="Invite kian to a Telegram group from Switch Console" glyph={<PlaneIcon />} onConnect={() => guide('#5-telegram-optional')} />

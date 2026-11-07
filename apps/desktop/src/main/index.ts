@@ -58,7 +58,10 @@ async function connect() {
   desk = new Desk(
     rooms,
     publicSettings,
-    (state: DeskState) => send(widget, 'desk:state', state),
+    (state: DeskState) => {
+      send(widget, 'desk:state', state)
+      send(hub, 'desk:state', state) // the hub greets the signed-in person
+    },
     (event: RoomEvent) => send(hub, 'hub:feed', event),
   )
   desk.setConnection('connecting')
