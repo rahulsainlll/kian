@@ -26,7 +26,7 @@ export function parseAnswers(text: string): { body: string; chips: Chip[] } {
     const chip: Chip = { label, reply: label }
     if (hold) Object.assign(chip, { hold: true, holdLabel: `Hold to ${label}`, tone: 'primary' })
     else if (NEGATIVE.has(label.toLowerCase())) chip.tone = 'danger'
-    else if (!hasHold && i === words.length - 1 && words.length > 1) chip.tone = 'primary'
+    else if (!hasHold && i === words.length - 1) chip.tone = 'primary'
     return chip
   })
   return { body: lines.slice(0, -1).join('\n').trim(), chips }

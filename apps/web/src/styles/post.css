@@ -1,0 +1,212 @@
+/*
+ * site · post.css
+ * The long-form blog post (tables, code, figures, notes, link buttons), the
+ * featured post on /blog, and the demo strip on /dashboard.
+ */
+
+/* ── the featured post on /blog ── */
+.blog__feature {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 32px;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+}
+.blog__feature img {
+  width: 100%;
+  height: auto;
+  border-radius: 24px;
+  transition: transform 300ms var(--ease-out);
+}
+.blog__feature > span {
+  display: grid;
+  gap: 10px;
+}
+.blog__feature .blog__title {
+  font-size: 32px;
+}
+.blog__feature small {
+  color: var(--ink-3);
+  font-weight: 600;
+}
+@media (hover: hover) and (pointer: fine) {
+  .blog__feature:hover img {
+    transform: translateY(-3px);
+  }
+}
+
+/* ── the long post ── */
+.post--long {
+  max-width: 760px;
+}
+.post__cover {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-bottom: 28px;
+  border-radius: 24px;
+}
+.post__by {
+  margin: 14px 0 0;
+  color: var(--ink-2);
+  font-size: 15px;
+}
+.post__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 20px 0;
+}
+.post__link {
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 650;
+  text-decoration: none;
+  box-shadow: 0 0 0 1px rgba(23, 23, 26, 0.1);
+}
+.post__link--dark {
+  background: var(--ink);
+  color: #fff;
+  box-shadow: none;
+}
+.post__note {
+  margin: 8px 0 0;
+  padding: 16px 20px;
+  border-radius: 18px;
+  background: #e3ecff;
+  color: #1c3a7a;
+  font-size: 15.5px;
+  line-height: 1.55;
+}
+.post__body h3 {
+  margin: 28px 0 6px;
+  font-family: var(--display);
+  font-size: 18px;
+  letter-spacing: -0.01em;
+}
+.post__body ul {
+  margin: 0 0 16px;
+  padding-left: 22px;
+}
+.post__body li {
+  margin: 4px 0;
+}
+.post__body a {
+  color: #2f6ee6;
+  text-underline-offset: 3px;
+}
+.post__body code {
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: #efe8dd;
+  font-size: 0.88em;
+}
+.post__body pre {
+  margin: 0 0 16px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  border-radius: 14px;
+  background: #1d1b18;
+  color: #f3eee6;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.post__body pre code {
+  padding: 0;
+  background: none;
+  color: inherit;
+}
+.post__img {
+  margin: 20px 0;
+}
+.post__img img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 18px;
+  box-shadow: 0 0 0 1px rgba(23, 23, 26, 0.06);
+}
+.post__table {
+  margin: 0 0 18px;
+  overflow-x: auto;
+}
+.post__table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  line-height: 1.45;
+}
+.post__table th,
+.post__table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e6ddd0;
+  text-align: left;
+  vertical-align: top;
+}
+.post__table th {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-2);
+  background: #f3ece2;
+}
+.post__origin {
+  margin: 32px 0 0;
+  color: var(--ink-2);
+  font-size: 15px;
+}
+
+/* ── /dashboard: the demo strip ── */
+.demo-strip {
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+  z-index: 50;
+  translate: -50% 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  max-width: calc(100vw - 32px);
+  padding: 10px 12px 10px 18px;
+  box-sizing: border-box;
+  border-radius: 999px;
+  background: #17171a;
+  color: #fff;
+  font-size: 14px;
+  box-shadow: 0 16px 36px -14px rgba(0, 0, 0, 0.45);
+}
+.demo-strip span {
+  white-space: nowrap;
+}
+.demo-strip a {
+  flex: none;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: #fff;
+  color: #17171a;
+  font-weight: 650;
+  text-decoration: none;
+}
+.demo-strip a + a {
+  background: transparent;
+  color: #fff;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3);
+}
+
+@media (max-width: 760px) {
+  .blog__feature {
+    grid-template-columns: 1fr;
+  }
+  .demo-strip {
+    flex-wrap: wrap;
+    justify-content: center;
+    border-radius: 20px;
+    text-align: center;
+  }
+  .demo-strip span {
+    white-space: normal;
+  }
+}

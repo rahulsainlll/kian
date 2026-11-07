@@ -143,10 +143,9 @@ export function Widget() {
         const dx = e.screenX - d.x
         const dy = e.screenY - d.y
         if (!d.moved && Math.hypot(dx, dy) < 4) return
+        if (!d.moved) window.kian.desk.dragStart()
         d.moved = true
-        d.x = e.screenX
-        d.y = e.screenY
-        window.kian.desk.moveBy(dx, dy)
+        window.kian.desk.dragMove()
       }}
       onPointerUp={() => {
         if (drag.current?.moved) {

@@ -11,6 +11,7 @@ import type { RoomMessage } from '@kian/ui'
 import { parseAnswers } from '../shared/answers'
 import type { Connection, DeskState, RoomEvent, Settings } from '../shared/types'
 import type { Rooms } from './rooms/types'
+import { Walkthrough } from './walkthrough'
 
 const PENDING_TIMEOUT_MS = 25_000
 /** Switch's own progress notes ("Working… 20s", "Queued…"), never cards. */
@@ -27,6 +28,22 @@ export class Desk {
   private me = ''
   /** Called for every new card, e.g. to raise a system notification. */
   onCard?: (message: RoomMessage) => void
+  /** The scripted morning for recording demos; its cards never post to rooms. */
+  readonly walkthrough = new Walkthrough(
+    (e) => {
+      // One walkthrough card at a time, ahead of live messages.
+      this.queue = this.queue.filter((q) => !this.walkthrough.owns(q.message.id))
+      this.consider(e)
+    },
+    () => this.settings().deskRoom,
+  )
+
+  /** Restarts the walkthrough from the greeting, clearing any old walkthrough cards. */
+  playWalkthrough(delay: number) {
+    this.queue = this.queue.filter((q) => !this.walkthrough.owns(q.message.id))
+    this.emit()
+    this.walkthrough.play(delay)
+  }
 
   constructor(
     private rooms: Rooms,
@@ -92,6 +109,10 @@ export class Desk {
   }
 
   async answer(messageId: string, reply: string) {
+    if (this.walkthrough.owns(messageId)) {
+      this.drop(messageId)
+      return this.walkthrough.answer(messageId, reply)
+    }
     // A card in the queue, or any message in the feed (the hub answers approvals too).
     const event = this.queue.find((q) => q.message.id === messageId)?.event ?? this.feed.find((e) => e.id === messageId)
     if (!event) return
@@ -138,7 +159,8 @@ export class Desk {
           ? { label: 'Open in Mattermost', href: event.permalink }
           : undefined,
     }
-    this.queue.push({ event, message })
+    if (this.walkthrough.owns(event.id)) this.queue.unshift({ event, message })
+    else this.queue.push({ event, message })
     console.log(`[kian] card from ${event.author} in #${event.room}: ${message.text.slice(0, 80)}`)
     this.onCard?.(message)
     this.emit()

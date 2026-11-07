@@ -1,0 +1,258 @@
+/*
+ * The explainer slides (/art/x-*): 1920×1080, cream paper, Bricolage titles,
+ * white tiles and the cast. Matches the How Kian works picture.
+ */
+.x {
+  display: flex;
+  flex-direction: column;
+  padding: 72px 96px;
+  box-sizing: border-box;
+  background: #f7f1ea;
+  color: #1d1408;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+.x__head {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+.x__kicker {
+  font-size: 24px;
+  font-weight: 700;
+  color: #3d7bf2;
+  background: #e3ecff;
+  border-radius: 999px;
+  padding: 8px 18px;
+}
+.x__title {
+  margin: 40px 0 0;
+  font-family: var(--display);
+  font-size: 76px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.02;
+  max-width: 1500px;
+}
+.x__title em {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: -0.01em;
+}
+.x__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 40px;
+}
+.x__lede {
+  margin: 0;
+  max-width: 1300px;
+  font-size: 32px;
+  line-height: 1.4;
+  color: #5d5242;
+}
+
+/* problem: the pings that fill a team's day */
+.x-pings {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px;
+}
+.x-ping {
+  padding: 22px 30px;
+  border-radius: 28px 28px 28px 8px;
+  background: #fff;
+  font-size: 34px;
+  font-weight: 600;
+  box-shadow: 0 12px 30px rgba(40, 30, 10, 0.08);
+  rotate: calc((var(--i) - 1.5) * 1.2deg);
+}
+
+/* tiles */
+.x-grid {
+  display: grid;
+  gap: 24px;
+}
+.x-grid--3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+.x-grid--4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+.x-tile {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  padding: 32px;
+  border-radius: 30px;
+  background: #fff;
+  box-shadow: 0 12px 30px rgba(40, 30, 10, 0.07);
+}
+.x-tile__icon {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  background: #e3ecff;
+  color: #3d7bf2;
+  font-size: 34px;
+  font-weight: 800;
+}
+.x-tile b {
+  font-size: 34px;
+  letter-spacing: -0.01em;
+}
+.x-tile p {
+  margin: 0;
+  font-size: 25px;
+  line-height: 1.4;
+  color: #5d5242;
+}
+
+/* how Kian uses Switch: three members over one room */
+.x-team {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+.x-member {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  padding: 30px 26px;
+  border-radius: 30px;
+  background: #fff;
+  text-align: center;
+  box-shadow: 0 12px 30px rgba(40, 30, 10, 0.07);
+}
+.x-member b {
+  font-size: 34px;
+}
+.x-member small {
+  font-size: 23px;
+  line-height: 1.35;
+  color: #5d5242;
+}
+.x-desk {
+  font-size: 22px;
+  font-weight: 700;
+  color: #3d7bf2;
+  background: #e3ecff;
+  border-radius: 999px;
+  padding: 6px 14px;
+}
+.x-room {
+  display: grid;
+  gap: 8px;
+  padding: 30px 40px;
+  border-radius: 30px;
+  background: #1d1b18;
+  color: #fff;
+}
+.x-room b {
+  font-size: 38px;
+}
+.x-room span {
+  font-size: 27px;
+  color: #d8d2c8;
+}
+
+/* architecture: a left-to-right pipeline */
+.x-arch {
+  display: flex;
+  align-items: stretch;
+  gap: 14px;
+}
+.x-node {
+  flex: 1;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 10px;
+  padding: 30px 18px;
+  border-radius: 28px;
+  background: #fff;
+  text-align: center;
+  box-shadow: 0 12px 30px rgba(40, 30, 10, 0.07);
+}
+.x-node b {
+  font-size: 29px;
+  letter-spacing: -0.01em;
+}
+.x-node small {
+  font-size: 21px;
+  line-height: 1.35;
+  color: #5d5242;
+}
+.x-node--wispr {
+  background: #1d1b18;
+}
+.x-node--wispr b {
+  color: #fff;
+}
+.x-node--wispr small {
+  color: #d8d2c8;
+}
+.x-node--switch {
+  background: #3d7bf2;
+}
+.x-node--switch b,
+.x-node--switch small {
+  color: #fff;
+}
+.x-link {
+  align-self: center;
+  font-size: 40px;
+  font-weight: 800;
+  color: #3d7bf2;
+}
+
+/* impact chips */
+.x-wins {
+  display: flex;
+  gap: 18px;
+}
+.x-wins span {
+  padding: 16px 26px;
+  border-radius: 999px;
+  background: #1d1b18;
+  color: #fff;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+/* closing */
+.x--close {
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  text-align: center;
+}
+.x--close p {
+  margin: 0;
+  font-size: 44px;
+  font-weight: 600;
+}
+.x-cast {
+  display: flex;
+  gap: 40px;
+}
+.x-links {
+  display: flex;
+  gap: 24px;
+}
+.x-links span {
+  padding: 16px 30px;
+  border-radius: 999px;
+  background: #fff;
+  font-size: 32px;
+  font-weight: 700;
+  box-shadow: 0 10px 24px rgba(40, 30, 10, 0.08);
+}
+.x--close small {
+  font-size: 26px;
+  color: #5d5242;
+}

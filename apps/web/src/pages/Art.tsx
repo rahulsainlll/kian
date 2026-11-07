@@ -10,6 +10,9 @@ import { SwitchNotebook } from './home/SwitchUse'
 import './art.css'
 import { GuideMac, GuideWindows } from './art/Guides'
 import { HowItWorks } from './art/HowItWorks'
+import { XClosing, XHowKian, XProblem } from './art/Explainer'
+import { XDesktop, XImpact, XNotify, XStage } from './art/ExplainerScenes'
+import { XArchitecture, XNotebook, XWhySwitch } from './art/ExplainerSwitch'
 
 const BRIEF: RoomMessage = {
   id: 'a1',
@@ -78,7 +81,7 @@ function Banner({ w, h }: { w: number; h: number }) {
       </div>
       <div className="hero-art__body">
         <Logo size={150} />
-        <p>A sales desk run by agents in your team’s Switch rooms.</p>
+        <p>An agent for everyone on your team, working together in Switch.</p>
       </div>
       <CastRow size={110} />
     </Frame>
@@ -149,13 +152,28 @@ function TrayIcon() {
   )
 }
 
-const ART: Record<string, () => ReactNode> = { og: Og, hero: Hero, cast: Cast, switch: Switch, widget: Widget, appicon: AppIcon, trayicon: TrayIcon, 'guide-mac': () => <GuideMac />, 'guide-windows': () => <GuideWindows />, 'how-it-works': HowItWorks }
+const ART: Record<string, () => ReactNode> = { og: Og, hero: Hero, cast: Cast, switch: Switch, widget: Widget, appicon: AppIcon, trayicon: TrayIcon, 'guide-mac': () => <GuideMac />, 'guide-windows': () => <GuideWindows />, 'how-it-works': HowItWorks,
+  'x-problem': XProblem,
+  'x-why-switch': XWhySwitch,
+  'x-how-kian': XHowKian,
+  'x-architecture': XArchitecture,
+  'x-impact': XImpact,
+  'x-closing': XClosing,
+  'x-notebook': XNotebook,
+  'x-desktop': XDesktop,
+  'x-notify': XNotify,
+  'x-stage': XStage,
+}
 const CLEAR = new Set(['appicon', 'trayicon'])
 
 export function Art({ name }: { name?: string }) {
   const Piece = (name && ART[name]) || Og
   return (
-    <div className={`art-page${name && CLEAR.has(name) ? ' art-page--clear' : ''}`}>
+    <div
+      className={`art-page${name && CLEAR.has(name) ? ' art-page--clear' : ''}`}
+      // ?t=<seconds> seeks the slide animations, for frame-by-frame video capture
+      style={{ ['--t' as string]: `${new URLSearchParams(location.search).get('t') ?? 10}s` }}
+    >
       <Piece />
     </div>
   )

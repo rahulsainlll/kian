@@ -14,6 +14,7 @@ export interface TrayActions {
   snooze(minutes: number): void
   position(): WidgetPosition
   setPosition(p: WidgetPosition): void
+  playWalkthrough(): void
 }
 
 const POSITIONS: [WidgetPosition, string][] = [
@@ -49,6 +50,7 @@ function menu(actions: TrayActions) {
       })),
     },
     { type: 'separator' },
+    { label: 'Play the morning walkthrough', click: actions.playWalkthrough },
     { label: 'Snooze for an hour', click: () => actions.snooze(60) },
     { type: 'separator' },
     { label: 'Quit Kian', role: 'quit', click: () => app.quit() },
