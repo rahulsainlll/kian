@@ -1,0 +1,31 @@
+/*
+ * The reset the design kit expects. The website gets it from Tailwind's
+ * preflight; the desktop app loads no Tailwind, so this is the same idea in
+ * a few lines. It sits in the `base` layer, which the kit's `components`
+ * layer outranks, so kit styles always win over it.
+ */
+@layer base {
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+    border: 0 solid;
+    margin: 0;
+    padding: 0;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+    background: transparent;
+    border-radius: 0;
+  }
+
+  button {
+    cursor: pointer;
+  }
+}

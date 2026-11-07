@@ -5,7 +5,7 @@
  * the main process.
  */
 import { contextBridge, ipcRenderer } from 'electron'
-import type { DeskState, KianBridge, RoomEvent } from '../shared/types'
+import type { DeskState, KianBridge, RoomEvent, Settings } from '../shared/types'
 
 function listen<T>(channel: string, fn: (payload: T) => void) {
   const handler = (_e: unknown, payload: T) => fn(payload)
@@ -33,6 +33,7 @@ const kian: KianBridge = {
     rooms: () => ipcRenderer.invoke('hub:rooms'),
     feed: () => ipcRenderer.invoke('hub:feed'),
     onFeed: (fn) => listen<RoomEvent>('hub:feed', fn),
+    onSettings: (fn) => listen<Settings>('hub:settings-changed', fn),
   },
 }
 

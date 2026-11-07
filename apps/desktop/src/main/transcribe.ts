@@ -1,20 +1,28 @@
 /*
- * Speech to text for the pill's mic. Sends the recording to an OpenAI-
- * compatible /audio/transcriptions endpoint when a key is set in the hub.
- * Without one it returns null, and the widget opens the type bar instead,
- * which is where Wispr Flow (or the system's dictation) types for you.
+ * Speech to text for the pill's mic. Every engine in shared/voice.ts takes
+ * the same request: POST <url>/audio/transcriptions with the recording as a
+ * WAV file. NVIDIA's speech NIM also wants a language and no key. With the
+ * provider set to "off" this returns null, and the widget opens the type bar
+ * for Wispr Flow or the system's dictation instead.
  */
+import { VOICE_PRESETS } from '../shared/voice'
 import type { Settings } from '../shared/types'
 
 export async function transcribe(audio: ArrayBuffer, mime: string, settings: Settings, key: string): Promise<string | null> {
-  if (!key || !settings.sttUrl) return null
+  const provider = settings.sttProvider
+  if (provider === 'off') return null
+  const preset = VOICE_PRESETS[provider]
+  const url = (settings.sttUrl || preset.url).replace(/\/+$/, '')
+  if (!url || (preset.needsKey && !key)) return null
+
   const form = new FormData()
-  const ext = mime.includes('mp4') ? 'mp4' : mime.includes('ogg') ? 'ogg' : 'webm'
-  form.append('file', new Blob([audio], { type: mime }), `speech.${ext}`)
-  form.append('model', settings.sttModel)
-  const res = await fetch(`${settings.sttUrl.replace(/\/+$/, '')}/audio/transcriptions`, {
+  form.append('file', new Blob([audio], { type: mime }), mime.includes('wav') ? 'speech.wav' : 'speech.webm')
+  form.append('model', settings.sttModel || preset.model)
+  if (provider === 'nvidia') form.append('language', 'en-US')
+
+  const res = await fetch(`${url}/audio/transcriptions`, {
     method: 'POST',
-    headers: { Authorization: `Bearer ${key}` },
+    headers: key ? { Authorization: `Bearer ${key}` } : {},
     body: form,
   })
   if (!res.ok) throw new Error(`Transcription failed (${res.status}).`)

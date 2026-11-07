@@ -21,9 +21,12 @@ const DEFAULTS: Stored = {
   approvalsRoom: 'kian-approvals',
   approver: false,
   hotkey: 'CommandOrControl+Shift+K',
+  position: 'bottom',
+  sounds: true,
   speak: false,
-  sttUrl: 'https://api.openai.com/v1',
-  sttModel: 'gpt-4o-mini-transcribe',
+  sttProvider: 'off',
+  sttUrl: '',
+  sttModel: '',
 }
 
 const file = () => join(app.getPath('userData'), 'settings.json')

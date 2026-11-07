@@ -30,6 +30,12 @@ export interface RoomSummary {
 
 export type Connection = 'connecting' | 'online' | 'offline' | 'demo' | 'setup'
 
+/** Where the widget sits. The side positions stand the pill upright. */
+export type WidgetPosition = 'bottom' | 'bottom-left' | 'bottom-right' | 'left' | 'right'
+
+/** Who turns speech into text. "off" opens the type bar, for Wispr Flow or system dictation. */
+export type VoiceProvider = 'off' | 'openai' | 'groq' | 'nvidia' | 'custom'
+
 /** What the widget shows. Voice state belongs to the renderer, not here. */
 export interface DeskState {
   message: RoomMessage | null
@@ -37,6 +43,12 @@ export interface DeskState {
   pending: { author: string; room: string } | null
   connection: Connection
   deskRoom: string
+  /** The signed-in username, for the greeting. */
+  me: string
+  position: WidgetPosition
+  sounds: boolean
+  speak: boolean
+  hotkey: string
 }
 
 /** Settings the hub edits. Secrets are write-only: the renderer sees only whether one is set. */
@@ -53,7 +65,10 @@ export interface Settings {
   /** This person is the sales lead: approval cards are for them. */
   approver: boolean
   hotkey: string
+  position: WidgetPosition
+  sounds: boolean
   speak: boolean
+  sttProvider: VoiceProvider
   sttUrl: string
   sttModel: string
   hasToken: boolean
@@ -70,6 +85,7 @@ export interface KianBridge {
     onState(fn: (s: DeskState) => void): () => void
     onHotkey(fn: () => void): () => void
     say(text: string): Promise<void>
+    /** Answer a card, or any agent message in the feed (approvals from the hub). */
     answer(messageId: string, reply: string): Promise<void>
     dismiss(messageId: string): Promise<void>
     transcribe(audio: ArrayBuffer, mime: string): Promise<string | null>
@@ -83,5 +99,7 @@ export interface KianBridge {
     rooms(): Promise<RoomSummary[]>
     feed(): Promise<RoomEvent[]>
     onFeed(fn: (e: RoomEvent) => void): () => void
+    /** Settings changed elsewhere (the tray's position menu). */
+    onSettings(fn: (s: Settings) => void): () => void
   }
 }

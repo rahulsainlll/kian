@@ -41,6 +41,13 @@ export async function captureRun(windows: { widget: () => BrowserWindow | null; 
   windows.hub()?.webContents.invalidate()
   await wait(800) // a window in the background keeps its last painted frame
   await shoot(windows.hub(), dir, 'hub-today')
+  for (const tab of ['general', 'agents', 'connectors']) {
+    await windows.hub()?.webContents.executeJavaScript(`location.hash = 'settings/${tab}'`)
+    await wait(700)
+    windows.hub()?.webContents.invalidate()
+    await wait(300)
+    await shoot(windows.hub(), dir, `hub-settings-${tab}`)
+  }
   console.log(`[kian] captured windows into ${dir}`)
   app.quit()
 }

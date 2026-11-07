@@ -5,7 +5,7 @@
  * IPC the preload bridge exposes. Saving settings reconnects the rooms.
  */
 import { BrowserWindow, app, globalShortcut, ipcMain } from 'electron'
-import type { DeskState, RoomEvent, SettingsUpdate } from '../shared/types'
+import type { DeskState, RoomEvent, SettingsUpdate, WidgetPosition } from '../shared/types'
 import { captureRun } from './capture'
 import { Desk } from './desk'
 import { MattermostRooms } from './rooms/mattermost'
@@ -14,7 +14,7 @@ import type { Rooms } from './rooms/types'
 import { publicSettings, saveSettings, secrets } from './settings'
 import { transcribe } from './transcribe'
 import { createTray } from './tray'
-import { createHub, createWidget } from './windows'
+import { createHub, createWidget, placeWidget } from './windows'
 
 let widget: BrowserWindow | null = null
 let hub: BrowserWindow | null = null
@@ -25,10 +25,22 @@ function send(win: BrowserWindow | null, channel: string, payload?: unknown) {
   if (win && !win.isDestroyed()) win.webContents.send(channel, payload)
 }
 
-function openHub() {
-  if (hub && !hub.isDestroyed()) return hub.show(), hub.focus()
-  hub = createHub()
+/** Opens (or focuses) the hub; `hash` jumps to a view or settings tab. */
+function openHub(hash = '') {
+  if (hub && !hub.isDestroyed()) {
+    if (hash) void hub.webContents.executeJavaScript(`location.hash = ${JSON.stringify(hash)}`)
+    return hub.show(), hub.focus()
+  }
+  hub = createHub(hash)
   hub.on('closed', () => (hub = null))
+}
+
+/** Settings changed: move the widget, re-register the hotkey, tell both windows. */
+function applySettings() {
+  if (widget && !widget.isDestroyed()) placeWidget(widget, publicSettings().position)
+  registerHotkey()
+  desk?.refresh()
+  send(hub, 'hub:settings-changed', publicSettings())
 }
 
 function makeRooms(): Rooms {
@@ -51,7 +63,8 @@ async function connect() {
   )
   desk.setConnection('connecting')
   try {
-    await rooms.connect()
+    const me = await rooms.connect()
+    desk.setMe(me.username)
     desk.setConnection(rooms.kind === 'mock' ? 'demo' : 'online')
   } catch (err) {
     console.error('[kian] could not connect:', err)
@@ -81,13 +94,18 @@ function wireIpc() {
     widget?.setIgnoreMouseEvents(!on, { forward: true })
     if (on) widget?.focus()
   })
-  ipcMain.on('desk:open-hub', openHub)
+  ipcMain.on('desk:open-hub', () => openHub())
 
   ipcMain.handle('hub:settings', () => publicSettings())
   ipcMain.handle('hub:save', async (_e, update: SettingsUpdate) => {
+    const before = publicSettings()
     const saved = saveSettings(update)
-    registerHotkey()
-    await connect()
+    applySettings()
+    // Only a change to the connection needs a reconnect.
+    const reconnect = ['backend', 'url', 'team', 'username', 'agents'].some(
+      (k) => JSON.stringify(before[k as keyof typeof before]) !== JSON.stringify(saved[k as keyof typeof saved]),
+    )
+    if (reconnect || update.token !== undefined) await connect()
     return saved
   })
   ipcMain.handle('hub:test', async () => {
@@ -108,15 +126,21 @@ function wireIpc() {
 if (!app.requestSingleInstanceLock()) {
   app.quit()
 } else {
-  app.on('second-instance', openHub)
+  app.on('second-instance', () => openHub())
   app.whenReady().then(async () => {
     if (process.platform === 'darwin') app.dock?.hide()
     wireIpc()
-    widget = createWidget()
+    widget = createWidget(publicSettings().position)
     createTray({
-      openHub,
+      openHub: () => openHub(),
+      openSettings: () => openHub('settings/general'),
       toggleWidget: () => (widget?.isVisible() ? widget.hide() : widget?.showInactive()),
       snooze: (minutes) => desk?.snooze(minutes),
+      position: () => publicSettings().position,
+      setPosition: (position: WidgetPosition) => {
+        saveSettings({ position })
+        applySettings()
+      },
     })
     registerHotkey()
     await connect()

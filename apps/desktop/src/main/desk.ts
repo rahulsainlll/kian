@@ -22,6 +22,7 @@ export class Desk {
   private connection: Connection = 'connecting'
   private snoozedUntil = 0
   private feed: RoomEvent[] = []
+  private me = ''
 
   constructor(
     private rooms: Rooms,
@@ -35,13 +36,29 @@ export class Desk {
 
   state(): DeskState {
     const head = Date.now() < this.snoozedUntil ? null : this.queue[0]
+    const s = this.settings()
     return {
       message: head?.message ?? null,
       queued: Math.max(0, this.queue.length - 1),
       pending: head ? null : this.pending,
       connection: this.connection,
-      deskRoom: this.settings().deskRoom,
+      deskRoom: s.deskRoom,
+      me: this.me,
+      position: s.position,
+      sounds: s.sounds,
+      speak: s.speak,
+      hotkey: s.hotkey,
     }
+  }
+
+  setMe(username: string) {
+    this.me = username
+    this.emit()
+  }
+
+  /** Settings changed: the widget re-reads position, sounds and the hotkey. */
+  refresh() {
+    this.emit()
   }
 
   history(): RoomEvent[] {
@@ -61,10 +78,11 @@ export class Desk {
   }
 
   async answer(messageId: string, reply: string) {
-    const item = this.queue.find((q) => q.message.id === messageId)
-    if (!item) return
+    // A card in the queue, or any message in the feed (the hub answers approvals too).
+    const event = this.queue.find((q) => q.message.id === messageId)?.event ?? this.feed.find((e) => e.id === messageId)
+    if (!event) return
     this.drop(messageId)
-    await this.rooms.post(item.event.room, reply, { rootId: item.event.rootId ?? item.event.id })
+    await this.rooms.post(event.room, reply, { rootId: event.rootId ?? event.id })
   }
 
   dismiss(messageId: string) {

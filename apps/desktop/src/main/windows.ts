@@ -1,20 +1,42 @@
 /*
  * The two windows. The widget is a transparent, frameless, always-on-top
- * window at the bottom centre of the screen, larger than the pill so cards
- * can grow above it; its empty pixels pass clicks through to the apps below.
+ * window, placed by the person (bottom centre, a bottom corner, or upright on
+ * the left or right edge). It is larger than the pill so cards can grow
+ * beside it; its empty pixels pass clicks through to the apps below.
  * The hub is an ordinary window for setup, today, approvals and rooms.
  * Links inside either window open in the default browser, never in the app.
  */
 import { BrowserWindow, screen, shell } from 'electron'
 import { join } from 'node:path'
+import type { WidgetPosition } from '../shared/types'
 
 const WIDGET = { width: 460, height: 440 }
+const EDGE = 4
+
+/** Moves the widget window to its position on the primary display. */
+export function placeWidget(win: BrowserWindow, position: WidgetPosition) {
+  const { workArea: a } = screen.getPrimaryDisplay()
+  const { width: w, height: h } = WIDGET
+  const middleX = Math.round(a.x + (a.width - w) / 2)
+  const middleY = Math.round(a.y + (a.height - h) / 2)
+  const bottom = a.y + a.height - h - EDGE
+  const spots: Record<WidgetPosition, [number, number]> = {
+    bottom: [middleX, bottom],
+    'bottom-left': [a.x + EDGE, bottom],
+    'bottom-right': [a.x + a.width - w - EDGE, bottom],
+    left: [a.x + EDGE, middleY],
+    right: [a.x + a.width - w - EDGE, middleY],
+  }
+  const [x, y] = spots[position] ?? spots.bottom
+  win.setBounds({ x, y, width: w, height: h })
+}
+
 const preload = join(__dirname, '../preload/index.js')
 
-function load(win: BrowserWindow, page: 'widget' | 'hub') {
+function load(win: BrowserWindow, page: 'widget' | 'hub', hash = '') {
   const dev = process.env.ELECTRON_RENDERER_URL
-  if (dev) void win.loadURL(`${dev}/${page}.html`)
-  else void win.loadFile(join(__dirname, `../renderer/${page}.html`))
+  if (dev) void win.loadURL(`${dev}/${page}.html${hash ? `#${hash}` : ''}`)
+  else void win.loadFile(join(__dirname, `../renderer/${page}.html`), { hash })
 }
 
 function externalLinks(win: BrowserWindow) {
@@ -30,12 +52,9 @@ function externalLinks(win: BrowserWindow) {
   })
 }
 
-export function createWidget(): BrowserWindow {
-  const { workArea } = screen.getPrimaryDisplay()
+export function createWidget(position: WidgetPosition): BrowserWindow {
   const win = new BrowserWindow({
     ...WIDGET,
-    x: Math.round(workArea.x + (workArea.width - WIDGET.width) / 2),
-    y: workArea.y + workArea.height - WIDGET.height - 8,
     show: false,
     frame: false,
     transparent: true,
@@ -51,13 +70,15 @@ export function createWidget(): BrowserWindow {
   win.setAlwaysOnTop(true, process.platform === 'darwin' ? 'floating' : 'screen-saver')
   win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })
   win.setIgnoreMouseEvents(true, { forward: true })
+  placeWidget(win, position)
   win.once('ready-to-show', () => win.showInactive())
   externalLinks(win)
   load(win, 'widget')
   return win
 }
 
-export function createHub(): BrowserWindow {
+/** The hub; `hash` opens a view or settings tab, e.g. settings/general. */
+export function createHub(hash = ''): BrowserWindow {
   const win = new BrowserWindow({
     width: 1040,
     height: 720,
@@ -72,6 +93,6 @@ export function createHub(): BrowserWindow {
   })
   win.once('ready-to-show', () => win.show())
   externalLinks(win)
-  load(win, 'hub')
+  load(win, 'hub', hash)
   return win
 }

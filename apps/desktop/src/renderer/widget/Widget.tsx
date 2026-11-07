@@ -1,39 +1,56 @@
 /*
  * The desktop widget: the shared KianWidget, fed by the desk in the main
- * process. The hotkey or the mic starts listening; stopping transcribes and
- * posts to the desk room. With no transcription set up, the type bar opens,
- * so Wispr Flow or the system's dictation can type instead. The window only
- * takes clicks while the pointer is over the pill or its card.
+ * process. At rest it is a thin line; hovering grows it into the pill with
+ * the hotkey beside it. The hotkey or the mic starts listening; stopping
+ * transcribes and posts to the desk room. With no voice engine set, the type
+ * bar opens so Wispr Flow or the system's dictation can type instead. The
+ * window only takes clicks while the pointer is over the widget.
  */
 import { KianWidget, useSpeak, type Chip, type RoomMessage } from '@kian/ui'
 import { useEffect, useRef, useState } from 'react'
 import type { DeskState } from '../../shared/types'
+import { prettyHotkey } from '../hotkey'
+import { play } from './sounds'
 import { useVoice } from './useVoice'
+import { toWav } from './wav'
 
-const EMPTY: DeskState = { message: null, queued: 0, pending: null, connection: 'connecting', deskRoom: 'kian-desk' }
+const EMPTY: DeskState = {
+  message: null,
+  queued: 0,
+  pending: null,
+  connection: 'connecting',
+  deskRoom: 'kian-desk',
+  me: '',
+  position: 'bottom',
+  sounds: true,
+  speak: false,
+  hotkey: '',
+}
 
 export function Widget() {
   const [desk, setDesk] = useState<DeskState>(EMPTY)
-  const [speakOn, setSpeakOn] = useState(false)
+  const [hovered, setHovered] = useState(false)
   const voice = useVoice()
-  const { speak, speaking, stop: stopSpeaking } = useSpeak(speakOn)
-  const spoken = useRef<string | null>(null)
+  const { speak, speaking, stop: stopSpeaking } = useSpeak(desk.speak)
+  const seen = useRef<string | null>(null)
   const replyTo = useRef<RoomMessage | null>(null)
   const { voiceState, setVoiceState } = voice
+  const cue = (c: Parameters<typeof play>[0]) => desk.sounds && play(c)
 
   useEffect(() => {
     void window.kian.desk.state().then((s) => s && setDesk(s))
-    void window.kian.hub.settings().then((s) => setSpeakOn(s.speak))
     return window.kian.desk.onState(setDesk)
   }, [])
 
-  // Read each new card aloud once, when voice-out is on.
+  // Each new card: a chime, and read aloud when voice-out is on.
   useEffect(() => {
     const m = desk.message
-    if (m && spoken.current !== m.id) {
-      spoken.current = m.id
+    if (m && seen.current !== m.id) {
+      seen.current = m.id
+      cue('card')
       speak(m.text)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [desk.message, speak])
 
   // Take clicks while typing, so the type bar can be focused.
@@ -41,51 +58,78 @@ export function Widget() {
     if (voiceState === 'typing') window.kian.desk.setInteractive(true)
   }, [voiceState])
 
-  const flash = (text: string) => {
-    setVoiceState('sent')
-    setTimeout(() => setVoiceState('idle'), 900)
-    return text
-  }
-
   const send = async (text: string) => {
     const target = replyTo.current
     replyTo.current = null
     setVoiceState('sending')
     if (target) await window.kian.desk.answer(target.id, text)
     else await window.kian.desk.say(text)
-    flash(text)
+    cue('sent')
+    setVoiceState('sent')
+    setTimeout(() => setVoiceState('idle'), 900)
   }
 
   const finish = async () => {
     const meeting = voiceState === 'recording'
+    cue('stop')
     const rec = await voice.stop()
     if (!rec) return setVoiceState('idle')
     setVoiceState('sending')
-    const text = await window.kian.desk.transcribe(rec.audio, rec.mime).catch(() => null)
-    if (!text) return setVoiceState('typing') // no transcription set up: type or dictate instead
+    const wav = await toWav(rec.audio).catch(() => null)
+    const text = await window.kian.desk
+      .transcribe(wav ?? rec.audio, wav ? 'audio/wav' : rec.mime)
+      .catch(() => null)
+    if (!text) return setVoiceState('typing') // no voice engine: type or dictate instead
     if (meeting) return send(`Transcript of a ${Math.round(rec.seconds / 60) || 1} minute call, for @kian-scribe:\n\n${text}`)
     return send(text)
+  }
+
+  const listen = () => {
+    stopSpeaking()
+    cue('listen')
+    setVoiceState('listening')
   }
 
   const talk = () => {
     if (voiceState === 'typing') return setVoiceState('idle')
     if (voiceState === 'listening' || voiceState === 'recording') return void finish()
-    stopSpeaking()
-    setVoiceState('listening')
+    listen()
   }
 
   useEffect(() => window.kian.desk.onHotkey(talk))
 
-  const chip = (m: RoomMessage, c: Chip) => void window.kian.desk.answer(m.id, c.reply ?? c.label)
+  const chip = (m: RoomMessage, c: Chip) => {
+    if (c.hold) cue('approve')
+    void window.kian.desk.answer(m.id, c.reply ?? c.label)
+  }
+
+  const side = desk.position === 'left' || desk.position === 'right'
+  const resting = voiceState === 'idle' && !desk.message && !desk.pending && !hovered
 
   return (
     <div
       className="widget-stage"
+      data-position={desk.position}
       data-connection={desk.connection}
-      onPointerEnter={() => window.kian.desk.setInteractive(true)}
-      onPointerLeave={() => voiceState !== 'typing' && window.kian.desk.setInteractive(false)}
+      onPointerEnter={() => {
+        setHovered(true)
+        window.kian.desk.setInteractive(true)
+      }}
+      onPointerLeave={() => {
+        setHovered(false)
+        if (voiceState !== 'typing') window.kian.desk.setInteractive(false)
+      }}
     >
       <KianWidget
+        orientation={side ? 'vertical' : 'horizontal'}
+        collapsed={resting}
+        hint={
+          desk.hotkey ? (
+            <>
+              Talk <b>{prettyHotkey(desk.hotkey, window.kian.platform)}</b>
+            </>
+          ) : undefined
+        }
         voiceState={voiceState}
         getLevel={voice.getLevel}
         room={desk.deskRoom}
@@ -94,7 +138,10 @@ export function Widget() {
         queued={desk.queued}
         speaking={speaking}
         onTalk={talk}
-        onRecord={() => setVoiceState('recording')}
+        onRecord={() => {
+          cue('listen')
+          setVoiceState('recording')
+        }}
         onStop={() => void finish()}
         onCancel={voice.cancel}
         onTypeSubmit={(t) => void send(t)}
@@ -102,7 +149,7 @@ export function Widget() {
         onChip={chip}
         onVoiceReply={(m) => {
           replyTo.current = m
-          setVoiceState('listening')
+          listen()
         }}
         onDismiss={(m) => void window.kian.desk.dismiss(m.id)}
       />
