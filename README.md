@@ -221,7 +221,7 @@ changed, nothing pushes its neighbours around, and reduced motion is respected t
 
 ## Further reading
 
-- [How Kian uses Switch](apps/web/src/pages/Blog.tsx) (also at `/blog/how-kian-uses-switch`)
+- [How our agents run a whole revenue engine together](https://kiandesk.vercel.app/blog/how-our-agents-run-a-revenue-engine), also on [AWS Builder Center](https://builder.aws.com/content/3Lmgdiwrm1pEJaiGb1RfLm6GtJt/how-my-agents-run-a-whole-revenue-engine-together)
 - [Research](docs/01-research.md) · [Design](docs/02-design.md) · [Architecture](docs/03-architecture.md)
 
 <p align="center">

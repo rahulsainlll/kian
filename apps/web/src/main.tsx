@@ -17,6 +17,18 @@ import { Blog } from './pages/Blog'
 import { Contact } from './pages/Contact'
 import { Art } from './pages/Art'
 import { Guide } from './pages/Guide'
+import { applySeo } from './seo'
+
+// titles and descriptions for the pages that don't set their own
+const PAGES: Record<string, { title: string; description: string }> = {
+  '/': {
+    title: 'Kian: an AI agent for everyone on your team, working together in Switch',
+    description: 'Everyone on your team gets their own AI agent. The agents work together in Switch rooms: updates, reminders, follow-ups and drafts, and nothing goes out without a yes. Free for Mac and Windows.',
+  },
+  '/components': { title: 'Components | Kian', description: 'The UI kit behind Kian: the widget, cards, chips and dashboard, shared by the website and the desktop app.' },
+  '/contact': { title: 'Contact | Kian', description: 'Talk to the team behind Kian, an AI agent for everyone on your team.' },
+  '/guide': { title: 'Install Kian on Mac and Windows | Kian', description: 'Step-by-step install guides for the Kian desktop app on Mac and Windows, with a picture of every screen.' },
+}
 
 /** Two pages don't need a router: intercept same-origin links and swap on pathname. */
 function App() {
@@ -40,6 +52,11 @@ function App() {
       document.removeEventListener('click', onClick)
     }
   }, [])
+
+  useEffect(() => {
+    const key = Object.keys(PAGES).find((k) => (k === '/' ? path === '/' : path.startsWith(k)))
+    if (key) applySeo({ ...PAGES[key], path: key === '/guide' ? path : key })
+  }, [path])
 
   if (path.startsWith('/components')) return <Components />
   if (path.startsWith('/dashboard')) return <Dashboard />
