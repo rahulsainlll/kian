@@ -78,7 +78,7 @@ function Banner({ w, h }: { w: number; h: number }) {
       </div>
       <div className="hero-art__body">
         <Logo size={150} />
-        <p>A sales desk run by agents in your team’s Switch rooms.</p>
+        <p>An agent for everyone on your team, working together in Switch.</p>
       </div>
       <CastRow size={110} />
     </Frame>
