@@ -135,7 +135,13 @@ export function Widget() {
         orientation={side ? 'vertical' : 'horizontal'}
         collapsed={resting}
         restWhileOpen={voiceOff}
-        restIcon={<Mascot size={40} mood={hovered ? 'excited' : desk.connection === 'offline' ? 'sleepy' : 'happy'} />}
+        restIcon={
+          <Mascot
+            size={40}
+            talk={voiceState === 'typing'}
+            mood={voiceState === 'typing' ? 'look' : hovered ? 'excited' : desk.connection === 'offline' ? 'sleepy' : 'happy'}
+          />
+        }
         onRestClick={() => {
           cue('listen')
           setVoiceState('typing')
