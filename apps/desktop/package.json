@@ -1,6 +1,6 @@
 {
   "name": "@kian/desktop",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Kian for macOS and Windows: the widget and the hub, on the same Switch rooms.",
   "main": "out/main/index.js",

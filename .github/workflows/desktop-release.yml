@@ -22,7 +22,7 @@ jobs:
     steps:
       - name: Create the release
         run: |
-          notes="Kian for macOS (Apple silicon and Intel) and Windows. Builds are unsigned, so on a Mac open it the first time with right-click, Open, and on Windows choose More info, Run anyway."
+          notes="Kian for macOS (Apple silicon and Intel) and Windows. Not yet signed with an Apple Developer ID. On a Mac, open it once, then go to System Settings, Privacy and Security, and choose Open Anyway. On Windows, choose More info, then Run anyway."
           gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" \
             || gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --title "Kian $GITHUB_REF_NAME" --notes "$notes"
         env:
@@ -51,10 +51,25 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @kian/desktop test
       - name: Build and publish
-        run: pnpm --filter @kian/desktop ${{ matrix.target }} --publish ${{ startsWith(github.ref, 'refs/tags/') && 'always' || 'never' }}
+        shell: bash
+        run: |
+          publish=${{ startsWith(github.ref, 'refs/tags/') && 'always' || 'never' }}
+          extra=()
+          # With a Developer ID certificate in the secrets, sign with it and
+          # notarize; without one, electron-builder.yml signs ad hoc.
+          if [ "$RUNNER_OS" = macOS ] && [ -n "$CSC_LINK" ]; then
+            extra=(-c.mac.identity=null -c.mac.notarize=true)
+          fi
+          pnpm --filter @kian/desktop ${{ matrix.target }} --publish "$publish" "${extra[@]}"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Unsigned builds until signing certificates are added as secrets.
+          # Developer ID signing and notarization, used only when these secrets
+          # exist, and only on the Mac runner (Windows would try the cert too)
+          CSC_LINK: ${{ runner.os == 'macOS' && secrets.MAC_CERT_P12_BASE64 || '' }}
+          CSC_KEY_PASSWORD: ${{ runner.os == 'macOS' && secrets.MAC_CERT_PASSWORD || '' }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           CSC_IDENTITY_AUTO_DISCOVERY: false
       - uses: actions/upload-artifact@v4
         with:
