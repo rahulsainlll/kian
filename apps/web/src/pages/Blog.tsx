@@ -1,7 +1,7 @@
 import { CAST, Mascot, type Mood } from '@kian/ui'
 import type { ReactNode } from 'react'
 import { Nav, SiteFooter } from '../Chrome'
-import { SwitchNotebook } from './HomeSections'
+import { SwitchNotebook } from './home/SwitchUse'
 
 interface Post {
   slug: string

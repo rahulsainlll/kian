@@ -1,7 +1,7 @@
 import { CAST, KianWidget, Mascot, type RoomMessage } from '@kian/ui'
 import type { ReactNode } from 'react'
 import { Logo } from '../Chrome'
-import { SwitchNotebook } from './HomeSections'
+import { SwitchNotebook } from './home/SwitchUse'
 import './art.css'
 
 /*

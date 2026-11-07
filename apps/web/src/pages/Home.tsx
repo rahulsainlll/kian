@@ -6,7 +6,12 @@ import { ChatApp, Phone } from '../demo/ChatApp'
 import { useAutoplay } from '../demo/useAutoplay'
 import { useDemoDesk } from '../demo/useDemoDesk'
 import { useOnScreen } from '../scenes/useScene'
-import { Cast, Everywhere, Faq, Story, SwitchUse, WhyKian } from './HomeSections'
+import { Cast } from './home/Cast'
+import { Everywhere } from './home/Everywhere'
+import { Faq } from './home/Faq'
+import { Story } from './home/Story'
+import { SwitchUse } from './home/SwitchUse'
+import { WhyKian } from './home/WhyKian'
 
 export function Home() {
   return (
