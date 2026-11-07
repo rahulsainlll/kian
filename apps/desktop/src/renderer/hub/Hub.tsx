@@ -1,156 +1,127 @@
 /*
- * The hub window: a sidebar and one paper panel, like the website's team
- * dashboard but live. Today shows what agents just did across your rooms,
- * Rooms lists every room you are in, and Setup connects Kian to Switch.
- * It only reads the rooms; "Say morning" posts to the desk like you would.
+ * The desktop hub: the same @kian/hub the website shows, filled from the
+ * live rooms instead of demo data. Today lists what agents just did,
+ * Approvals holds what waits for the sales lead (approve right here),
+ * Rooms lists every room you are in, and Settings holds the app's real
+ * options. A #settings/<tab> hash opens a tab (the tray's Settings item).
  */
-import { Button } from '@kian/designs'
-import { ActivityRow, HashIcon, HomeIcon, GearIcon, Mascot, Panel, RoomRow, type Activity } from '@kian/ui'
-import { useEffect, useState, type ReactNode } from 'react'
-import type { RoomEvent, RoomSummary, Settings } from '../../shared/types'
-import { Setup } from './Setup'
+import { Hub as SharedHub, type HubData, type SettingsTab } from '@kian/hub'
+import { Logo, type Approval } from '@kian/ui'
+import { useEffect, useMemo, useState } from 'react'
+import { parseAnswers } from '../../shared/answers'
+import type { RoomEvent, RoomSummary, Settings, SettingsUpdate } from '../../shared/types'
+import { settingsTabs } from './SettingsTabs'
 
-type View = 'today' | 'rooms' | 'setup'
+const tabFromHash = (): SettingsTab | null => {
+  const m = /^#settings\/(\w+)/.exec(location.hash)
+  return (m?.[1] as SettingsTab) ?? null
+}
 
 export function Hub() {
-  const [view, setView] = useState<View>('today')
   const [settings, setSettings] = useState<Settings | null>(null)
-
-  useEffect(() => {
-    void window.kian.hub.settings().then((s) => {
-      setSettings(s)
-      if (s.backend === 'mattermost' && !s.hasToken) setView('setup')
-    })
-  }, [])
-
-  return (
-    <div className="hub" data-platform={window.kian.platform}>
-      <aside className="hub__side">
-        <div className="hub__brand">
-          <Mascot size={26} shape="flower" color="#3d7bf2" mood="happy" />
-          <b>kian</b>
-          <span className="hub__mode">{settings?.backend === 'mattermost' ? 'Switch' : 'Demo'}</span>
-        </div>
-        <nav className="hub__nav">
-          <NavItem icon={<HomeIcon />} label="Today" active={view === 'today'} onClick={() => setView('today')} />
-          <NavItem icon={<HashIcon />} label="Rooms" active={view === 'rooms'} onClick={() => setView('rooms')} />
-          <NavItem icon={<GearIcon />} label="Setup" active={view === 'setup'} onClick={() => setView('setup')} />
-        </nav>
-        <p className="hub__hint">
-          Press <kbd>{prettyHotkey(settings?.hotkey ?? '')}</kbd> anywhere to talk to Kian.
-        </p>
-      </aside>
-      <main className="hub__paper">
-        {view === 'today' && <Today deskRoom={settings?.deskRoom ?? 'kian-desk'} />}
-        {view === 'rooms' && <Rooms />}
-        {view === 'setup' && settings && <Setup settings={settings} onSaved={setSettings} />}
-      </main>
-    </div>
-  )
-}
-
-function NavItem({ icon, label, active, onClick }: { icon: ReactNode; label: string; active: boolean; onClick: () => void }) {
-  return (
-    <button className="hub__item" data-active={active || undefined} onClick={onClick}>
-      {icon}
-      <span>{label}</span>
-    </button>
-  )
-}
-
-function Today({ deskRoom }: { deskRoom: string }) {
   const [events, setEvents] = useState<RoomEvent[]>([])
-  const [asked, setAsked] = useState(false)
+  const [rooms, setRooms] = useState<RoomSummary[]>([])
+  const [me, setMe] = useState('')
+  const [answered, setAnswered] = useState<Set<string>>(new Set())
+  const [openTab, setOpenTab] = useState<SettingsTab | null>(tabFromHash)
 
   useEffect(() => {
+    void window.kian.hub.settings().then(setSettings)
     void window.kian.hub.feed().then(setEvents)
-    return window.kian.hub.onFeed((e) => setEvents((prev) => [...prev.slice(-199), e]))
+    void window.kian.hub.rooms().then(setRooms)
+    void window.kian.desk.state().then((s) => s && setMe(s.me))
+    const offs = [
+      window.kian.hub.onFeed((e) => {
+        setEvents((prev) => [...prev.slice(-199), e])
+        void window.kian.hub.rooms().then(setRooms)
+      }),
+      window.kian.hub.onSettings(setSettings),
+      window.kian.desk.onState((s) => setMe(s.me)),
+    ]
+    const onHash = () => setOpenTab(tabFromHash())
+    window.addEventListener('hashchange', onHash)
+    return () => {
+      offs.forEach((off) => off())
+      window.removeEventListener('hashchange', onHash)
+    }
   }, [])
 
-  const agentEvents = events.filter((e) => e.authorIsAgent).slice(-30).reverse()
-  const morning = async () => {
-    setAsked(true)
-    await window.kian.desk.say('morning')
+  const data = useMemo(() => toHubData(events, rooms, settings, me, answered), [events, rooms, settings, me, answered])
+  if (!settings) return null
+
+  const save = async (update: SettingsUpdate) => setSettings(await window.kian.hub.save(update))
+  const decide = (a: Approval, reply: 'approve' | 'refuse') => {
+    setAnswered((prev) => new Set(prev).add(a.id))
+    void window.kian.desk.answer(a.id, reply)
   }
 
   return (
-    <>
-      <header className="hub__head">
-        <div>
-          <h1>{greeting()}</h1>
-          <p>What your agents did, newest first. Answer cards from the widget or in the room.</p>
-        </div>
-        <Button variant="primary" onClick={() => void morning()} disabled={asked}>
-          {asked ? 'Asked for your brief' : 'Say “morning” to kian'}
-        </Button>
-      </header>
-      <Panel title="Live from your rooms">
-        {agentEvents.length ? (
-          agentEvents.map((e) => <ActivityRow key={e.id} item={toActivity(e)} />)
-        ) : (
-          <p className="hub__empty">Nothing yet. Say “morning” in #{deskRoom} or press the button above.</p>
-        )}
-      </Panel>
-    </>
+    <SharedHub
+      className="hub--desktop"
+      logo={<Logo size={30} />}
+      badge={settings.backend === 'mattermost' ? 'Switch' : 'Demo'}
+      data={data}
+      banner={{
+        title: (
+          <>
+            Say <em>morning</em> to kian
+          </>
+        ),
+        text: 'Your brief arrives in the widget, one card at a time. Answer with a tap or your voice.',
+        action: 'Start my morning',
+        onAction: () => void window.kian.desk.say('morning'),
+      }}
+      settings={settingsTabs(settings, save)}
+      openSettings={openTab}
+      onApprove={(a) => decide(a, 'approve')}
+      onRefuse={(a) => decide(a, 'refuse')}
+    />
   )
 }
 
-function Rooms() {
-  const [rooms, setRooms] = useState<RoomSummary[] | null>(null)
-  useEffect(() => void window.kian.hub.rooms().then(setRooms), [])
-  return (
-    <>
-      <header className="hub__head">
-        <div>
-          <h1>Rooms</h1>
-          <p>One room per deal, plus the desk, approvals and content. The history is the memory.</p>
-        </div>
-      </header>
-      <Panel title={rooms ? `${rooms.length} rooms` : 'Loading rooms'}>
-        {rooms?.map((r) => (
-          <RoomRow
-            key={r.name}
-            room={{
-              name: r.name,
-              topic: r.last ? `${r.last.author}: ${firstLine(r.last.text)}` : r.title,
-              members: r.members,
-              updated: r.last ? clock(r.last.at) : '',
-            }}
-          />
-        ))}
-      </Panel>
-    </>
-  )
+function toHubData(events: RoomEvent[], rooms: RoomSummary[], s: Settings | null, me: string, answered: Set<string>): HubData {
+  const agentEvents = events.filter((e) => e.authorIsAgent)
+  const approvals: Approval[] = agentEvents
+    .filter((e) => s && e.room === s.approvalsRoom && !answered.has(e.id) && parseAnswers(e.text).chips.some((c) => c.hold))
+    .filter((e) => !events.some((r) => r.rootId === e.id && !r.authorIsAgent))
+    .map((e) => {
+      const [ask, ...rest] = parseAnswers(e.text).body.replace(/^@\S+\s*/, '').split(/(?<=\.)\s+/)
+      return { id: e.id, deal: `#${e.room}`, ask, detail: rest.join(' '), requestedBy: e.author }
+    })
+  const drafts = agentEvents.filter((e) => /draft/i.test(e.text)).length
+  const cards = agentEvents.filter((e) => parseAnswers(e.text).chips.length).length
+  const live = s?.backend === 'mattermost' && s.hasToken
+
+  return {
+    greeting: `${greeting()}${me ? `, ${me[0].toUpperCase()}${me.slice(1)}` : ''}`,
+    stats: [
+      { n: String(cards), label: 'cards today' },
+      { n: String(drafts), label: 'drafts in Gmail' },
+      { n: String(rooms.length), label: 'rooms' },
+    ],
+    approvals,
+    timeline: agentEvents
+      .slice(-40)
+      .reverse()
+      .map((e) => ({ id: e.id, time: clock(e.at), who: e.author, text: `${parseAnswers(e.text).body.split('\n')[0]} · #${e.room}` })),
+    rooms: rooms.map((r) => ({
+      name: r.name,
+      topic: r.last ? `${r.last.author}: ${r.last.text.split('\n')[0]}` : r.title,
+      members: r.members,
+      updated: r.last ? clock(r.last.at) : '',
+    })),
+    setup: [
+      { label: 'Try the demo morning', done: agentEvents.length > 1 },
+      { label: 'Connect your Switch rooms', done: !!live, tab: 'connectors' },
+      { label: 'Pick a voice engine', done: s?.sttProvider !== 'off', tab: 'agents' },
+      { label: 'Choose your shortcut', done: !!s && s.hotkey !== 'CommandOrControl+Shift+K', tab: 'general' },
+    ],
+  }
 }
 
-function toActivity(e: RoomEvent): Activity {
-  const text = firstLine(e.text)
-  const kind: Activity['kind'] = /draft/i.test(text)
-    ? 'draft'
-    : /decision/i.test(text)
-      ? 'decision'
-      : /sheet|→ .*→/i.test(text)
-        ? 'sheet'
-        : /next step|summary updated/i.test(text)
-          ? 'task'
-          : undefined
-  return { id: e.id, actor: e.author, text, room: e.room, time: clock(e.at), kind }
-}
-
-const firstLine = (t: string) => t.split('\n')[0].slice(0, 140)
-const clock = (at: number) => new Date(at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
+const clock = (at: number) => new Date(at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }).toLowerCase().replace(' ', '')
 
 function greeting() {
   const h = new Date().getHours()
   return h < 12 ? 'Morning' : h < 18 ? 'Afternoon' : 'Evening'
-}
-
-function prettyHotkey(accel: string) {
-  const mac = window.kian.platform === 'darwin'
-  return accel
-    .replace('CommandOrControl', mac ? '⌘' : 'Ctrl')
-    .replace('Shift', mac ? '⇧' : 'Shift')
-    .replace('Alt', mac ? '⌥' : 'Alt')
-    .split('+')
-    .join(mac ? '' : '+')
 }

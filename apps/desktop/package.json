@@ -15,6 +15,7 @@
   "dependencies": {},
   "devDependencies": {
     "@kian/designs": "workspace:*",
+    "@kian/hub": "workspace:*",
     "@kian/ui": "workspace:*",
     "@types/node": "22.10.2",
     "@types/react": "19.2.7",
