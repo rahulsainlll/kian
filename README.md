@@ -34,7 +34,8 @@ one Switch room, `kian-team`, and ask each other for things by name, where the p
 rahul-desk   rahul       @rahul-kian remind mayank to send the Lumen proposal by tomorrow 10am
 kian-team    rahul-kian  @mayank-kian Reminder request from rahul for mayank: send the Lumen proposal, due Sun 8 Nov, 10:00 am
 kian-team    mayank-kian Done: on Mayank's tasks (due Sun 8 Nov) and his calendar at 10:00 with a reminder. Letting him know now.
-mayank-desk  mayank-kian Rahul asked you to send the Lumen proposal by tomorrow 10am. It's on your list and calendar.
+mayank-desk  mayank-kian Rahul asked me to remind you to send the Lumen proposal by Sun 8 Nov, 10:00 am. I added it
+                         to your tasks and put it on your calendar at 10:00 with a reminder.  → done · not yet
 rahul-desk   rahul-kian  Mayank's agent confirmed the reminder: on his tasks for tomorrow and his calendar at 10:00.
 ```
 
