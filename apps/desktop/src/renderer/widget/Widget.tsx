@@ -114,7 +114,8 @@ export function Widget() {
 
   const side = desk.position === 'left' || desk.position === 'right'
   // At rest it's only the flower; clicking it (or the hotkey) opens the chat bar.
-  const resting = voiceState === 'idle' && !desk.message && !desk.pending
+  // With Wispr Flow there's no in-app recording, so the flower stays instead of the mic pill.
+  const resting = voiceOff ? voiceState === 'idle' || voiceState === 'typing' : voiceState === 'idle' && !desk.message && !desk.pending
 
   return (
     <div
@@ -133,6 +134,7 @@ export function Widget() {
       <KianWidget
         orientation={side ? 'vertical' : 'horizontal'}
         collapsed={resting}
+        restWhileOpen={voiceOff}
         restIcon={<Mascot size={40} mood={hovered ? 'excited' : desk.connection === 'offline' ? 'sleepy' : 'happy'} />}
         onRestClick={() => {
           cue('listen')

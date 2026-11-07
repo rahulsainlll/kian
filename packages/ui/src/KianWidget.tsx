@@ -38,6 +38,8 @@ export interface KianWidgetProps {
   restIcon?: ReactNode
   /** Clicking the resting icon, e.g. to open the chat bar. */
   onRestClick?: () => void
+  /** Keep the resting icon under cards and the type bar instead of the pill (no in-app voice). */
+  restWhileOpen?: boolean
 }
 
 /**
@@ -89,7 +91,7 @@ export function KianWidget(p: KianWidgetProps) {
   return (
     <div className="kian k-widget dark" data-orientation={orientation}>
       <Presence item={floating} />
-      <div className="k-dock" data-collapsed={(p.collapsed && !floating) || undefined}>
+      <div className="k-dock" data-collapsed={(p.collapsed && (!floating || p.restWhileOpen)) || undefined}>
         {p.restIcon ? (
           <button className="k-line k-line--icon" aria-label="Talk to Kian" onClick={p.onRestClick}>
             {p.restIcon}
