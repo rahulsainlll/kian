@@ -73,8 +73,18 @@ export class Desk {
   /** The person said something to the desk (by voice or typing). */
   async say(text: string) {
     const room = this.settings().deskRoom
-    await this.rooms.post(room, text)
-    this.setPending({ author: this.settings().agents[0] ?? 'kian', room })
+    const agent = this.settings().agents[0] ?? 'kian'
+    await this.rooms.post(room, this.addressed(text, agent))
+    this.setPending({ author: agent, room })
+  }
+
+  /**
+   * Switch agents act on messages that @-mention them. In real rooms, address
+   * the agent unless the person already named one; the demo rooms don't need it.
+   */
+  private addressed(text: string, agent: string) {
+    if (this.rooms.kind !== 'mattermost' || /(^|\s)@[\w.-]+/.test(text)) return text
+    return `@${agent} ${text}`
   }
 
   async answer(messageId: string, reply: string) {
@@ -82,7 +92,8 @@ export class Desk {
     const event = this.queue.find((q) => q.message.id === messageId)?.event ?? this.feed.find((e) => e.id === messageId)
     if (!event) return
     this.drop(messageId)
-    await this.rooms.post(event.room, reply, { rootId: event.rootId ?? event.id })
+    const to = event.authorIsAgent ? event.author : (this.settings().agents[0] ?? 'kian')
+    await this.rooms.post(event.room, this.addressed(reply, to), { rootId: event.rootId ?? event.id })
   }
 
   dismiss(messageId: string) {
