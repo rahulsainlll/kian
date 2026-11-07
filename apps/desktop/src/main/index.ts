@@ -4,7 +4,7 @@
  * connects to the rooms (mock or Mattermost, from settings) and wires the
  * IPC the preload bridge exposes. Saving settings reconnects the rooms.
  */
-import { BrowserWindow, app, globalShortcut, ipcMain } from 'electron'
+import { BrowserWindow, Notification, app, globalShortcut, ipcMain } from 'electron'
 import type { DeskState, RoomEvent, SettingsUpdate, WidgetPosition } from '../shared/types'
 import { captureRun } from './capture'
 import { Desk } from './desk'
@@ -37,10 +37,11 @@ function openHub(hash = '') {
 
 /** Settings changed: move the widget, re-register the hotkey, tell both windows. */
 function applySettings() {
-  if (widget && !widget.isDestroyed()) placeWidget(widget, publicSettings().position)
+  if (widget && !widget.isDestroyed()) placeWidget(widget, publicSettings().position, publicSettings().widgetXY)
   registerHotkey()
   desk?.refresh()
   send(hub, 'hub:settings-changed', publicSettings())
+  send(widget, 'hub:settings-changed', publicSettings())
 }
 
 function makeRooms(): Rooms {
@@ -58,9 +59,19 @@ async function connect() {
   desk = new Desk(
     rooms,
     publicSettings,
-    (state: DeskState) => send(widget, 'desk:state', state),
+    (state: DeskState) => {
+      send(widget, 'desk:state', state)
+      send(hub, 'desk:state', state) // the hub greets the signed-in person
+    },
     (event: RoomEvent) => send(hub, 'hub:feed', event),
   )
+  // Every card also shows as a system notification, in case the widget is covered.
+  desk.onCard = (m) => {
+    if (!Notification.isSupported()) return
+    const n = new Notification({ title: `${m.author} · #${m.room}`, body: m.text.slice(0, 180), silent: true })
+    n.on('click', () => widget?.showInactive())
+    n.show()
+  }
   desk.setConnection('connecting')
   try {
     const me = await rooms.connect()
@@ -95,11 +106,19 @@ function wireIpc() {
     if (on) widget?.focus()
   })
   ipcMain.on('desk:open-hub', () => openHub())
+  ipcMain.on('desk:move-by', (_e, dx: number, dy: number) => {
+    if (!widget || widget.isDestroyed()) return
+    const [x, y] = widget.getPosition()
+    widget.setPosition(Math.round(x + dx), Math.round(y + dy))
+  })
+  ipcMain.on('desk:move-end', () => {
+    if (widget && !widget.isDestroyed()) saveSettings({ widgetXY: widget.getPosition() as [number, number] })
+  })
 
   ipcMain.handle('hub:settings', () => publicSettings())
   ipcMain.handle('hub:save', async (_e, update: SettingsUpdate) => {
     const before = publicSettings()
-    const saved = saveSettings(update)
+    const saved = saveSettings(update.position ? { ...update, widgetXY: null } : update)
     applySettings()
     // Only a change to the connection needs a reconnect.
     const reconnect = ['backend', 'url', 'team', 'username', 'agents'].some(
@@ -130,7 +149,7 @@ if (!app.requestSingleInstanceLock()) {
   app.whenReady().then(async () => {
     if (process.platform === 'darwin') app.dock?.hide()
     wireIpc()
-    widget = createWidget(publicSettings().position)
+    widget = createWidget(publicSettings().position, publicSettings().widgetXY)
     createTray({
       openHub: () => openHub(),
       openSettings: () => openHub('settings/general'),
@@ -138,7 +157,7 @@ if (!app.requestSingleInstanceLock()) {
       snooze: (minutes) => desk?.snooze(minutes),
       position: () => publicSettings().position,
       setPosition: (position: WidgetPosition) => {
-        saveSettings({ position })
+        saveSettings({ position, widgetXY: null })
         applySettings()
       },
     })

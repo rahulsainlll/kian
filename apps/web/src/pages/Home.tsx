@@ -61,8 +61,8 @@ function Hero() {
           Meet <Mascot /> Kian
         </h1>
         <p className="hero__lede">
-          A sales desk run by agents in your team’s Switch rooms. They read the inbox, draft follow-ups and keep the
-          lead list current. You just say yes.
+          Everyone on your team gets their own agent, and the agents work together in Switch rooms. Ask yours to
+          check with Mayank, remind Yukti or draft the reply. You just say yes.
         </p>
         <div className="hero__cta">
           <a className="dl-btn" href={DOWNLOADS.macArm}>

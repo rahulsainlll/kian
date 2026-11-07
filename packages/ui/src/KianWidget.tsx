@@ -34,6 +34,12 @@ export interface KianWidgetProps {
   collapsed?: boolean
   /** A small label beside the idle pill, e.g. the hotkey. */
   hint?: ReactNode
+  /** What the widget shows at rest instead of the plain line, e.g. the Kian flower. */
+  restIcon?: ReactNode
+  /** Clicking the resting icon, e.g. to open the chat bar. */
+  onRestClick?: () => void
+  /** Keep the resting icon under cards and the type bar instead of the pill (no in-app voice). */
+  restWhileOpen?: boolean
 }
 
 /**
@@ -85,8 +91,14 @@ export function KianWidget(p: KianWidgetProps) {
   return (
     <div className="kian k-widget dark" data-orientation={orientation}>
       <Presence item={floating} />
-      <div className="k-dock" data-collapsed={(p.collapsed && !floating) || undefined}>
-        <span className="k-line" aria-hidden />
+      <div className="k-dock" data-collapsed={(p.collapsed && (!floating || p.restWhileOpen)) || undefined}>
+        {p.restIcon ? (
+          <button className="k-line k-line--icon" aria-label="Talk to Kian" onClick={p.onRestClick}>
+            {p.restIcon}
+          </button>
+        ) : (
+          <span className="k-line" aria-hidden />
+        )}
         {p.hint && !floating && p.voiceState === 'idle' && <span className="k-hint">{p.hint}</span>}
         <Pill
           state={p.voiceState}

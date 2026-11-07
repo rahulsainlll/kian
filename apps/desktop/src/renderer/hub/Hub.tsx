@@ -79,8 +79,14 @@ export function Hub() {
   )
 }
 
+/** Switch's own progress notes ("Working… 20s", "Starting a session…") aren't activity. */
+const STATUS = /^(\*\*)?(working|worked for|queued|starting a session|connecting here|joining here|note: (i took|joining))/i
+
+/** Every agent gets the flower; people keep their initial. */
+const face = (e: RoomEvent) => (e.authorIsAgent ? 'kian' : e.author)
+
 function toHubData(events: RoomEvent[], rooms: RoomSummary[], s: Settings | null, me: string, answered: Set<string>): HubData {
-  const agentEvents = events.filter((e) => e.authorIsAgent)
+  const agentEvents = events.filter((e) => e.authorIsAgent && !STATUS.test(e.text.trim()))
   const approvals: Approval[] = agentEvents
     .filter((e) => s && e.room === s.approvalsRoom && !answered.has(e.id) && parseAnswers(e.text).chips.some((c) => c.hold))
     .filter((e) => !events.some((r) => r.rootId === e.id && !r.authorIsAgent))
@@ -103,7 +109,7 @@ function toHubData(events: RoomEvent[], rooms: RoomSummary[], s: Settings | null
     timeline: agentEvents
       .slice(-40)
       .reverse()
-      .map((e) => ({ id: e.id, time: clock(e.at), who: e.author, text: `${parseAnswers(e.text).body.split('\n')[0]} · #${e.room}` })),
+      .map((e) => ({ id: e.id, time: clock(e.at), who: face(e), text: `${e.author}: ${parseAnswers(e.text).body.split('\n')[0]} · #${e.room}` })),
     rooms: rooms.map((r) => ({
       name: r.name,
       topic: r.last ? `${r.last.author}: ${r.last.text.split('\n')[0]}` : r.title,

@@ -77,3 +77,42 @@ html.kian-widget-page body {
   padding: 7px 12px;
   cursor: pointer;
 }
+
+/* Wispr mode: the chat is the flower's white speech bubble, not a dark bar */
+.widget-stage[data-wispr] .k-type {
+  background: #fff;
+  border: 0;
+  border-radius: 22px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
+  backdrop-filter: none;
+  position: relative;
+}
+.widget-stage[data-wispr] .k-type::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -7px;
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border-radius: 3px;
+  transform: translateX(-50%) rotate(45deg);
+}
+.widget-stage[data-wispr] .k-type__input {
+  color: #1d1408;
+  font-size: 15px;
+  font-weight: 500;
+}
+.widget-stage[data-wispr] .k-type__input::placeholder {
+  color: #8e877c;
+}
+.widget-stage[data-wispr] .k-btn--send {
+  background: #3d7bf2;
+  color: #fff;
+}
+.widget-stage .k-line--icon {
+  cursor: grab;
+}
+.widget-stage .k-line--icon:active {
+  cursor: grabbing;
+}

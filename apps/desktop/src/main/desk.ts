@@ -1,7 +1,7 @@
 /*
  * The desk decides what reaches the widget. A room message becomes a card
- * when an agent wrote it and it either ends with an answer line or mentions
- * the person. Approval cards (a hold answer in the approvals room) are only
+ * when an agent wrote it in the person's own desk room, or anywhere with an
+ * answer line or a mention of the person. Switch's progress notes never do. Approval cards (a hold answer in the approvals room) are only
  * for the sales lead. One card shows at a time; the rest wait in a queue.
  *
  * Answers are posted back as replies in the message's thread, exactly what
@@ -13,6 +13,8 @@ import type { Connection, DeskState, RoomEvent, Settings } from '../shared/types
 import type { Rooms } from './rooms/types'
 
 const PENDING_TIMEOUT_MS = 25_000
+/** Switch's own progress notes ("Working… 20s", "Queued…"), never cards. */
+const STATUS = /^(\*\*)?(working|worked for|queued|starting a session|connecting here|joining here|note: (i took|joining))/i
 const DRAFT_LINK = /https:\/\/mail\.google\.com\/\S+/
 
 export class Desk {
@@ -23,6 +25,8 @@ export class Desk {
   private snoozedUntil = 0
   private feed: RoomEvent[] = []
   private me = ''
+  /** Called for every new card, e.g. to raise a system notification. */
+  onCard?: (message: RoomMessage) => void
 
   constructor(
     private rooms: Rooms,
@@ -73,8 +77,18 @@ export class Desk {
   /** The person said something to the desk (by voice or typing). */
   async say(text: string) {
     const room = this.settings().deskRoom
-    await this.rooms.post(room, text)
-    this.setPending({ author: this.settings().agents[0] ?? 'kian', room })
+    const agent = this.settings().agents[0] ?? 'kian'
+    await this.rooms.post(room, this.addressed(text, agent))
+    this.setPending({ author: agent, room })
+  }
+
+  /**
+   * Switch agents act on messages that @-mention them. In real rooms, address
+   * the agent unless the person already named one; the demo rooms don't need it.
+   */
+  private addressed(text: string, agent: string) {
+    if (this.rooms.kind !== 'mattermost' || /(^|\s)@[\w.-]+/.test(text)) return text
+    return `@${agent} ${text}`
   }
 
   async answer(messageId: string, reply: string) {
@@ -82,7 +96,8 @@ export class Desk {
     const event = this.queue.find((q) => q.message.id === messageId)?.event ?? this.feed.find((e) => e.id === messageId)
     if (!event) return
     this.drop(messageId)
-    await this.rooms.post(event.room, reply, { rootId: event.rootId ?? event.id })
+    const to = event.authorIsAgent ? event.author : (this.settings().agents[0] ?? 'kian')
+    await this.rooms.post(event.room, this.addressed(reply, to), { rootId: event.rootId ?? event.id })
   }
 
   dismiss(messageId: string) {
@@ -98,14 +113,16 @@ export class Desk {
   private consider(event: RoomEvent) {
     this.feed = [...this.feed.slice(-199), event]
     this.onEvent(event)
-    if (!event.authorIsAgent) return
+    if (!event.authorIsAgent || STATUS.test(event.text.trim())) return
     if (this.pending && event.room === this.pending.room) this.setPending(null)
 
     const { body, chips } = parseAnswers(event.text)
     const isApproval = event.room === this.settings().approvalsRoom && chips.some((c) => c.hold)
     // In the demo you play both the rep and the sales lead.
     if (isApproval && !this.settings().approver && this.rooms.kind !== 'mock') return
-    if (!chips.length && !event.mentionsMe) return
+    // Your own desk is your agent talking to you: every message there is a card.
+    const inDesk = event.room === this.settings().deskRoom
+    if (!chips.length && !event.mentionsMe && !inDesk) return
 
     const draft = DRAFT_LINK.exec(body)?.[0]
     const message: RoomMessage = {
@@ -122,6 +139,8 @@ export class Desk {
           : undefined,
     }
     this.queue.push({ event, message })
+    console.log(`[kian] card from ${event.author} in #${event.room}: ${message.text.slice(0, 80)}`)
+    this.onCard?.(message)
     this.emit()
   }
 

@@ -9,7 +9,7 @@ const FAQ = [
   ['Why a widget if everything lives in chat?', 'Chat is where the work is recorded. The widget is the fast way in: talk instead of typing, and get tapped when a room needs you.'],
   ['Isn’t the dashboard a second UI?', 'It only reads the rooms. Every button on it posts the same message you would have typed, so the rooms stay the source of truth.'],
   ['What does it run on?', 'Switch runs the agents and rooms, the agents are Claude, and the site runs on free tiers. Your data stays in your own Google account.'],
-  ['Can my team use it today?', 'Yes, with a Switch server, a Google account and the template. Start with the synthetic demo account, then switch to a real one.'],
+  ['Can my team use it today?', 'Yes, with a Switch server, a Google account and the template. Each person signs in once, and their agent works with their own accounts.'],
 ]
 
 export function Faq() {

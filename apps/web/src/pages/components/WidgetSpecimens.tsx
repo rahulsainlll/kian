@@ -27,7 +27,7 @@ export function WidgetSpecimen() {
     <Specimen
       id="KianWidget"
       title="KianWidget"
-      blurb="The pill plus whatever floats beside it: one card, nudge or type bar at a time. It holds no state of its own. Here a scripted morning drives it; in the desktop app the same props come from Switch."
+      blurb="The pill plus whatever floats beside it: one card, nudge or type bar at a time. It holds no state of its own. Here a morning plays through it; in the desktop app the same props come from Switch."
       controls={
         <>
           <Segmented aria-label="Orientation" value={orientation} options={opts(['horizontal', 'vertical'] as const)} onValueChange={setOrientation} />

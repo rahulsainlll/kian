@@ -39,7 +39,7 @@ finish the first run until switch-buddy answers you. Then:
 git clone https://github.com/rahulsainlll/kian ~/kian
 cd ~/kian/switch/toolkit
 python3 -m venv .venv && .venv/bin/pip install -r requirements.txt   # kian_tools.py uses .venv by itself
-python3 kian_tools.py --profile rahul agenda      # demo data until you sign in
+python3 kian_tools.py --profile rahul agenda      # Rahul's meetings and tasks
 ```
 
 ### 3. Each person's Google account

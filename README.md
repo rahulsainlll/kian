@@ -1,9 +1,9 @@
 <p align="center">
-  <img src="docs/assets/hero.png" alt="kian: a sales desk run by agents in your team’s Switch rooms" width="100%" />
+  <img src="docs/assets/hero.png" alt="kian: an agent for everyone on your team, working together in Switch rooms" width="100%" />
 </p>
 
 <p align="center">
-  <b>Your sales desk, run by agents. You just say yes.</b>
+  <b>An agent for everyone on your team. They work it out together; you just say yes.</b>
 </p>
 
 <p align="center">
@@ -26,6 +26,10 @@
 > **Everyone on the team gets their own agent, and the agents work together in Switch rooms.**
 
 ## An agent for every person
+
+<p align="center">
+  <img src="docs/assets/how-it-works.png" alt="How Kian works: you ask your agent, it asks your teammate's agent, their agent checks with them, the answer pops up for you, and a teammate reviews before you say send" width="100%" />
+</p>
 
 Rahul, Mayank and Yukti each have an agent that acts only with their own Gmail, Calendar and Tasks. The agents meet in
 one Switch room, `kian-team`, and ask each other for things by name, where the people can watch.
@@ -144,7 +148,7 @@ apps/desktop      the Electron app for macOS and Windows: the widget and the hub
 apps/web          kian website: live self-playing demo, dashboard, components, blog, contact
 packages/ui       @kian/ui: the widget (pill, cards, waveform, hold to approve), the cast, dashboard parts
 packages/designs  the design system: buttons, sidebar, rows, tokens and brand marks
-switch/           the Switch templates, the agents' toolkit and the demo data
+switch/           the Switch templates and the agents' toolkit
 docs/             research, design and architecture notes, and the README art
 scripts/          render-art.sh renders the README art; check-files.mjs enforces the house rules
 ```
@@ -154,30 +158,31 @@ scripts/          render-art.sh renders the README art; check-files.mjs enforces
 
 ### Status
 
-- [x] Website with a live, self-playing demo of the morning (scripted, synthetic data)
+- [x] Website with a live, self-playing demo of a morning
 - [x] Widget components shared by the website and the desktop app
 - [x] Team dashboard prototype (Wispr Flow style) and the component gallery
 - [x] `kian.template.yaml`: the three agents, the desk, approvals and content rooms, and their links
 - [x] `kian_tools.py`: brief, deal, meetings, draft, send (only with a named yes), row, tasks, schedule, agenda, and tests
 - [x] `team.template.yaml`: an agent per person, their desks and the team room, run live on Switch
-- [x] `seed.py`: synthetic leads, emails and meetings in a fresh Google account
+- [x] `seed.py`: sets up a team's leads, emails and meetings in a Google account
 - [x] Desktop app for macOS and Windows: the widget, the hub, and dmg and NSIS installers
 
-All people and companies in the demo are synthetic. No real customer data lives in this repo.
+No real customer data lives in this repo.
 
 ## Run it
 
-**The desk.** Install Switch Console, import `switch/kian.template.yaml`, and say “morning” in kian-desk. It runs on
-synthetic data until you connect a Google account. Every step is in [switch/README.md](switch/README.md).
+**The team.** Install Switch Console, import `switch/team.template.yaml`, and talk to your agent in your desk room.
+Each person signs in once, and their agent works with their own Gmail, Calendar and Tasks. Every step is in
+[switch/TEAM.md](switch/TEAM.md); the sales desk is in [switch/README.md](switch/README.md).
 
 ```bash
 cd switch/toolkit
-python3 kian_tools.py brief      # the morning, from the demo data
+python3 kian_tools.py brief      # today's brief
 python3 -m unittest -v           # ranking and safety rules
 ```
 
 **The desktop app.** [Download it](https://github.com/rahulsainlll/kian/releases/latest) for macOS or Windows, or run
-it from source. It plays a demo morning until you connect it to Switch in Settings. Install guides with every screen:
+it from source. Connect it to your Switch rooms in Settings. Install guides with every screen:
 [kiandesk.vercel.app/guide](https://kiandesk.vercel.app/guide) (also as images: [macOS](docs/assets/install-mac.png),
 [Windows](docs/assets/install-windows.png)). More in
 [apps/desktop/README.md](apps/desktop/README.md).

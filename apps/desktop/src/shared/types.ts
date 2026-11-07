@@ -66,6 +66,8 @@ export interface Settings {
   approver: boolean
   hotkey: string
   position: WidgetPosition
+  /** Where you dragged the widget window to; set positions clear it. */
+  widgetXY?: [number, number] | null
   sounds: boolean
   speak: boolean
   sttProvider: VoiceProvider
@@ -90,6 +92,9 @@ export interface KianBridge {
     dismiss(messageId: string): Promise<void>
     transcribe(audio: ArrayBuffer, mime: string): Promise<string | null>
     setInteractive(on: boolean): void
+    /** Drag the widget: move the window by this much, then save where it ended. */
+    moveBy(dx: number, dy: number): void
+    moveEnd(): void
     openHub(): void
   }
   hub: {

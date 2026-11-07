@@ -16,11 +16,11 @@ export interface VoicePreset {
 
 export const VOICE_PRESETS: Record<VoiceProvider, VoicePreset> = {
   off: {
-    label: 'Type or dictate',
+    label: 'Wispr Flow',
     url: '',
     model: '',
     needsKey: false,
-    hint: 'The mic opens the type bar, so Wispr Flow or your system dictation types for you.',
+    hint: 'The mic opens the type bar: hold fn and talk, and Wispr Flow types it in. System dictation works too.',
   },
   openai: {
     label: 'OpenAI',
