@@ -182,3 +182,40 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ── install guide page ── */
+.guide-page {
+  padding-bottom: 64px;
+}
+.guide-page__head {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  padding: 40px 0 28px;
+  text-align: center;
+}
+.guide-page__tabs {
+  display: inline-flex;
+  padding: 4px;
+  border-radius: 999px;
+  background: #ece4d8;
+}
+.guide-page__tabs a {
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-weight: 600;
+  color: #5d5242;
+  text-decoration: none;
+  transition: background-color 160ms ease-out, color 160ms ease-out;
+}
+.guide-page__tabs a[aria-selected='true'] {
+  background: #fff;
+  color: #1d1408;
+  box-shadow: 0 1px 3px rgba(40, 30, 10, 0.12);
+}
+.guide-page__dl {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}

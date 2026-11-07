@@ -16,6 +16,7 @@ import { Dashboard } from './pages/Dashboard'
 import { Blog } from './pages/Blog'
 import { Contact } from './pages/Contact'
 import { Art } from './pages/Art'
+import { Guide } from './pages/Guide'
 
 /** Two pages don't need a router: intercept same-origin links and swap on pathname. */
 function App() {
@@ -44,6 +45,7 @@ function App() {
   if (path.startsWith('/dashboard')) return <Dashboard />
   if (path.startsWith('/blog')) return <Blog slug={path.split('/')[2] || undefined} />
   if (path.startsWith('/contact')) return <Contact />
+  if (path.startsWith('/guide')) return <Guide platform={path.split('/')[2] || undefined} />
   if (path.startsWith('/art')) return <Art name={path.split('/')[2] || undefined} />
   return <Home />
 }

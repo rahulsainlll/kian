@@ -8,6 +8,7 @@ import type { ReactNode } from 'react'
 import { Logo } from '../Chrome'
 import { SwitchNotebook } from './home/SwitchUse'
 import './art.css'
+import { GuideMac, GuideWindows } from './art/Guides'
 
 const BRIEF: RoomMessage = {
   id: 'a1',
@@ -147,7 +148,7 @@ function TrayIcon() {
   )
 }
 
-const ART: Record<string, () => ReactNode> = { og: Og, hero: Hero, cast: Cast, switch: Switch, widget: Widget, appicon: AppIcon, trayicon: TrayIcon }
+const ART: Record<string, () => ReactNode> = { og: Og, hero: Hero, cast: Cast, switch: Switch, widget: Widget, appicon: AppIcon, trayicon: TrayIcon, 'guide-mac': () => <GuideMac />, 'guide-windows': () => <GuideWindows /> }
 const CLEAR = new Set(['appicon', 'trayicon'])
 
 export function Art({ name }: { name?: string }) {
