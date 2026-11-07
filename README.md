@@ -110,6 +110,7 @@ Kian is built for talking, and it was built by talking.
 ## What’s in this repo
 
 ```
+apps/desktop      the Electron app for macOS and Windows: the widget and the hub
 apps/web          kian website: live self-playing demo, dashboard, components, blog, contact
 packages/ui       @kian/ui: the widget (pill, cards, waveform, hold to approve), the cast, dashboard parts
 packages/designs  the design system: buttons, sidebar, rows, tokens and brand marks
@@ -129,7 +130,7 @@ scripts/          render-art.sh renders the README art; check-files.mjs enforces
 - [x] `kian.template.yaml`: the three agents, the desk, approvals and content rooms, and their links
 - [x] `kian_tools.py`: brief, deal, meetings, draft and row, with no send command, and tests
 - [x] `seed.py`: synthetic leads, emails and meetings in a fresh Google account
-- [ ] Desktop widget for macOS and Windows (Electron, on `@kian/ui`)
+- [x] Desktop app for macOS and Windows: the widget, the hub, and dmg and NSIS installers
 
 All people and companies in the demo are synthetic. No real customer data lives in this repo.
 
@@ -143,6 +144,18 @@ cd switch/toolkit
 python3 kian_tools.py brief      # the morning, from the demo data
 python3 -m unittest -v           # ranking and safety rules
 ```
+
+**The desktop app.** Runs on the demo morning until you connect it to Switch in its Setup screen. More in
+[apps/desktop/README.md](apps/desktop/README.md).
+
+```bash
+pnpm install
+pnpm desktop
+```
+
+<p align="center">
+  <img src="docs/assets/desktop.png" alt="The Kian hub with a live feed of the agents' work, and the widget showing a brief item" width="100%" />
+</p>
 
 **The website.**
 

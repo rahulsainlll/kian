@@ -37,6 +37,9 @@ export async function captureRun(windows: { widget: () => BrowserWindow | null; 
   await desk.answer('skip')
   await wait(1200)
   await shoot(windows.widget(), dir, 'widget-approval')
+  windows.hub()?.show()
+  windows.hub()?.webContents.invalidate()
+  await wait(800) // a window in the background keeps its last painted frame
   await shoot(windows.hub(), dir, 'hub-today')
   console.log(`[kian] captured windows into ${dir}`)
   app.quit()
