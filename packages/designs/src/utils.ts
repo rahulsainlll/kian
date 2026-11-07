@@ -1,3 +1,6 @@
+/*
+ * cn(): join class names and let later Tailwind classes win.
+ */
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 

@@ -1,3 +1,7 @@
+/*
+ * The contact page: a short form that opens the visitor's own mail app with
+ * the message filled in. Nothing is sent from the page itself.
+ */
 import { Button } from '@kian/designs'
 import { Mascot } from '@kian/ui'
 import { useState } from 'react'

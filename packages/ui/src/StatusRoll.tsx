@@ -1,3 +1,6 @@
+/*
+ * StatusRoll: a status word that rolls to its new value.
+ */
 import { useEffect, useRef, useState } from 'react'
 
 /**

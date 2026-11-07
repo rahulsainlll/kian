@@ -1,3 +1,6 @@
+/*
+ * Check: a status circle that can spin while pending and tick when done.
+ */
 import type { ComponentProps } from "react"
 import { cn } from "./utils"
 import "./designs.css"

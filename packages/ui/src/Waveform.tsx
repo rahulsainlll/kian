@@ -1,3 +1,6 @@
+/*
+ * Waveform: live mic loudness as scrolling bars.
+ */
 import { useEffect, useRef } from 'react'
 import type { Orientation } from './types'
 

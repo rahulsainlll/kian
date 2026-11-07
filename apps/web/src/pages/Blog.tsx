@@ -1,3 +1,7 @@
+/*
+ * The blog: three posts (how Kian uses Switch, how it was built, why agents
+ * can't send) as data, an index of cards and a post view at /blog/<slug>.
+ */
 import { CAST, Mascot, type Mood } from '@kian/ui'
 import type { ReactNode } from 'react'
 import { Nav, SiteFooter } from '../Chrome'

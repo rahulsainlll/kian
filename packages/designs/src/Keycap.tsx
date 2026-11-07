@@ -1,3 +1,6 @@
+/*
+ * Keycap: a keyboard key, for showing shortcuts.
+ */
 import type { CSSProperties, ReactNode } from "react"
 import { cn } from "./utils"
 import "./designs.css"

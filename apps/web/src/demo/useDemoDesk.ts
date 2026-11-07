@@ -1,3 +1,8 @@
+/*
+ * useDemoDesk: the demo's stand-in for Switch. It plays the scripted morning
+ * into a chat log and a widget queue, answers chips, and tracks when an agent
+ * is still busy, so the site behaves like the real desk without a server.
+ */
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useMicLevel, useSpeak, type Chip, type Nudge, type RoomMessage, type VoiceState } from '@kian/ui'
 import { HISTORY, approvedSteps, briefItems, briefSteps, draftSteps, genericReply, meetingSteps, type Step } from './script'

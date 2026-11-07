@@ -1,3 +1,7 @@
+/*
+ * The home page: the hero with the self-playing demo (autoplay until the
+ * visitor touches it), then the sections from pages/home/ in story order.
+ */
 import { useState, type ReactNode } from 'react'
 import { Button, Toggle } from '@kian/designs'
 import { KianWidget, Mascot } from '@kian/ui'

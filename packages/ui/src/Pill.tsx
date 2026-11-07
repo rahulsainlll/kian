@@ -1,3 +1,8 @@
+/*
+ * Pill: the always-there capsule at the bottom of the screen. It shows the
+ * voice state (idle, listening, recording, sending, sent, typing), the live
+ * waveform, and the mic and type buttons.
+ */
 import { useEffect, useState } from 'react'
 import { CheckIcon, CloseIcon, MicIcon, StopIcon } from './icons'
 import { StatusRoll } from './StatusRoll'

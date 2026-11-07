@@ -1,3 +1,6 @@
+/*
+ * Tooltip: a short label on hover and focus, on Radix Tooltip.
+ */
 "use client"
 
 import { Tooltip as TooltipPrimitive } from "radix-ui"

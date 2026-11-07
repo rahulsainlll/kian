@@ -1,3 +1,6 @@
+/*
+ * AvatarStack: overlapping avatars for the people in a room, with a +N.
+ */
 import { cn } from "./utils"
 import "./designs.css"
 

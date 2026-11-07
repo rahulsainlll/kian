@@ -1,14 +1,13 @@
-import { CAST, KianWidget, Mascot, type RoomMessage } from '@kian/ui'
-import type { ReactNode } from 'react'
-import { Logo } from '../Chrome'
-import { SwitchNotebook } from './home/SwitchUse'
-import './art.css'
-
 /*
  * Fixed-size artwork for the OG image and the README, rendered with the real
  * components and captured with headless Chrome (scripts/render-art.sh).
  * Visit /art/<name> to see one; every frame is exactly its target size.
  */
+import { CAST, KianWidget, Mascot, type RoomMessage } from '@kian/ui'
+import type { ReactNode } from 'react'
+import { Logo } from '../Chrome'
+import { SwitchNotebook } from './home/SwitchUse'
+import './art.css'
 
 const BRIEF: RoomMessage = {
   id: 'a1',

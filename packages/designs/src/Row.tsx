@@ -1,3 +1,6 @@
+/*
+ * Row: one inbox-style list row (lead, title, preview, meta, unread dot).
+ */
 import type { CSSProperties, ReactNode } from "react"
 import { cn } from "./utils"
 import "./designs.css"

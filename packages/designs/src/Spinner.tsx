@@ -1,3 +1,6 @@
+/*
+ * Spinner: a small loading arc.
+ */
 import type { CSSProperties } from "react"
 import { cn } from "./utils"
 import "./designs.css"

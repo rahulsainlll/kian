@@ -1,3 +1,6 @@
+/*
+ * Badge: a small status pill with an optional dot or icon.
+ */
 import type { ComponentProps, ReactNode } from "react"
 import { cn } from "./utils"
 import "./designs.css"

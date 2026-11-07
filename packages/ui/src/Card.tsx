@@ -1,3 +1,8 @@
+/*
+ * The widget's cards: MessageCard (one agent message with answer chips),
+ * NudgeCard (an agent asking for attention), TypeBar (type or dictate to the
+ * desk), plus AgentAvatar, ChipButton and SpeakingIndicator.
+ */
 import { Button } from '@kian/designs'
 import { useEffect, useRef, useState } from 'react'
 import { Skeleton } from 'skullet/react'

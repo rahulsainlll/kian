@@ -1,3 +1,6 @@
+/*
+ * Tabs: a tab row with a sliding underline, on Radix Tabs.
+ */
 "use client"
 
 import { Tabs as TabsPrimitive } from "radix-ui"
