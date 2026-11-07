@@ -11,6 +11,7 @@ import type { RoomMessage } from '@kian/ui'
 import { parseAnswers } from '../shared/answers'
 import type { Connection, DeskState, RoomEvent, Settings } from '../shared/types'
 import type { Rooms } from './rooms/types'
+import { Walkthrough } from './walkthrough'
 
 const PENDING_TIMEOUT_MS = 25_000
 /** Switch's own progress notes ("Working… 20s", "Queued…"), never cards. */
@@ -27,6 +28,8 @@ export class Desk {
   private me = ''
   /** Called for every new card, e.g. to raise a system notification. */
   onCard?: (message: RoomMessage) => void
+  /** The scripted morning for recording demos; its cards never post to rooms. */
+  readonly walkthrough = new Walkthrough((e) => this.consider(e), () => this.settings().deskRoom)
 
   constructor(
     private rooms: Rooms,
@@ -92,6 +95,10 @@ export class Desk {
   }
 
   async answer(messageId: string, reply: string) {
+    if (this.walkthrough.owns(messageId)) {
+      this.drop(messageId)
+      return this.walkthrough.answer(messageId, reply)
+    }
     // A card in the queue, or any message in the feed (the hub answers approvals too).
     const event = this.queue.find((q) => q.message.id === messageId)?.event ?? this.feed.find((e) => e.id === messageId)
     if (!event) return

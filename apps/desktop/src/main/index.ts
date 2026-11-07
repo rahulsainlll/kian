@@ -163,6 +163,7 @@ if (!app.requestSingleInstanceLock()) {
       toggleWidget: () => (widget?.isVisible() ? widget.hide() : widget?.showInactive()),
       snooze: (minutes) => desk?.snooze(minutes),
       position: () => publicSettings().position,
+      playWalkthrough: () => desk?.walkthrough.play(1500),
       setPosition: (position: WidgetPosition) => {
         saveSettings({ position, widgetXY: null })
         applySettings()
@@ -170,6 +171,7 @@ if (!app.requestSingleInstanceLock()) {
     })
     registerHotkey()
     await connect()
+    if (process.env.KIAN_WALKTHROUGH) desk?.walkthrough.play(5000)
     if (publicSettings().backend === 'mock' && !app.isPackaged) openHub()
     void captureRun(
       { widget: () => widget, hub: () => hub },
