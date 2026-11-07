@@ -1,0 +1,167 @@
+/*
+ * The YouTube thumbnails: one bright (cream and blue), one dark (deep
+ * purple), both with type big enough to read at phone size.
+ */
+.yt {
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+.yt h1 {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 0.95;
+}
+
+/* one: cream on the left, a blue stage for the agents on the right */
+.yt--one {
+  display: grid;
+  grid-template-columns: 640px 1fr;
+  background: #f7f1ea;
+  color: #17140f;
+}
+.yt__words {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 26px;
+  padding: 0 0 0 64px;
+}
+.yt--one h1 {
+  font-size: 104px;
+}
+.yt--one h1 em {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: -0.01em;
+  color: #2f6ee6;
+}
+.yt__proof {
+  display: flex;
+  gap: 10px;
+}
+.yt__proof span {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 16px 7px 8px;
+  border-radius: 999px;
+  background: #fff;
+  font-size: 22px;
+  font-weight: 700;
+  box-shadow: 0 8px 20px -10px rgba(40, 30, 10, 0.35);
+}
+.yt__cast {
+  position: relative;
+  margin: 28px 28px 28px 0;
+  border-radius: 44px;
+  background: radial-gradient(80% 70% at 100% 0%, #ffd2e2, transparent 60%), linear-gradient(170deg, #ffb7cf, #ffe7ef);
+}
+.yt__m {
+  position: absolute;
+}
+.yt__m--1 {
+  left: 40px;
+  top: 250px;
+  rotate: -8deg;
+}
+.yt__m--2 {
+  right: 30px;
+  top: 190px;
+  rotate: 8deg;
+}
+.yt__m--3 {
+  left: 190px;
+  bottom: 10px;
+  rotate: 4deg;
+}
+.yt__say {
+  position: absolute;
+  padding: 16px 24px;
+  border-radius: 28px;
+  background: #fff;
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  box-shadow: 0 16px 30px -14px rgba(0, 0, 40, 0.5);
+}
+.yt__say--a {
+  left: 28px;
+  top: 70px;
+  border-bottom-left-radius: 8px;
+}
+.yt__say--b {
+  right: 36px;
+  top: 92px;
+  background: #2457e6;
+  color: #fff;
+  border-bottom-right-radius: 8px;
+}
+
+/* two: deep purple, the hook on top, the agents passing work along */
+.yt--two {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 70px;
+  background: radial-gradient(60% 70% at 50% 110%, #7c4fd0, transparent 70%), linear-gradient(170deg, #1b0838, #43207a);
+  color: #fff;
+  text-align: center;
+}
+.yt--two h1 {
+  font-size: 112px;
+}
+.yt--two mark {
+  padding: 0 18px;
+  border-radius: 24px;
+  background: #ffcf1f;
+  color: #1b0838;
+}
+.yt__row {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  margin-top: 44px;
+}
+.yt__row i {
+  font-style: normal;
+  font-size: 80px;
+  font-weight: 800;
+  color: #ffcf1f;
+}
+.yt__notif {
+  position: absolute;
+  right: 44px;
+  bottom: 40px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 300px;
+  padding: 14px 18px;
+  border-radius: 22px;
+  background: #fff;
+  color: #17140f;
+  font-size: 22px;
+  line-height: 1.25;
+  text-align: left;
+  rotate: -3deg;
+  box-shadow: 0 20px 40px -16px rgba(0, 0, 0, 0.6);
+}
+.yt__corner {
+  position: absolute;
+  left: 44px;
+  bottom: 44px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 18px 8px 14px;
+  border-radius: 999px;
+  background: #f7f1ea;
+  color: #17140f;
+  font-size: 20px;
+  font-weight: 700;
+}
