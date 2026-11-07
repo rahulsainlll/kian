@@ -40,7 +40,7 @@ export function Dashboard() {
       />
       <div className="demo-strip" role="note">
         <span>
-          <b>Demo with sample data.</b> The real app works on your team’s own rooms.
+          <b>This is a demo</b> with sample data.
         </span>
         <a href="/#download">Download for Mac or Windows</a>
         <a href="/guide">Install guide</a>

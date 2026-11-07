@@ -13,6 +13,7 @@ import { HowItWorks } from './art/HowItWorks'
 import { XClosing, XHowKian, XProblem } from './art/Explainer'
 import { XDesktop, XImpact, XNotify, XStage } from './art/ExplainerScenes'
 import { XArchitecture, XNotebook, XWhySwitch } from './art/ExplainerSwitch'
+import { Yt1, Yt2 } from './art/Thumbnails'
 
 const BRIEF: RoomMessage = {
   id: 'a1',
@@ -163,6 +164,8 @@ const ART: Record<string, () => ReactNode> = { og: Og, hero: Hero, cast: Cast, s
   'x-desktop': XDesktop,
   'x-notify': XNotify,
   'x-stage': XStage,
+  'yt-1': Yt1,
+  'yt-2': Yt2,
 }
 const CLEAR = new Set(['appicon', 'trayicon'])
 

@@ -27,6 +27,10 @@ const PAGES: Record<string, { title: string; description: string }> = {
   },
   '/components': { title: 'Components | Kian', description: 'The UI kit behind Kian: the widget, cards, chips and dashboard, shared by the website and the desktop app.' },
   '/contact': { title: 'Contact | Kian', description: 'Talk to the team behind Kian, an AI agent for everyone on your team.' },
+  '/guide/switch': {
+    title: 'Connect Kian to Switch: setup guide | Kian',
+    description: 'Step by step: install Switch, create an agent for every teammate from one template, connect each Google account, and sign in from the Kian app.',
+  },
   '/guide': { title: 'Install Kian on Mac and Windows | Kian', description: 'Step-by-step install guides for the Kian desktop app on Mac and Windows, with a picture of every screen.' },
 }
 
