@@ -1,5 +1,6 @@
-# test_toolkit.py: pins down the brief's order and the toolkit's safety rules
-# against the demo data. No network, no Google account. Run from this folder:
+# test_toolkit.py: pins down the brief's order, the safety rules (no send
+# without a named yes, no sheet change without one) and that each person's
+# profile keeps its own tasks and calendar, against the demo data. No network, no Google account. Run from this folder:
 #   python3 -m unittest -v
 from __future__ import annotations
 
@@ -57,9 +58,26 @@ class Safety(unittest.TestCase):
     def tearDown(self) -> None:
         DemoBackend.reset()
 
-    def test_there_is_no_send_command(self) -> None:
-        commands = kian_tools.parser()._subparsers._group_actions[0].choices  # type: ignore[union-attr]
-        self.assertFalse(any("send" in name for name in commands))
+    def test_send_refuses_without_a_named_yes(self) -> None:
+        run("--profile", "test", "draft", "--to", "a@b.example", "--subject", "Hi", "--body", "Hello")
+        code, out = run("--profile", "test", "send", "--draft", "demo-draft-1")
+        self.assertEqual(code, 2)
+        self.assertIn("--approved-by", out)
+        code, out = run("--profile", "test", "send", "--draft", "demo-draft-1", "--approved-by", "Mayank")
+        self.assertEqual(code, 0)
+        self.assertIn("approved by Mayank", out)
+
+    def test_each_profile_keeps_its_own_day(self) -> None:
+        run("--profile", "mayank", "tasks", "add", "--title", "Send the proposal")
+        _, mayank = run("--profile", "mayank", "agenda")
+        _, rahul = run("--profile", "rahul", "agenda")
+        self.assertIn("Send the proposal", mayank)
+        self.assertNotIn("Send the proposal", rahul)
+
+    def test_schedule_puts_it_on_the_calendar(self) -> None:
+        run("--profile", "yukti", "schedule", "--title", "Call Priya", "--at", "2026-11-07 15:00")
+        _, out = run("--profile", "yukti", "agenda")
+        self.assertIn("Call Priya", out)
 
     def test_row_apply_needs_a_named_approver(self) -> None:
         code, out = run("row", "apply", "--company", "Lumen Health", "--column", "Stage", "--value", "Won")

@@ -1,9 +1,10 @@
 # google_backend.py: the desk's data from a real Google account.
 #
-# Reads Gmail, Calendar and the lead Sheet; writes only Gmail drafts and Sheet
-# cells. Signs in once with a desktop OAuth client (credentials.json) and keeps
-# the token in token.json beside this file. There is deliberately no method
-# that sends mail: the toolkit cannot send even if an agent asks it to.
+# Reads Gmail, Calendar, Tasks and the lead Sheet. Writes Gmail drafts, Sheet
+# cells, the person's own tasks and calendar entries, and sends a draft only
+# when kian_tools.py has a named approval. Signs in once per person with a
+# desktop OAuth client (credentials.json); each profile keeps its own token,
+# token-<profile>.json, so every agent acts with its own person's account.
 from __future__ import annotations
 
 import base64
@@ -13,15 +14,20 @@ from email.message import EmailMessage
 from email.utils import parseaddr, parsedate_to_datetime
 from pathlib import Path
 
-from model import COLUMNS, Draft, Email, Lead, Meeting
+from model import COLUMNS, Draft, Email, Lead, Meeting, Task
 
 HERE = Path(__file__).resolve().parent
 SCOPES = [
     "https://www.googleapis.com/auth/gmail.readonly",
-    "https://www.googleapis.com/auth/gmail.compose",  # drafts; the toolkit never calls send
-    "https://www.googleapis.com/auth/calendar.readonly",
+    "https://www.googleapis.com/auth/gmail.compose",  # drafts, and sending a draft after a named yes
+    "https://www.googleapis.com/auth/calendar.events",
+    "https://www.googleapis.com/auth/tasks",
     "https://www.googleapis.com/auth/spreadsheets",
 ]
+
+
+def token_name(profile: str = "") -> str:
+    return f"token-{profile}.json" if profile else "token.json"
 RANGE = "Leads!A1:H200"
 
 
@@ -57,10 +63,11 @@ def _date(value: str) -> datetime | None:
 class GoogleBackend:
     name = "google"
 
-    def __init__(self) -> None:
+    def __init__(self, profile: str = "") -> None:
         from googleapiclient.discovery import build
 
-        creds = credentials(SCOPES)
+        creds = credentials(SCOPES, token_name(profile))
+        self.tasks_api = build("tasks", "v1", credentials=creds, cache_discovery=False)
         self.gmail = build("gmail", "v1", credentials=creds, cache_discovery=False)
         self.calendar = build("calendar", "v3", credentials=creds, cache_discovery=False)
         self.sheets = build("sheets", "v4", credentials=creds, cache_discovery=False)
@@ -149,3 +156,38 @@ class GoogleBackend:
             except Exception as err:  # report every source, not just the first failure
                 status[label] = f"failed: {err}"
         return status
+
+    # ── the person's own day ────────────────────────────────────────────────
+
+    def tasks(self) -> list[Task]:
+        items = self.tasks_api.tasks().list(tasklist="@default", showCompleted=True, showHidden=True, maxResults=100).execute()
+        return [
+            Task(t["id"], t.get("title", ""), (t.get("due") or "")[:10], t.get("status") == "completed", t.get("notes", ""))
+            for t in items.get("items", [])
+        ]
+
+    def add_task(self, title: str, due: str, note: str) -> Task:
+        body = {"title": title, "notes": note}
+        if due:
+            body["due"] = f"{due}T00:00:00.000Z"
+        t = self.tasks_api.tasks().insert(tasklist="@default", body=body).execute()
+        return Task(t["id"], title, due, False, note)
+
+    def complete_task(self, task_id: str) -> Task:
+        t = self.tasks_api.tasks().patch(tasklist="@default", task=task_id, body={"status": "completed"}).execute()
+        return Task(t["id"], t.get("title", ""), (t.get("due") or "")[:10], True, t.get("notes", ""))
+
+    def add_event(self, title: str, start: datetime, minutes: int, note: str) -> str:
+        start = start.astimezone()
+        ev = self.calendar.events().insert(calendarId="primary", sendUpdates="none", body={
+            "summary": title,
+            "description": note,
+            "start": {"dateTime": start.isoformat()},
+            "end": {"dateTime": (start + timedelta(minutes=minutes)).isoformat()},
+            "reminders": {"useDefault": False, "overrides": [{"method": "popup", "minutes": 10}]},
+        }).execute()
+        return ev.get("htmlLink", ev["id"])
+
+    def send_draft(self, draft_id: str) -> str:
+        sent = self.gmail.users().drafts().send(userId="me", body={"id": draft_id}).execute()
+        return sent["id"]

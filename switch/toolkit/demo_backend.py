@@ -1,8 +1,9 @@
 # demo_backend.py: the desk's data from fixtures.json, with no Google account.
 #
-# Drafts and sheet edits are kept in .demo/state.json next to this file, so a
-# demo run behaves like the real thing across commands (a row change shows up
-# in the next `brief`) and resets with `kian_tools.py reset-demo`.
+# Drafts, sheet edits, tasks, calendar entries and sends are kept in
+# .demo/state[-<profile>].json next to this file, so a demo run behaves like
+# the real thing across commands (a row change shows up in the next `brief`)
+# and each person's agent has its own day. `kian_tools.py reset-demo` clears it.
 from __future__ import annotations
 
 import json
@@ -10,11 +11,14 @@ from datetime import datetime, timedelta
 from email.utils import parseaddr
 from pathlib import Path
 
-from model import COLUMNS, Draft, Email, Lead, Meeting
+from model import COLUMNS, Draft, Email, Lead, Meeting, Task
 
 HERE = Path(__file__).resolve().parent
 FIXTURES = HERE / "fixtures.json"
-STATE = HERE / ".demo" / "state.json"
+
+
+def state_file(profile: str = "") -> Path:
+    return HERE / ".demo" / (f"state-{profile}.json" if profile else "state.json")
 
 
 def load_fixtures() -> dict:
@@ -29,15 +33,17 @@ def _at_today(clock: str, now: datetime) -> datetime:
 class DemoBackend:
     name = "demo"
 
-    def __init__(self, now: datetime | None = None) -> None:
+    def __init__(self, now: datetime | None = None, profile: str = "") -> None:
+        self.file = state_file(profile)
         # The demo is always this morning at 9:00, so the brief looks the same whenever it runs.
         self.now = now or datetime.now().replace(hour=9, minute=0, second=0, microsecond=0)
         self.data = load_fixtures()
-        self.state = json.loads(STATE.read_text()) if STATE.exists() else {"drafts": [], "cells": {}}
+        blank = {"drafts": [], "cells": {}, "tasks": [], "events": [], "sent": []}
+        self.state = blank | (json.loads(self.file.read_text()) if self.file.exists() else {})
 
     def _save(self) -> None:
-        STATE.parent.mkdir(exist_ok=True)
-        STATE.write_text(json.dumps(self.state, indent=2))
+        self.file.parent.mkdir(exist_ok=True)
+        self.file.write_text(json.dumps(self.state, indent=2))
 
     def leads(self) -> list[Lead]:
         out = []
@@ -65,7 +71,10 @@ class DemoBackend:
         return out
 
     def meetings(self, days: int = 1) -> list[Meeting]:
-        return [Meeting(m["id"], m["title"], _at_today(m["today_at"], self.now), m["attendees"]) for m in self.data["meetings"]]
+        fixed = [Meeting(m["id"], m["title"], _at_today(m["today_at"], self.now), m["attendees"]) for m in self.data["meetings"]]
+        added = [Meeting(f"e{i}", e["title"], datetime.fromisoformat(e["start"]), []) for i, e in enumerate(self.state["events"])]
+        horizon = self.now + timedelta(days=days)
+        return sorted([m for m in fixed + added if m.start <= horizon], key=lambda m: m.start)
 
     def thread(self, thread_id: str) -> list[dict]:
         return [{"from": m["from"], "subject": m["subject"], "body": m["body"]} for m in self.data["emails"] if m["thread"] == thread_id]
@@ -85,9 +94,40 @@ class DemoBackend:
     def check(self) -> dict[str, str]:
         return {"Gmail": "demo data", "Calendar": "demo data", "Lead sheet": "demo data"}
 
+    def tasks(self) -> list[Task]:
+        return [Task(**t) for t in self.state["tasks"]]
+
+    def add_task(self, title: str, due: str, note: str) -> Task:
+        task = Task(f"t{len(self.state['tasks']) + 1}", title, due, False, note)
+        self.state["tasks"].append(task.__dict__)
+        self._save()
+        return task
+
+    def complete_task(self, task_id: str) -> Task:
+        for t in self.state["tasks"]:
+            if t["id"] == task_id:
+                t["done"] = True
+                self._save()
+                return Task(**t)
+        raise ValueError(f"no task {task_id}")
+
+    def add_event(self, title: str, start: datetime, minutes: int, note: str) -> str:
+        self.state["events"].append({"title": title, "start": start.isoformat(), "minutes": minutes, "note": note})
+        self._save()
+        return f"demo://calendar/{len(self.state['events'])}"
+
+    def send_draft(self, draft_id: str) -> str:
+        draft = next((d for d in self.state["drafts"] if d["id"] == draft_id), None)
+        if draft is None:
+            raise ValueError(f"no draft {draft_id}")
+        self.state["sent"].append(draft_id)
+        self._save()
+        return f"demo-sent-{draft_id}"
+
     @staticmethod
     def reset() -> None:
-        STATE.unlink(missing_ok=True)
+        for f in (HERE / ".demo").glob("state*.json"):
+            f.unlink()
 
 
 def _apply(lead: Lead, column: str, value: str) -> None:
