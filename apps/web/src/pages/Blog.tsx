@@ -5,6 +5,7 @@
  */
 import { Nav, SiteFooter } from '../Chrome'
 import { useSeo } from '../seo'
+import { VideoEmbed } from '../VideoEmbed'
 import { Note } from './blog/parts'
 import { RevenuePartOne } from './blog/revenue1'
 import { RevenuePartTwo } from './blog/revenue2'
@@ -84,6 +85,7 @@ export function Blog({ slug }: { slug?: string }) {
               By <b>{POST.author}</b>, {POST.role}, with Rahul and Mayank
             </p>
             <Links />
+            <VideoEmbed />
             <Note>
               <b>Where Kian is now.</b> Since this was written, Kian gives every person on the team their own agent, and
               the agents ask each other for updates, reminders and reviews in one shared Switch room. The ideas below
