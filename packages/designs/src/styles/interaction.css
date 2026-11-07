@@ -1,0 +1,356 @@
+/*
+ * @kian/designs · interaction.css
+ * Real interaction: focus rings, hit areas, native inputs, menu and tooltip motion, the window chrome.
+ * Loaded by designs.css in cascade order; keep the import order when editing.
+ */
+
+/* ── Real interaction: native elements in the kit's shapes ─────────────────── */
+
+@layer components {
+
+  /* Field: a real input where the kit draws typed characters */
+  .ds-field__input {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+    font: inherit;
+    color: inherit;
+  }
+
+  .ds-field__input::placeholder {
+    color: var(--ds-text-faint);
+    opacity: 1;
+  }
+
+  /* Autofill tints the bare input square inside the rounded box: Chrome's own colour, and the
+     app-wide inset-shadow fix in globals.css (painted in the site's background). Drop both, so
+     the input stays transparent and the box shows through. Out-ranks that global rule. */
+  :is(.ds-field, .ds-search) :is(.ds-field__input, .ds-search__input):is(:autofill, :-webkit-autofill) {
+    box-shadow: none;
+    -webkit-text-fill-color: var(--ds-text-strong);
+    caret-color: var(--ds-text-strong);
+    transition: background-color 600000s 0s, color 600000s 0s;
+  }
+
+  .ds-field__input[type="password"]:not(:placeholder-shown) {
+    letter-spacing: 1.5px;
+  }
+
+  .ds-field:focus-within .ds-field__box {
+    box-shadow: inset 0 0 0 1px var(--ds-accent), 0 0 0 1.5px var(--ds-accent-soft);
+  }
+
+  .ds-field[data-status="error"]:focus-within .ds-field__box {
+    box-shadow: inset 0 0 0 2px var(--ds-danger);
+  }
+
+  .ds-field__hint {
+    color: var(--ds-text);
+    font-size: var(--text-ds-small);
+    line-height: var(--text-ds-small--line-height);
+    letter-spacing: var(--text-ds-small--letter-spacing);
+    font-weight: var(--text-ds-small--font-weight);
+    color: var(--ds-text);
+  }
+
+  .ds-field[data-status="error"] .ds-field__hint {
+    color: var(--ds-danger-text);
+  }
+
+  .ds-field[data-disabled] {
+    opacity: 0.5;
+  }
+
+  .ds-seg__option:disabled,
+  .ds-toggle:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  .ds-chip__x {
+    padding: 0;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .ds-chip__x:hover {
+      background-color: var(--ds-ink-2);
+      transition-duration: 0s;
+    }
+  }
+
+  /* Menu: the kit's popover surface and rows, opened by Radix */
+  .ds-popover-surface {
+    z-index: 50;
+    min-width: 160px;
+    padding: 4px;
+    border-radius: var(--ds-radius-lg);
+    background: var(--ds-raised);
+    box-shadow: var(--ds-shadow-float);
+    font-family: var(--ds-font);
+    transform-origin: var(--radix-dropdown-menu-content-transform-origin, var(--radix-select-content-transform-origin, var(--radix-popover-content-transform-origin, top left)));
+  }
+
+  /* Opens in 180ms from its trigger, on a strong ease-out; leaves faster than it came,
+     never on an ease-in (it would hang at the start, just when it's being watched) */
+  .ds-popover-surface[data-state="open"] {
+    animation: ds-pop-in 180ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .ds-popover-surface[data-state="closed"] {
+    animation: ds-pop-out 120ms cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  }
+
+  @keyframes ds-pop-in {
+    from { opacity: 0; transform: scale(0.97); }
+  }
+
+  @keyframes ds-pop-out {
+    to { opacity: 0; transform: scale(0.97); }
+  }
+
+  /* Reduced motion: a plain fade, no scale */
+  @media (prefers-reduced-motion: reduce) {
+    .ds-popover-surface[data-state="open"] {
+      animation-name: ds-fade-in;
+    }
+
+    .ds-popover-surface[data-state="closed"] {
+      animation-name: ds-fade-out;
+    }
+
+    .ds-select__chevron {
+      transition: none;
+    }
+  }
+
+  @keyframes ds-fade-in {
+    from { opacity: 0; }
+  }
+
+  @keyframes ds-fade-out {
+    to { opacity: 0; }
+  }
+
+  .ds-menu__item {
+    outline: none;
+    cursor: default;
+    user-select: none;
+  }
+
+  .ds-menu__item[data-highlighted] {
+    background-color: var(--ds-ink-2);
+    transition-duration: 0s;
+  }
+
+  .ds-menu__item[data-disabled] {
+    opacity: 0.45;
+  }
+
+  .ds-menu__icon {
+    display: grid;
+    color: var(--ds-icon);
+  }
+
+  .ds-menu__label {
+    flex: 1;
+  }
+
+  .ds-menu__shortcut {
+    color: var(--ds-text-faint);
+    font-size: var(--text-ds-caption);
+    line-height: var(--text-ds-caption--line-height);
+    letter-spacing: var(--text-ds-caption--letter-spacing);
+    font-weight: var(--text-ds-caption--font-weight);
+  }
+
+  .ds-menu__check {
+    display: grid;
+    width: 14px;
+    color: var(--ds-accent);
+  }
+
+  .ds-menu__separator {
+    height: 1px;
+    margin: 4px -4px;
+    background: var(--ds-line);
+  }
+
+  /* Tooltip: the kit's label, placed by Radix */
+  .ds-tip {
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    height: 26px;
+    padding: 0 8px;
+    border-radius: var(--ds-radius-sm);
+    background: var(--color-ds-tooltip);
+    color: var(--color-ds-white);
+    font-size: var(--text-ds-caption);
+    line-height: var(--text-ds-caption--line-height);
+    letter-spacing: var(--text-ds-caption--letter-spacing);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .ds-tip[data-state="delayed-open"],
+  .ds-tip[data-state="instant-open"] {
+    animation: ds-tip-in 0.15s ease;
+  }
+
+  @keyframes ds-tip-in {
+    from { opacity: 0; translate: 0 -2px; }
+  }
+
+  @keyframes ds-tip-fade {
+    from { opacity: 0; }
+  }
+
+  /* Reduced motion: it fades in where it stands */
+  @media (prefers-reduced-motion: reduce) {
+    .ds-tip[data-state="delayed-open"],
+    .ds-tip[data-state="instant-open"] {
+      animation-name: ds-tip-fade;
+    }
+  }
+
+  .ds-tip > span {
+    display: block;
+    text-box: trim-both cap alphabetic;
+  }
+
+  /* Toasts shown through Sonner arrive already risen */
+  [data-sonner-toast] .ds-toast {
+    opacity: 1;
+    margin-block: 0;
+  }
+
+  /* Window: the kit's chrome. Native (macOS lights, a bar and rule) and glass */
+  .ds-window {
+    position: relative;
+    --ds-lights-y: 19px;
+    --ds-dot: 9px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: var(--ds-radius-window);
+    background: var(--ds-canvas);
+    box-shadow: var(--ds-shadow-window);
+  }
+
+  .ds-window__bar {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 6px;
+    height: 38px;
+    padding: 0 calc(var(--ds-lights-y) - var(--ds-dot) / 2);
+    background: var(--ds-surface);
+    border-bottom: 1px solid var(--ds-line);
+  }
+
+  .ds-window__lights {
+    display: flex;
+    flex-shrink: 0;
+    gap: 6px;
+  }
+
+  .ds-window__dot {
+    width: var(--ds-dot);
+    height: var(--ds-dot);
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 0.5px var(--color-ds-light-edge);
+  }
+
+  .ds-window__dot:nth-child(1) { background: var(--color-ds-light-red); }
+  .ds-window__dot:nth-child(2) { background: var(--color-ds-light-yellow); }
+  .ds-window__dot:nth-child(3) { background: var(--color-ds-light-green); }
+
+  .ds-window[data-lights="grey"] .ds-window__dot { background: var(--color-ds-light-grey); box-shadow: none; }
+  .ds-window[data-lights="white"] .ds-window__dot { background: var(--color-ds-light-white); box-shadow: none; }
+
+  .ds-window__url {
+    flex: 1;
+    min-width: 0;
+    margin-left: 8px;
+    padding: 4px 10px;
+    overflow: hidden;
+    border-radius: calc(6px * var(--ds-corner, 1));
+    background: var(--ds-ink-1);
+    color: var(--ds-text-faint);
+    font-size: 10.5px;
+    line-height: 1.4;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .ds-window__title {
+    flex: 1;
+    margin-right: 36px;
+    text-align: center;
+    font-size: var(--text-ds-label);
+    line-height: var(--text-ds-label--line-height);
+    letter-spacing: var(--text-ds-label--letter-spacing);
+    font-weight: var(--text-ds-label--font-weight);
+    color: var(--ds-text-strong);
+  }
+
+  .ds-window__body {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .ds-window[data-chrome="glass"] {
+    background: var(--color-ds-glass-frame);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border-radius: calc(12px * var(--ds-corner, 1));
+    box-shadow: 0 0 0 1px var(--color-ds-glass-edge), 0 15px 35px var(--color-ds-glass-drop);
+  }
+
+  .ds-window[data-chrome="glass"] > .ds-window__bar {
+    display: grid;
+    grid-template-columns: 1fr minmax(0, 262px) 1fr;
+    gap: 12px;
+    height: 35px;
+    padding: 0 20px;
+    background: none;
+    border: 0;
+  }
+
+  .ds-window[data-chrome="glass"] .ds-window__lights { gap: 4px; }
+
+  .ds-window[data-chrome="glass"] .ds-window__dot { width: 8px; height: 8px; }
+
+  .ds-window[data-chrome="glass"] .ds-window__url {
+    display: flex;
+    grid-column: 2;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    height: 20px;
+    margin: 0;
+    padding: 0 8px;
+    border-radius: 999px;
+    background: var(--color-ds-glass-url);
+    box-shadow: inset 0 0 0 1px var(--color-ds-glass-edge);
+    color: var(--color-ds-glass-url-ink);
+    font-size: 10px;
+  }
+
+  .ds-window__lock { flex-shrink: 0; color: var(--color-ds-glass-lock); }
+
+  .ds-window__url-text { overflow: hidden; text-overflow: ellipsis; }
+
+  .ds-window[data-chrome="glass"] > .ds-window__body {
+    margin: 0 6px 6px;
+    overflow: hidden;
+    border-radius: calc(12px * var(--ds-corner, 1) - 6px);
+    background: var(--ds-surface);
+    box-shadow: 0 3px 6px var(--color-ds-glass-page-drop);
+  }
+}

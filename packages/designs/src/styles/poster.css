@@ -1,0 +1,306 @@
+/*
+ * @kian/designs · poster.css
+ * Poster-size variants: the soft segmented control, search, select and the people stack.
+ * Loaded by designs.css in cascade order; keep the import order when editing.
+ */
+
+/* ── Poster parts (the hero-grid example), at its 1x sizes ───────────────────── */
+
+@layer components {
+  .ds-poster {
+    font-size: var(--text-ds-body);
+    line-height: var(--text-ds-body--line-height);
+    letter-spacing: var(--text-ds-body--letter-spacing);
+    font-weight: 500;
+    color: var(--ds-control-ink);
+  }
+
+  .ds-surface {
+    background: var(--ds-control);
+    box-shadow: 0 0 0 0.5px var(--ds-control-edge), 0 2px 6px -2px var(--ds-control-drop);
+  }
+
+  /* The grid paper the poster's controls sit on */
+  .ds-paper {
+    background-color: var(--ds-paper);
+    background-image: linear-gradient(var(--ds-grid) 1px, transparent 1px), linear-gradient(90deg, var(--ds-grid) 1px, transparent 1px);
+    background-size: 16px 16px;
+  }
+
+  /* Segmented, soft: the poster's Day / Week / Month */
+  .ds-seg[data-variant="soft"] {
+    grid-template-rows: 1fr;
+    height: 48px;
+    padding: 4px;
+    border-radius: calc(16px * var(--ds-corner, 1));
+    background: var(--ds-control);
+    box-shadow: 0 0 0 0.5px var(--ds-control-edge), 0 2px 6px -2px var(--ds-control-drop);
+  }
+
+  .ds-seg[data-variant="soft"] .ds-seg__thumb {
+    top: 4px;
+    bottom: 4px;
+    left: 4px;
+    width: calc((100% - 8px) / var(--n));
+    border-radius: calc(16px * var(--ds-corner, 1) - 4px);
+    background: var(--ds-accent-soft);
+    box-shadow: none;
+    transition: transform 350ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .ds-seg[data-variant="soft"] .ds-seg__option {
+    height: auto;
+    padding: 0 14px;
+    font-size: var(--text-ds-body);
+    line-height: var(--text-ds-body--line-height);
+    letter-spacing: var(--text-ds-body--letter-spacing);
+    font-weight: 500;
+    color: var(--ds-control-muted);
+  }
+
+  .ds-seg[data-variant="soft"] .ds-seg__option[data-on] {
+    color: var(--ds-accent);
+  }
+
+  /* Toggle at the poster's 1.6x */
+  .ds-toggle[data-size="lg"] {
+    zoom: 1.3333;
+  }
+
+  /* Search: the poster's field */
+  .ds-search {
+    /* The ink and placeholder colors, shared by the input and its dissolve layers */
+    --ds-search-ink: var(--ds-control-ink);
+    --ds-search-placeholder: var(--ds-control-placeholder);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 48px;
+    padding: 0 14px;
+    border-radius: calc(14px * var(--ds-corner, 1));
+    color: var(--ds-control-placeholder);
+    transition: box-shadow 0.2s ease;
+  }
+
+  .ds-search:focus-within {
+    box-shadow: inset 0 0 0 1px var(--ds-accent), 0 0 0 1.5px var(--ds-accent-soft);
+  }
+
+  .ds-search svg {
+    flex: none;
+  }
+
+  .ds-search__input {
+    flex: 1;
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+    font: inherit;
+    color: var(--ds-search-ink);
+  }
+
+  /* The visible placeholder is its own layer, so it can fall in when the text clears */
+  .ds-search__input::placeholder {
+    color: transparent;
+  }
+
+  .ds-search__input::-webkit-search-cancel-button {
+    appearance: none;
+  }
+
+  /* Publish → Live: states stacked in one cell, crossfading */
+  .ds-action {
+    display: inline-grid;
+    place-items: center;
+    grid-template-areas: "stack";
+    height: 48px;
+    padding: 0 24px;
+    border-radius: calc(14px * var(--ds-corner, 1));
+    background: var(--ds-accent);
+    color: var(--color-ds-white);
+    box-shadow: 0 6px 14px -8px var(--ds-button-drop);
+    transition: scale 0.15s ease;
+  }
+
+  .ds-action:active {
+    scale: 0.98;
+  }
+
+  .ds-action:disabled {
+    cursor: default;
+  }
+
+  .ds-action__layer {
+    grid-area: stack;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    opacity: 0;
+    filter: blur(2px);
+    transition: opacity 250ms ease, filter 250ms ease;
+    text-box: trim-both cap alphabetic;
+  }
+
+  .ds-action__layer[data-on] {
+    opacity: 1;
+    filter: none;
+    transition-delay: 80ms;
+  }
+
+  .ds-action .ds-check__ring { stroke: color-mix(in srgb, var(--color-ds-white) 45%, transparent); }
+  .ds-action .ds-check__arc { stroke: var(--color-ds-white); }
+  .ds-action .ds-check__fill { fill: var(--color-ds-white); }
+  .ds-action .ds-check__tick { stroke: var(--ds-accent); }
+
+  /* Select: Weekly ⌄ */
+  .ds-select {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    /* At least the poster's 128, growing for a longer label rather than clipping it */
+    min-width: 128px;
+    height: var(--ds-control-h);
+    padding: 0 11px;
+    border-radius: var(--ds-radius-md);
+    transition: background-color 0.15s ease, transform 120ms ease-out;
+  }
+
+  /* Pressed: a small give as the menu opens */
+  .ds-select:not(:disabled):active {
+    transform: scale(0.97);
+  }
+
+  /* The chevron is secondary to the choice: icon ink, and it turns over while open */
+  .ds-select__chevron {
+    display: grid;
+    color: var(--ds-icon);
+    transition: transform 200ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .ds-select[data-state="open"] .ds-select__chevron {
+    transform: rotate(180deg);
+  }
+
+  /* Never narrower than its trigger */
+  .ds-select__menu {
+    min-width: var(--radix-select-trigger-width);
+  }
+
+  /* The label first, lined up with the trigger's: the menu's 4px + 7px = the trigger's 11px.
+     The check at the far end */
+  .ds-select__menu .ds-menu__item {
+    gap: 12px;
+    padding-left: 7px;
+  }
+
+  .ds-select__check {
+    margin-left: auto;
+  }
+
+  .ds-select[data-placeholder] {
+    color: var(--ds-control-placeholder);
+  }
+
+  .ds-select:disabled {
+    cursor: default;
+    opacity: 0.5;
+  }
+
+  /* People: the poster's big avatar discs */
+  .ds-people {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .ds-people > li {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 54px;
+    height: 54px;
+    margin-right: -10px;
+    overflow: hidden;
+    border-radius: 50%;
+    background: var(--ds-control);
+    box-shadow: 0 0 0 0.5px var(--ds-control-edge), 0 0 0 4px var(--ds-paper);
+    font-size: var(--text-ds-title);
+    line-height: var(--text-ds-title--line-height);
+    letter-spacing: var(--text-ds-title--letter-spacing);
+    font-weight: var(--text-ds-title--font-weight);
+  }
+
+  .ds-people img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ds-people__more {
+    color: var(--ds-control-muted);
+    font-size: var(--text-ds-body);
+    line-height: var(--text-ds-body--line-height);
+    letter-spacing: var(--text-ds-body--letter-spacing);
+    font-weight: var(--text-ds-body--font-weight);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ds-key {
+    --ds-key: 44px;
+    position: relative;
+    display: inline-block;
+    flex: none;
+    width: var(--ds-key);
+    height: var(--ds-key);
+    border-radius: calc(var(--ds-key) * 0.16 * var(--ds-corner, 1));
+    background: linear-gradient(var(--color-ds-key-face), var(--color-ds-key-face-end));
+    box-shadow:
+      inset 0 1px 0 var(--color-ds-key-shine),
+      0 0 0 1px var(--color-ds-key-edge),
+      0 calc(var(--ds-key) * 0.06) 0 var(--color-ds-key-lip),
+      0 calc(var(--ds-key) * 0.16) calc(var(--ds-key) * 0.24) calc(var(--ds-key) * -0.08) var(--color-ds-key-drop);
+    font-family: var(--ds-font);
+    transition: translate 0.08s ease, box-shadow 0.08s ease;
+  }
+
+  .ds-key[data-pressed] {
+    translate: 0 calc(var(--ds-key) * 0.05);
+    box-shadow: inset 0 1px 0 var(--color-ds-key-shine), 0 0 0 1px var(--color-ds-key-edge), 0 calc(var(--ds-key) * 0.01) 0 var(--color-ds-key-lip);
+  }
+
+  .ds-key__legend {
+    position: absolute;
+    top: 3px;
+    left: 5px;
+    font-size: 10px;
+    line-height: 12px;
+    color: var(--color-ds-key-legend);
+  }
+
+  .ds-key__glyph {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding-top: 4px;
+    font-family: "Hiragino Sans", "Noto Sans JP", var(--ds-font);
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--color-ds-key-ink);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ds-action__layer,
+    .ds-seg__thumb,
+    .ds-toggle__knob {
+      animation: none;
+      transition: none;
+    }
+  }
+}

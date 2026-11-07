@@ -1,0 +1,125 @@
+/*
+ * @kian/designs · button.css
+ * The Button: a tactile face built from six variables per variant.
+ * Loaded by designs.css in cascade order; keep the import order when editing.
+ */
+
+/* Button (Button.tsx): a tactile face. Every variant sets six variables and one rule turns
+   them into the layers: a top-lit gradient, a 1px white highlight inside the top edge, a
+   colored glow underneath (y 3, blur 4, spread -1) and a crisp 1px darker rim. */
+@layer components {
+  .ds-button {
+    --b-top: var(--ds-surface);
+    --b-bottom: var(--ds-surface);
+    --b-glow: transparent;
+    --b-rim: transparent;
+    --b-shine: transparent;
+    --b-focus: var(--ds-accent);
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 0;
+    padding: 0 20px;
+    border: 0;
+    border-radius: var(--ds-radius-md);
+    background: linear-gradient(180deg, var(--b-top), var(--b-bottom));
+    box-shadow:
+      inset 0 1px 0 0 var(--b-shine),
+      0 3px 4px -1px var(--b-glow),
+      0 0 0 1px var(--b-rim);
+    font-family: var(--ds-font);
+    font-size: var(--text-ds-label);
+    line-height: var(--text-ds-label--line-height);
+    letter-spacing: var(--text-ds-label--letter-spacing);
+    font-weight: var(--text-ds-label--font-weight);
+    white-space: nowrap;
+    cursor: pointer;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    transition: box-shadow 0.15s ease, filter 0.15s ease, translate 0.1s ease, opacity 0.15s ease;
+  }
+
+  .ds-button[data-size="md"] { height: var(--ds-control-h); }
+  .ds-button[data-size="sm"] { height: 32px; gap: 6px; padding: 0 14px; }
+  .ds-button[data-icon-only][data-size="md"] { width: var(--ds-control-h); padding: 0; }
+  .ds-button[data-icon-only][data-size="sm"] { width: 32px; padding: 0; }
+
+  /* The accent, lit the reference's way */
+  .ds-button[data-variant="primary"] {
+    --b-top: color-mix(in srgb, var(--ds-accent), white 6%);
+    --b-bottom: var(--ds-accent);
+    --b-glow: color-mix(in srgb, color-mix(in srgb, var(--ds-accent), white 12%) 95%, transparent);
+    --b-rim: color-mix(in srgb, var(--ds-accent), black 18%);
+    --b-shine: color-mix(in srgb, var(--color-ds-white) 33%, transparent);
+    color: var(--color-ds-white);
+  }
+
+  /* Destructive: the reference's exact colors */
+  .ds-button[data-variant="danger"] {
+    --b-top: var(--color-ds-delete-top);
+    --b-bottom: var(--color-ds-delete-bottom);
+    --b-glow: color-mix(in srgb, var(--color-ds-delete-glow) 95%, transparent);
+    --b-rim: var(--color-ds-delete-rim);
+    --b-shine: color-mix(in srgb, var(--color-ds-white) 33%, transparent);
+    --b-focus: var(--color-ds-delete-top);
+    color: var(--color-ds-white);
+  }
+
+  /* Neutral: a white face, a grey rim, a soft grey shadow */
+  .ds-button[data-variant="secondary"] {
+    --b-top: color-mix(in srgb, var(--ds-surface), var(--color-ds-white) 4%);
+    --b-bottom: color-mix(in srgb, var(--ds-surface), var(--ds-text-strong) 3%);
+    /* A light edge: the rim and the drop below it stack along the bottom, so each stays faint */
+    --b-glow: var(--ds-ink-1);
+    --b-rim: var(--ds-ink-2);
+    --b-shine: color-mix(in srgb, var(--color-ds-white) 33%, transparent);
+    color: var(--ds-text-strong);
+  }
+
+  .dark .ds-button[data-variant="secondary"] {
+    --b-shine: color-mix(in srgb, var(--color-ds-white) 6%, transparent);
+  }
+
+  .ds-button[data-variant="ghost"] {
+    background: transparent;
+    box-shadow: none;
+    color: var(--ds-icon);
+  }
+
+  /* Pressed: the face sinks 1px and its glow tucks in under it */
+  .ds-button:not([data-variant="ghost"]):active:not(:disabled) {
+    translate: 0 1px;
+    filter: brightness(0.97);
+    box-shadow:
+      inset 0 1px 0 0 var(--b-shine),
+      0 1px 2px -1px var(--b-glow),
+      0 0 0 1px var(--b-rim);
+    transition-duration: 0s;
+  }
+
+  .ds-button[data-variant="ghost"]:active:not(:disabled) {
+    translate: 0 1px;
+  }
+
+  /* Focus: the rim, a band of the page, then a ring in the button's own color */
+  .ds-button:not([data-variant="ghost"]):focus-visible {
+    box-shadow:
+      inset 0 1px 0 0 var(--b-shine),
+      0 0 0 1px var(--b-rim),
+      0 0 0 3px var(--ds-surface),
+      0 0 0 4.5px var(--b-focus);
+  }
+
+  .ds-button[data-variant="ghost"]:focus-visible {
+    outline: 2px solid var(--ds-accent);
+    outline-offset: 2px;
+  }
+
+  .ds-button:disabled {
+    cursor: default;
+    opacity: 0.4;
+  }
+}

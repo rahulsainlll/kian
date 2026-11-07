@@ -1,0 +1,208 @@
+/*
+ * @kian/designs · fields.css
+ * Text fields, the segmented control, the toggle and tabs.
+ * Loaded by designs.css in cascade order; keep the import order when editing.
+ */
+
+/* Field */
+
+@layer components {
+
+  /* The box never grows past the width it was given: a chip opening, or any
+     content, clips inside the text area instead of pushing the trailing
+     control and the box edge out into whatever sits next to the field */
+  .ds-field {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+  }
+
+  .ds-field__label {
+    font-size: var(--text-ds-label);
+    line-height: var(--text-ds-label--line-height);
+    letter-spacing: var(--text-ds-label--letter-spacing);
+    font-weight: var(--text-ds-label--font-weight);
+    color: var(--ds-text-strong);
+  }
+
+  /* The ring is a shadow, so focusing never moves the text */
+  .ds-field__box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: var(--ds-control-h);
+    padding: 0 11px;
+    border-radius: var(--ds-radius-md);
+    background: var(--ds-surface);
+    box-shadow: inset 0 0 0 1px var(--ds-ink-4), 0 0 0 0 transparent;
+    font-size: var(--text-ds-body);
+    line-height: var(--text-ds-body--line-height);
+    letter-spacing: var(--text-ds-body--letter-spacing);
+    font-weight: 500;
+    color: var(--ds-text-strong);
+    transition: box-shadow 0.2s ease, padding 0.35s cubic-bezier(0.45, 0, 0.1, 1);
+  }
+
+  .ds-field[data-focused] .ds-field__box {
+    box-shadow: inset 0 0 0 1px var(--ds-accent), 0 0 0 1.5px var(--ds-accent-soft);
+  }
+
+  .ds-field[data-status="error"] .ds-field__box {
+    box-shadow: inset 0 0 0 2px var(--ds-danger);
+  }
+
+  
+
+  .ds-field__ok {
+    flex-shrink: 0;
+  }
+
+  .ds-field__ok path {
+    fill: none;
+    stroke: var(--ds-success);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 1;
+    /* Drawn at rest, so a still (animations off) still shows it */
+    animation: ds-draw 0.35s cubic-bezier(0.65, 0, 0.35, 1) both;
+  }
+
+  /* Reduced motion: a steady caret, and the tick already drawn */
+  @media (prefers-reduced-motion: reduce) {
+    .ds-field__ok path {
+      animation: none;
+    }
+  }
+}
+
+/* Segmented */
+
+@layer components {
+  .ds-seg {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(var(--n), 1fr);
+    padding: 2px;
+    border-radius: var(--ds-radius-md);
+    background: var(--ds-ink-2);
+  }
+
+  .ds-seg__thumb {
+    position: absolute;
+    top: 2px;
+    bottom: 2px;
+    left: 2px;
+    width: calc((100% - 4px) / var(--n));
+    border-radius: calc(var(--ds-radius-md) - 2px);
+    background: var(--ds-raised);
+    box-shadow: 0 1px 2px var(--color-ds-thumb-drop), 0 0 0 0.5px var(--color-ds-thumb-edge);
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .ds-seg__option {
+    position: relative;
+    display: grid;
+    place-items: center;
+    height: var(--ds-row-h);
+    padding: 0 10px;
+    font-size: var(--text-ds-label);
+    line-height: var(--text-ds-label--line-height);
+    letter-spacing: var(--text-ds-label--letter-spacing);
+    font-weight: var(--text-ds-label--font-weight);
+    color: var(--ds-text);
+    transition: color 0.2s ease;
+  }
+
+  .ds-seg__option[data-on] {
+    color: var(--ds-text-strong);
+  }
+}
+
+/* Toggle */
+
+@layer components {
+  .ds-toggle {
+    position: relative;
+    display: inline-block;
+    flex-shrink: 0;
+    width: 36px;
+    height: 22px;
+    border-radius: 11px;
+    background: var(--ds-ink-5);
+    transition: background-color 0.2s ease;
+  }
+
+  .ds-toggle[data-state="checked"] {
+    background: var(--ds-accent);
+  }
+
+  .ds-toggle__knob {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 18px;
+    height: 18px;
+    background: var(--color-ds-white);
+    /* Light and tight: a heavy shadow grays the track beside the knob, so
+       the accent reads as see-through */
+    box-shadow: 0 0.5px 1.5px var(--color-ds-knob-drop), 0 0 0 0.5px var(--color-ds-knob-edge);
+    /* The knob's stretch on hover (Linear's: ~14% of its width), and how far it travels */
+    --ds-knob-stretch: 3px;
+    --ds-knob-travel: 14px;
+    border-radius: 9px;
+    transition:
+      transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+      width 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .ds-toggle[data-state="checked"] .ds-toggle__knob {
+    transform: translateX(var(--ds-knob-travel));
+  }
+
+  /* Pressed: the knob stretches toward the side it would go, its far edge pinned to the end */
+  .ds-toggle:not(:disabled):not([data-settled]):active .ds-toggle__knob {
+    width: calc(18px + var(--ds-knob-stretch));
+  }
+
+  .ds-toggle[data-state="checked"]:not(:disabled):not([data-settled]):active .ds-toggle__knob {
+    transform: translateX(calc(var(--ds-knob-travel) - var(--ds-knob-stretch)));
+  }
+
+}
+
+/* Tabs */
+
+@layer components {
+  .ds-tabs {
+    position: relative;
+    display: flex;
+    gap: 18px;
+    border-bottom: 1px solid var(--ds-line);
+  }
+
+  .ds-tabs__tab {
+    padding-bottom: 11px;
+    font-size: var(--text-ds-label);
+    line-height: var(--text-ds-label--line-height);
+    letter-spacing: var(--text-ds-label--letter-spacing);
+    font-weight: var(--text-ds-label--font-weight);
+    color: var(--ds-text);
+    transition: color 0.2s ease;
+  }
+
+  .ds-tabs__tab[data-on] {
+    color: var(--ds-text-strong);
+  }
+
+  .ds-tabs__bar {
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 1px;
+    height: 2px;
+    background: var(--ds-text-strong);
+    transform-origin: 0 0;
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
