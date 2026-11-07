@@ -8,9 +8,9 @@ import { Mascot } from '@kian/ui'
 import { useState } from 'react'
 import { Nav, SiteFooter } from '../Chrome'
 
-// Placeholder until the team inbox exists. The form opens the visitor's own mail
-// app with the message filled in; nothing is sent from this page.
-const CONTACT_EMAIL = 'team@kian.example'
+// The form opens the visitor's own mail app addressed here, with the message
+// filled in; nothing is sent from this page.
+const CONTACT_EMAIL = 'yuktimehraa@gmail.com'
 const LINKEDIN = 'https://www.linkedin.com/in/yukti222/'
 
 const REASONS = ['Try Kian with my team', 'Judging the hackathon', 'Press or partnership', 'Just saying hi'] as const
