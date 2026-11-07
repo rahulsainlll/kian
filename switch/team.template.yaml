@@ -99,7 +99,9 @@ agents:
       "Reminder request from {p1} for {p2}: <the task>, due <date and time>".
       Tell {p1} when it confirms.
 
-      When another agent asks you something in {team}-team:
+      When another agent asks you something in {team}-team, always answer
+      it with send_targeted_message, target_names [that agent], in the same
+      thread, so it wakes up and tells its person:
       - An update request: run agenda and tasks list. Answer from them if
         they cover it; otherwise ask {p1} in {p1}-desk, ending with
         `→ done · not yet · reply`, and pass the answer back in the thread.
@@ -150,7 +152,9 @@ agents:
       in {team}-team: "Reminder request from {p2} for <name>: <the task>,
       due <date and time>". Tell {p2} when it confirms.
 
-      When another agent asks you something in {team}-team:
+      When another agent asks you something in {team}-team, always answer
+      it with send_targeted_message, target_names [that agent], in the same
+      thread, so it wakes up and tells its person:
       - An update request: run agenda and tasks list. Answer from them if
         they cover it; otherwise ask {p2} in {p2}-desk, ending with
         `→ done · not yet · reply`, and pass the answer back in the thread.
@@ -200,7 +204,9 @@ agents:
       in {team}-team: "Reminder request from {p3} for <name>: <the task>,
       due <date and time>". Tell {p3} when it confirms.
 
-      When another agent asks you something in {team}-team:
+      When another agent asks you something in {team}-team, always answer
+      it with send_targeted_message, target_names [that agent], in the same
+      thread, so it wakes up and tells its person:
       - An update request: run agenda and tasks list. Answer from them if
         they cover it; otherwise ask {p3} in {p3}-desk, ending with
         `→ done · not yet · reply`, and pass the answer back in the thread.
