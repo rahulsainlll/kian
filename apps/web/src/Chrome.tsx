@@ -77,6 +77,8 @@ const FOOT_COLUMNS: { title: string; links: [string, string][] }[] = [
     title: 'Learn',
     links: [
       ['Blog', '/blog'],
+      ['Connect Switch', '/guide/switch'],
+      ['Watch the video', '/#watch'],
       ['How Kian uses Switch', '/#switch'],
       ['Questions', '/#faq'],
     ],
@@ -85,6 +87,7 @@ const FOOT_COLUMNS: { title: string; links: [string, string][] }[] = [
     title: 'Kian',
     links: [
       ['Contact', '/contact'],
+      ['LinkedIn', 'https://www.linkedin.com/in/yukti222/'],
       ['Switch on GitHub', 'https://github.com/sandbox-quantum/switch'],
       ['Flip the Switch', 'https://www.wemakedevs.org/hackathons/switch'],
     ],
