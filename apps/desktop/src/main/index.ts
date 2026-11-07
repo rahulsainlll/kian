@@ -4,7 +4,7 @@
  * connects to the rooms (mock or Mattermost, from settings) and wires the
  * IPC the preload bridge exposes. Saving settings reconnects the rooms.
  */
-import { BrowserWindow, app, globalShortcut, ipcMain } from 'electron'
+import { BrowserWindow, Notification, app, globalShortcut, ipcMain } from 'electron'
 import type { DeskState, RoomEvent, SettingsUpdate, WidgetPosition } from '../shared/types'
 import { captureRun } from './capture'
 import { Desk } from './desk'
@@ -65,6 +65,13 @@ async function connect() {
     },
     (event: RoomEvent) => send(hub, 'hub:feed', event),
   )
+  // Every card also shows as a system notification, in case the widget is covered.
+  desk.onCard = (m) => {
+    if (!Notification.isSupported()) return
+    const n = new Notification({ title: `${m.author} · #${m.room}`, body: m.text.slice(0, 180), silent: true })
+    n.on('click', () => widget?.showInactive())
+    n.show()
+  }
   desk.setConnection('connecting')
   try {
     const me = await rooms.connect()

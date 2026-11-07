@@ -59,6 +59,8 @@ export function Widget() {
     const m = desk.message
     if (m && seen.current !== m.id) {
       seen.current = m.id
+      // A new card wins over an open chat bubble, so answers are never hidden behind it.
+      setVoiceState((v) => (v === 'typing' ? 'idle' : v))
       cue('card')
       speak(m.text)
     }

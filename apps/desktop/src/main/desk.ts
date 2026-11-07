@@ -25,6 +25,8 @@ export class Desk {
   private snoozedUntil = 0
   private feed: RoomEvent[] = []
   private me = ''
+  /** Called for every new card, e.g. to raise a system notification. */
+  onCard?: (message: RoomMessage) => void
 
   constructor(
     private rooms: Rooms,
@@ -137,6 +139,8 @@ export class Desk {
           : undefined,
     }
     this.queue.push({ event, message })
+    console.log(`[kian] card from ${event.author} in #${event.room}: ${message.text.slice(0, 80)}`)
+    this.onCard?.(message)
     this.emit()
   }
 
