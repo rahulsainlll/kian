@@ -1,0 +1,131 @@
+/*
+ * Motion for the redesigned slides, seekable with --t like the rest: pops
+ * with an overshoot, notebook pages swinging open, lines drawing in, cards
+ * sliding in from the right, the agents' jiggle, and dots hopping along
+ * the lines (CSS offset-path). Also the brand-mark and app-icon basics.
+ */
+[data-anim='pop'] {
+  animation-name: x-pop2;
+  animation-duration: 0.7s;
+  animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes x-pop2 {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  40% {
+    opacity: 1;
+  }
+}
+[data-anim='open'] {
+  animation-name: x-open;
+  animation-duration: 0.9s;
+  transform-origin: 0 50%;
+}
+@keyframes x-open {
+  from {
+    opacity: 0;
+    transform: rotateY(-80deg);
+  }
+  30% {
+    opacity: 1;
+  }
+}
+[data-anim='draw'] {
+  animation-name: x-draw;
+  animation-duration: 0.9s;
+}
+@keyframes x-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+[data-anim='slide'] {
+  animation-name: x-slide;
+  animation-duration: 0.7s;
+}
+@keyframes x-slide {
+  from {
+    opacity: 0;
+    transform: translateX(80px);
+  }
+}
+.x-notif[data-anim='slide'] {
+  animation-name: x-slide-far;
+}
+@keyframes x-slide-far {
+  from {
+    opacity: 0;
+    transform: translateX(640px);
+  }
+}
+
+/* the agents jiggle while they bob */
+.x-jig {
+  display: inline-block;
+  animation: x-jig 1.6s ease-in-out infinite alternate paused;
+  animation-delay: calc(var(--b, 1s) - var(--t, 10s));
+}
+@keyframes x-jig {
+  from {
+    transform: rotate(-6deg);
+  }
+  to {
+    transform: rotate(6deg);
+  }
+}
+
+/* a dot hopping along a line, one hop per period, offset by --h */
+.x-hop {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--c, #3d7bf2);
+  box-shadow: 0 0 0 7px color-mix(in srgb, var(--c, #3d7bf2) 25%, transparent);
+  offset-rotate: 0deg;
+  animation: x-hop var(--period, 6s) linear infinite paused;
+  animation-delay: calc(var(--h, 0s) - var(--t, 10s));
+  animation-fill-mode: both;
+}
+@keyframes x-hop {
+  0% {
+    offset-distance: 0%;
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+  }
+  2% {
+    opacity: 1;
+  }
+  13% {
+    offset-distance: 100%;
+    opacity: 1;
+  }
+  15% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+
+.x-brand {
+  display: inline-block;
+  flex: none;
+  background: var(--c);
+  -webkit-mask: var(--src) center / contain no-repeat;
+  mask: var(--src) center / contain no-repeat;
+}
+.x-appicon {
+  flex: none;
+  border-radius: 24%;
+  box-shadow: 0 6px 16px -6px rgba(0, 0, 0, 0.3);
+}

@@ -10,7 +10,9 @@ import { SwitchNotebook } from './home/SwitchUse'
 import './art.css'
 import { GuideMac, GuideWindows } from './art/Guides'
 import { HowItWorks } from './art/HowItWorks'
-import { XArchitecture, XClosing, XHowKian, XImpact, XProblem, XWhySwitch } from './art/Explainer'
+import { XClosing, XHowKian, XProblem } from './art/Explainer'
+import { XDesktop, XImpact, XNotify, XStage } from './art/ExplainerScenes'
+import { XArchitecture, XNotebook, XWhySwitch } from './art/ExplainerSwitch'
 
 const BRIEF: RoomMessage = {
   id: 'a1',
@@ -157,6 +159,10 @@ const ART: Record<string, () => ReactNode> = { og: Og, hero: Hero, cast: Cast, s
   'x-architecture': XArchitecture,
   'x-impact': XImpact,
   'x-closing': XClosing,
+  'x-notebook': XNotebook,
+  'x-desktop': XDesktop,
+  'x-notify': XNotify,
+  'x-stage': XStage,
 }
 const CLEAR = new Set(['appicon', 'trayicon'])
 
