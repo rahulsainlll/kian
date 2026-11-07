@@ -103,7 +103,7 @@ The desk runs on demo data until you connect Google. Use a throwaway account, ne
 2. Install the client and seed the account:
 
    ```bash
-   python3 -m pip install -r requirements.txt
+   python3 -m venv .venv && .venv/bin/pip install -r requirements.txt   # kian_tools.py uses .venv by itself
    python3 seed.py                    # signs in, then prints KIAN_SHEET_ID
    cp .env.example .env               # set KIAN_SHEET_ID, and KIAN_BACKEND=google
    python3 kian_tools.py brief --check

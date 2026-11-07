@@ -226,5 +226,14 @@ def main(argv: list[str] | None = None) -> int:
     return args.run(None if getattr(args, "no_backend", False) else backend(args.profile), args)
 
 
+def use_toolkit_venv() -> None:
+    """Agents call plain `python3 kian_tools.py`; when the toolkit has its own
+    virtual environment (where the Google client is installed), run inside it."""
+    venv_py = HERE / ".venv" / "bin" / "python"
+    if venv_py.exists() and Path(sys.prefix).resolve() != (HERE / ".venv").resolve():
+        os.execv(str(venv_py), [str(venv_py), str(Path(__file__).resolve()), *sys.argv[1:]])
+
+
 if __name__ == "__main__":
+    use_toolkit_venv()
     sys.exit(main())

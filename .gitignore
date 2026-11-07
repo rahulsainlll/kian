@@ -13,3 +13,4 @@ __pycache__/
 # Electron build output
 apps/desktop/out
 apps/desktop/release
+switch/toolkit/.venv/
