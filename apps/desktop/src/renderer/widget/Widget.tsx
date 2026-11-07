@@ -30,6 +30,8 @@ const EMPTY: DeskState = {
 export function Widget() {
   const [desk, setDesk] = useState<DeskState>(EMPTY)
   const [hovered, setHovered] = useState(false)
+  // With no voice engine, the mic goes straight to the type bar (for Wispr Flow or typing).
+  const [voiceOff, setVoiceOff] = useState(true)
   const voice = useVoice()
   const { speak, speaking, stop: stopSpeaking } = useSpeak(desk.speak)
   const seen = useRef<string | null>(null)
@@ -39,7 +41,13 @@ export function Widget() {
 
   useEffect(() => {
     void window.kian.desk.state().then((s) => s && setDesk(s))
-    return window.kian.desk.onState(setDesk)
+    void window.kian.hub.settings().then((s) => setVoiceOff(s.sttProvider === 'off'))
+    const offSettings = window.kian.hub.onSettings((s) => setVoiceOff(s.sttProvider === 'off'))
+    const offState = window.kian.desk.onState(setDesk)
+    return () => {
+      offSettings()
+      offState()
+    }
   }, [])
 
   // Each new card: a chime, and read aloud when voice-out is on.
@@ -87,7 +95,7 @@ export function Widget() {
   const listen = () => {
     stopSpeaking()
     cue('listen')
-    setVoiceState('listening')
+    setVoiceState(voiceOff ? 'typing' : 'listening')
   }
 
   const talk = () => {

@@ -41,6 +41,7 @@ function applySettings() {
   registerHotkey()
   desk?.refresh()
   send(hub, 'hub:settings-changed', publicSettings())
+  send(widget, 'hub:settings-changed', publicSettings())
 }
 
 function makeRooms(): Rooms {
