@@ -8,6 +8,7 @@
 import { KianWidget, Logo, Mascot } from '@kian/ui'
 import type { ReactNode } from 'react'
 import './guides.css'
+import './guide-screens.css'
 
 function Step({ n, title, line, children }: { n: number; title: string; line: ReactNode; children: ReactNode }) {
   return (
