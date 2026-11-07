@@ -1,3 +1,7 @@
+/*
+ * useAutoplay: plays the demo morning on its own. It answers each card the
+ * way Yukti would, at reading pace, then pauses and loops.
+ */
 import type { Chip, RoomMessage } from '@kian/ui'
 import { useEffect } from 'react'
 import type { useDemoDesk } from './useDemoDesk'

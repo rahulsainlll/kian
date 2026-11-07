@@ -1,3 +1,6 @@
+/*
+ * Field: a labelled text input, controlled or not, with status and hint.
+ */
 "use client"
 
 import { type ComponentProps, type ReactNode, useId } from "react"

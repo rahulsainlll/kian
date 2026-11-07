@@ -1,0 +1,170 @@
+/*
+ * site · everywhere.css
+ * "Everywhere you are": the illustrated platform cards.
+ */
+
+/* ── everywhere you are (Headspace illustrations) ── */
+.where {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.where__card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 460px;
+  border-radius: 28px;
+  overflow: hidden;
+}
+.where__card--desk {
+  background: #2457e6;
+}
+.where__card--phone {
+  background: #0b16d6;
+}
+.where__art {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: auto;
+}
+.where__words {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 28px 28px 0;
+  color: #fff;
+}
+.where__words b {
+  font-family: var(--display);
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+.where__words span {
+  max-width: 380px;
+  font-size: 15.5px;
+  line-height: 1.45;
+  opacity: 0.9;
+}
+.where__phone-art {
+  position: relative;
+  align-self: center;
+  width: 220px;
+  height: 190px;
+  margin-top: 8px;
+  display: grid;
+  place-items: center;
+}
+.where__phone-art .mascot {
+  rotate: 8deg;
+}
+.where__check {
+  position: absolute;
+  right: -46px;
+  bottom: -10px;
+  width: 110px;
+  rotate: 8deg;
+}
+.where__spark {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  background: #fff;
+  clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%);
+}
+.where__spark--a {
+  top: -6px;
+  right: 18px;
+}
+.where__spark--b {
+  left: -4px;
+  top: 70px;
+  width: 26px;
+  height: 26px;
+  background: #4aa3f5;
+}
+.where__star {
+  position: absolute;
+  right: -14px;
+  bottom: 30px;
+  width: 50px;
+  height: 50px;
+  background: #ffa8c5;
+  clip-path: polygon(50% 0, 58% 30%, 85% 15%, 70% 42%, 100% 50%, 70% 58%, 85% 85%, 58% 70%, 50% 100%, 42% 70%, 15% 85%, 30% 58%, 0 50%, 30% 42%, 15% 15%, 42% 30%);
+}
+.where__note {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: calc(100% - 48px);
+  margin: 12px 24px 28px;
+  padding: 14px 18px;
+  border-radius: 22px;
+  background: #e8e5df;
+  color: #111;
+  font-size: 15px;
+  line-height: 1.35;
+  box-shadow: 0 16px 30px -16px rgba(0, 0, 0, 0.5);
+}
+.where__note b {
+  margin-right: 4px;
+}
+.where__app {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 44px;
+  height: 44px;
+  padding: 0 9px;
+  border-radius: 12px;
+  background: #fff;
+}
+.where__app i {
+  height: 5px;
+  border-radius: 3px;
+  background: #3d7bf2;
+}
+.where__app i:nth-child(2) {
+  background: #ff8a1f;
+}
+.where__app i:nth-child(3) {
+  background: #ffcf1f;
+}
+.a11y {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0 0;
+  padding: 0;
+}
+.a11y li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  color: var(--ink-2);
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.a11y li::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--c);
+}
+@media (max-width: 860px) {
+  .where {
+    grid-template-columns: 1fr;
+  }
+}

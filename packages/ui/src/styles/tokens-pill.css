@@ -1,0 +1,149 @@
+/*
+ * @kian/ui · tokens-pill.css
+ * Widget tokens, layout and the pill with its attention ring.
+ */
+
+.kian {
+  --k-surface: rgba(24, 24, 27, 0.88);
+  --k-surface-raised: rgba(255, 255, 255, 0.07);
+  --k-surface-hover: rgba(255, 255, 255, 0.12);
+  --k-hairline: rgba(255, 255, 255, 0.1);
+  --k-ink-1: #fafafa;
+  --k-ink-2: rgba(250, 250, 250, 0.72);
+  --k-ink-3: rgba(250, 250, 250, 0.48);
+  --k-rec: #ff453a;
+  --k-ok: #32d74b;
+  --k-agent-kian: #4c8dff;
+  --k-agent-scribe: #2fb36b;
+  --k-agent-studio: #f0a020;
+
+  --k-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --k-ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --k-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.4), 0 8px 24px -6px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.25);
+
+  --k-pill-h: 44px;
+  --k-pad: 4px;
+  --k-btn: 36px; /* outer radius 22 = inner 18 + pad 4 */
+  --k-card-r: 16px;
+
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--k-ink-1);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.kian *,
+.kian *::before,
+.kian *::after {
+  box-sizing: border-box;
+}
+
+.k-glass {
+  background: var(--k-surface);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--k-hairline);
+  box-shadow: var(--k-shadow);
+}
+
+/* ── layout ─────────────────────────────────────────────────────────────── */
+
+.k-widget {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.k-widget[data-orientation='vertical'] {
+  flex-direction: row;
+  align-items: center;
+}
+
+.k-float {
+  transform-origin: bottom center;
+  animation: k-surface-in 200ms var(--k-ease-out) both;
+}
+.k-widget[data-orientation='vertical'] .k-float {
+  transform-origin: center right;
+  --k-from: translateX(8px) scale(0.96);
+}
+.k-float[data-phase='closing'] {
+  animation: k-surface-out 150ms var(--k-ease-out) both;
+}
+
+@keyframes k-surface-in {
+  from {
+    opacity: 0;
+    transform: var(--k-from, translateY(8px) scale(0.96));
+  }
+}
+@keyframes k-surface-out {
+  to {
+    opacity: 0;
+    transform: var(--k-from, translateY(8px) scale(0.96));
+  }
+}
+
+/* ── pill ───────────────────────────────────────────────────────────────── */
+
+.k-pill {
+  position: relative;
+  display: inline-flex;
+  border-radius: 999px;
+  padding: var(--k-pad);
+  min-height: var(--k-pill-h);
+}
+/* Attention: a ring that breathes out once, ~2.5s after the nudge arrives, then
+   rests ~6s. Transform + opacity only, so it never repaints the pill. */
+.k-pill[data-attention='true']::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  box-shadow: 0 0 0 3px rgba(76, 141, 255, 0.55);
+  opacity: 0;
+  pointer-events: none;
+  animation: k-attention 8.5s var(--k-ease-out) 2.5s infinite;
+}
+@keyframes k-attention {
+  0% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  14% {
+    opacity: 0;
+    transform: scale(1.18);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.18);
+  }
+}
+
+.k-pill__body {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  animation: k-body-in 160ms var(--k-ease-out) both;
+}
+.k-pill[data-orientation='vertical'] .k-pill__body {
+  flex-direction: column;
+}
+.k-pill__body--status {
+  padding-inline: 8px 12px;
+  gap: 8px;
+  height: var(--k-btn);
+}
+.k-pill[data-orientation='vertical'] .k-pill__body--status {
+  padding: 8px 0;
+  width: var(--k-btn);
+  height: auto;
+}
+@keyframes k-body-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}

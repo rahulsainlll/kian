@@ -1,13 +1,12 @@
+/*
+ * Kian's dashboard parts, composed from the designs kit. The dashboard shows
+ * what the rooms already hold; every action here is still a message in a room.
+ */
 import { ActionButton, Avatar, Badge, BrandMark, Button, Row, type ActionStatus } from '@kian/designs'
 import type { BrandName } from '@kian/designs'
 import { useState, type ReactNode } from 'react'
 import { CAST, Mascot } from './Character'
 import { HoldButton } from './HoldButton'
-
-/**
- * Kian's dashboard parts, composed from the designs kit. The dashboard shows
- * what the rooms already hold; every action here is still a message in a room.
- */
 
 export function Panel({ title, action, children, className = '' }: { title?: ReactNode; action?: ReactNode; children: ReactNode; className?: string }) {
   return (

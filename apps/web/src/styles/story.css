@@ -1,0 +1,230 @@
+/*
+ * site · story.css
+ * The day timeline: stops, the moving face and its bubble.
+ */
+
+/* ── story: a day timeline (after Grok Bot) ── */
+.story {
+  overflow-x: clip;
+  max-width: 1040px;
+  margin: 144px auto 0;
+  text-align: center;
+  scroll-margin-top: 96px;
+}
+.tl {
+  position: relative;
+  height: 300px;
+}
+/* full-width mover, translated by the stop's share of the width; children sit on its left edge */
+.tl {
+  --x0: 16.66%;
+  --x1: 50%;
+  --x2: 83.33%;
+}
+.tl__mover {
+  position: absolute;
+  inset: 0;
+  transform: translateX(var(--x));
+  transition: transform 650ms cubic-bezier(0.77, 0, 0.175, 1);
+}
+.tl__mover[data-stop='0'] {
+  --x: var(--x0);
+}
+.tl__mover[data-stop='1'] {
+  --x: var(--x1);
+}
+.tl__mover[data-stop='2'] {
+  --x: var(--x2);
+}
+.tl__stop[data-stop='0'] {
+  left: var(--x0);
+}
+.tl__stop[data-stop='1'] {
+  left: var(--x1);
+}
+.tl__stop[data-stop='2'] {
+  left: var(--x2);
+}
+/* at the ends the bubble opens inward, so the face stays on its stop and nothing leaves the screen */
+.tl__mover[data-stop='0'] .tl__actor {
+  align-items: flex-start;
+  translate: -44px 0;
+}
+.tl__mover[data-stop='2'] .tl__actor {
+  align-items: flex-end;
+  translate: calc(-100% + 44px) 0;
+}
+.tl__actor,
+.tl__pill {
+  position: absolute;
+  left: 0;
+  translate: -50% 0;
+}
+.tl__actor {
+  bottom: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.tl__says {
+  max-width: 280px;
+  padding: 12px 16px;
+  border-radius: 18px 18px 18px 6px;
+  background: #17171a;
+  color: #fff;
+  font-size: 14.5px;
+  line-height: 1.4;
+  text-align: left;
+  white-space: normal;
+  width: max-content;
+  animation: says-in 360ms var(--ease-out) 250ms both;
+}
+@keyframes says-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.97);
+  }
+}
+.tl__pill {
+  bottom: 52px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 8px;
+  border-radius: 14px;
+  background: #ffcf1f;
+  box-shadow: 0 0 0 3px #fff, 0 0 0 5px #17171a;
+  font-weight: 650;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.tl__pill::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -26px;
+  translate: -50% 0;
+  width: 4px;
+  height: 26px;
+  border-radius: 2px;
+  background: #ffcf1f;
+}
+.tl__pill button {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+@media (hover: hover) and (pointer: fine) {
+  .tl__pill button:hover {
+    background: rgba(0, 0, 0, 0.08);
+  }
+}
+.tl__timer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: rgba(0, 0, 0, 0.25);
+  transform-origin: left;
+  animation: story-timer 4.5s linear both;
+}
+@keyframes story-timer {
+  from {
+    transform: scaleX(0);
+  }
+}
+.tl__ruler {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 14px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.tl__tick {
+  width: 2px;
+  height: 12px;
+  border-radius: 1px;
+  background: rgba(20, 20, 30, 0.18);
+}
+.tl__stop {
+  position: absolute;
+  top: 50%;
+  translate: -50% -50%;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: #cfc8bd;
+  cursor: pointer;
+  transition:
+    transform 200ms var(--ease-out),
+    background-color 200ms ease;
+}
+.tl__stop[aria-selected='true'] {
+  background: #17171a;
+}
+@media (hover: hover) and (pointer: fine) {
+  .tl__stop:hover {
+    transform: scale(1.15);
+  }
+}
+.story__copy {
+  max-width: 620px;
+  margin: 24px auto 0;
+  animation: story-in 420ms var(--ease-out) both;
+}
+.story__copy .feature__body {
+  margin-left: auto;
+  margin-right: auto;
+}
+.story__scene {
+  margin-top: 32px;
+  text-align: left;
+  animation: story-in 420ms var(--ease-out) 80ms both;
+}
+@keyframes story-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+@media (max-width: 860px) {
+  .tl {
+    --x0: 22%;
+    --x2: 78%;
+  }
+  .tl__says {
+    max-width: 210px;
+    font-size: 13px;
+  }
+  .tl__pill {
+    font-size: 14px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .story__copy,
+  .story__scene,
+  .tl__timer,
+  .tl__says {
+    animation: none;
+  }
+  .tl__mover {
+    transition: none;
+  }
+}

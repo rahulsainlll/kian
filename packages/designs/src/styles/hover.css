@@ -1,0 +1,81 @@
+/*
+ * @kian/designs · hover.css
+ * Hover states, only on devices that really hover.
+ * Loaded by designs.css in cascade order; keep the import order when editing.
+ */
+
+/* Hover, everywhere it can be pressed. Only on devices that really hover, so a tap on a
+   phone never leaves a stuck state. It arrives at once and eases out over 150ms. */
+@layer components {
+  @media (hover: hover) and (pointer: fine) {
+    /* Buttons */
+    .ds-action:hover:not(:disabled) {
+      background: color-mix(in srgb, var(--ds-accent), black 10%);
+      transition-duration: 0s;
+    }
+
+    .ds-button:is([data-variant="primary"], [data-variant="danger"]):hover:not(:disabled):not(:active) {
+      filter: brightness(1.06);
+      transition-duration: 0s;
+    }
+
+    .ds-button[data-variant="secondary"]:hover:not(:disabled) {
+      --b-rim: var(--ds-ink-3);
+      --b-bottom: color-mix(in srgb, var(--ds-surface), var(--ds-text-strong) 5%);
+      transition-duration: 0s;
+    }
+
+    .ds-button[data-variant="ghost"]:hover:not(:disabled) {
+      background: var(--ds-ink-2);
+      color: var(--ds-text-strong);
+      transition-duration: 0s;
+    }
+
+    /* Raised poster surfaces that open or change something */
+    .ds-select:hover:not(:disabled) {
+      background: color-mix(in srgb, var(--ds-control), var(--ds-control-ink) 4%);
+      transition-duration: 0s;
+    }
+
+    /* Choices that aren't on: the ink comes up */
+    .ds-seg__option:not([data-on]):not(:disabled):hover {
+      color: var(--ds-text-strong);
+      transition-duration: 0s;
+    }
+
+    .ds-seg[data-variant="soft"] .ds-seg__option:not([data-on]):not(:disabled):hover {
+      color: var(--ds-control-ink);
+    }
+
+    .ds-tabs__tab:not([data-on]):not(:disabled):hover {
+      color: var(--ds-text-strong);
+      transition-duration: 0s;
+    }
+
+    /* Toggle: the track deepens a step, off or on */
+    .ds-toggle:not(:disabled):hover {
+      background: color-mix(in srgb, var(--ds-ink-5), var(--ds-text-strong) 12%);
+      transition-duration: 0s;
+    }
+
+    .ds-toggle[data-state="checked"]:not(:disabled):hover {
+      background: color-mix(in srgb, var(--ds-accent), black 10%);
+    }
+
+    /* ...and the knob stretches toward the other side, its outer edge pinned (as Linear's).
+       Not once it's been flipped: it rests until the pointer leaves and hovers again */
+    .ds-toggle:not(:disabled):not([data-settled]):hover .ds-toggle__knob {
+      width: calc(18px + var(--ds-knob-stretch));
+    }
+
+    .ds-toggle[data-state="checked"]:not(:disabled):not([data-settled]):hover .ds-toggle__knob {
+      transform: translateX(calc(var(--ds-knob-travel) - var(--ds-knob-stretch)));
+    }
+
+    /* Fields: the edge darkens until focus takes over */
+    .ds-field:not([data-disabled]):not(:focus-within) .ds-field__box:hover,
+    .ds-search[data-size="md"]:not(:focus-within):hover {
+      box-shadow: inset 0 0 0 1px var(--ds-ink-5);
+    }
+  }
+}

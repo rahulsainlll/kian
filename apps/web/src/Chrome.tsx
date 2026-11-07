@@ -1,3 +1,7 @@
+/*
+ * Site chrome shared by every page: the Logo (wordmark plus Kian), the
+ * floating Nav pill, the Stage frame for showing a component, and the footer.
+ */
 import { Mascot } from '@kian/ui'
 import type { ReactNode } from 'react'
 

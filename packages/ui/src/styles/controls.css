@@ -1,0 +1,196 @@
+/*
+ * @kian/ui · controls.css
+ * Round buttons, the record dot, the waveform and the status line.
+ */
+
+/* ── buttons ────────────────────────────────────────────────────────────── */
+
+.k-btn {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: var(--k-btn);
+  height: var(--k-btn);
+  border: 0;
+  border-radius: 999px;
+  padding: 0;
+  color: var(--k-ink-1);
+  background: transparent;
+  cursor: pointer;
+  transition: transform 160ms var(--k-ease-out), background-color 150ms ease;
+}
+.k-btn:active {
+  transform: scale(0.96);
+}
+.k-btn:focus-visible,
+.k-link:focus-visible {
+  outline: 2px solid var(--k-agent-kian);
+  outline-offset: 1px;
+}
+.k-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.k-btn--sm {
+  --k-btn: 28px;
+}
+.k-btn--mic {
+  background: var(--k-surface-raised);
+}
+.k-btn--mic[data-active='true'] {
+  background: var(--k-ink-1);
+  color: #111;
+}
+.k-btn--soft {
+  background: var(--k-surface-raised);
+}
+.k-btn--ghost {
+  color: var(--k-ink-2);
+}
+.k-btn--stop {
+  background: var(--k-rec);
+}
+.k-btn--send {
+  background: var(--k-ink-1);
+  color: #111;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .k-btn--mic:hover,
+  .k-btn--soft:hover,
+  .k-btn--ghost:hover,
+  .k-btn--rec:hover {
+    background: var(--k-surface-hover);
+  }
+  .k-btn--ghost:hover {
+    color: var(--k-ink-1);
+  }
+  .k-btn--stop:hover {
+    background: #e63b31;
+  }
+  .k-link:hover {
+    color: var(--k-ink-1);
+  }
+}
+
+/* the record dot from the reference: white ring, white core */
+.k-rec {
+  display: block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--k-ink-1);
+  background: radial-gradient(circle, var(--k-ink-1) 0 4px, transparent 4.5px);
+}
+.k-rec--live {
+  margin-inline: 9px 2px;
+  border-color: var(--k-rec);
+  background: radial-gradient(circle, var(--k-rec) 0 4px, transparent 4.5px);
+  animation: k-rec-pulse 1.6s ease-in-out infinite;
+}
+.k-pill[data-orientation='vertical'] .k-rec--live {
+  margin: 9px 0 2px;
+}
+@keyframes k-rec-pulse {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+.k-timer {
+  font-variant-numeric: tabular-nums;
+  color: var(--k-ink-2);
+  padding-inline: 4px 6px;
+  min-width: 44px;
+}
+.k-pill[data-orientation='vertical'] .k-timer {
+  padding: 4px 0;
+  min-width: 0;
+  font-size: 11px;
+}
+
+/* ── waveform ───────────────────────────────────────────────────────────── */
+
+.k-wave {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 24px;
+  width: 118px;
+  padding-inline: 4px;
+}
+.k-wave[data-orientation='vertical'] {
+  flex-direction: column;
+  width: 24px;
+  height: 70px;
+  padding: 4px 0;
+}
+.k-wave__bar {
+  flex: 1;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--k-ink-1);
+  transform: scaleY(0.12);
+  transition: transform 80ms linear;
+}
+.k-wave[data-orientation='vertical'] .k-wave__bar {
+  width: 100%;
+  height: auto;
+  transform: scaleX(0.12);
+}
+
+/* ── status ─────────────────────────────────────────────────────────────── */
+
+.k-spinner {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--k-hairline);
+  border-top-color: var(--k-ink-1);
+  animation: k-spin 700ms linear infinite;
+}
+@keyframes k-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.k-check {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--k-ok);
+  color: #04210c;
+}
+
+.k-roll {
+  position: relative;
+  display: inline-grid;
+  overflow: hidden;
+  white-space: nowrap;
+  color: var(--k-ink-2);
+}
+.k-roll__item {
+  grid-area: 1 / 1;
+}
+.k-roll__item[data-phase='in'] {
+  animation: k-roll-in 200ms var(--k-ease-out) both;
+}
+.k-roll__item[data-phase='out'] {
+  animation: k-roll-out 200ms var(--k-ease-out) both;
+}
+@keyframes k-roll-in {
+  from {
+    opacity: 0;
+    transform: translateY(70%);
+  }
+}
+@keyframes k-roll-out {
+  to {
+    opacity: 0;
+    transform: translateY(-70%);
+  }
+}

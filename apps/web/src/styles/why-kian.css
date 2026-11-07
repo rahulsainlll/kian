@@ -1,0 +1,314 @@
+/*
+ * site · why-kian.css
+ * The Why Kian bento of gradient tiles.
+ */
+
+/* ── why Kian: a bento of soft gradient tiles (after Grok Bot) ── */
+.why {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-rows: 380px;
+  gap: 16px;
+  max-width: 1120px;
+  margin: 144px auto 0;
+}
+.why__title {
+  margin: 0;
+  padding: 8px 4px;
+  font-family: var(--display);
+  font-size: clamp(48px, 6vw, 76px);
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+  font-weight: 800;
+}
+.why__tile {
+  position: relative;
+  overflow: hidden;
+  padding: 28px;
+  border-radius: 28px;
+  isolation: isolate;
+}
+.why__tile h3 {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  font-family: var(--display);
+  font-size: 28px;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  font-weight: 750;
+}
+.why__tile--chat {
+  background: radial-gradient(80% 90% at 0% 100%, #4bd37a, transparent 60%), linear-gradient(160deg, #c9f0d6, #fbf7ee 70%);
+}
+.why__tile--always {
+  background: radial-gradient(70% 80% at 100% 100%, #f3f6ff, transparent 60%), linear-gradient(160deg, #cfe0fb, #e8eef8);
+}
+.why__tile--draft {
+  background: radial-gradient(80% 80% at 100% 0%, #ffd2e2, transparent 60%), linear-gradient(170deg, #ffb7cf, #ffe7ef);
+}
+.why__tile--work {
+  background: radial-gradient(90% 80% at 100% 100%, #ffc066, transparent 60%), linear-gradient(170deg, #ffe7a8, #fff3d6);
+}
+.why__tile--share {
+  background: radial-gradient(70% 80% at 100% 0%, #6b3fa8, transparent 70%), linear-gradient(170deg, #2a0f4d, #43207a);
+  color: #fff;
+}
+/* chat: a little app peeking from the bottom right */
+.why__app {
+  position: absolute;
+  left: 28%;
+  right: -10px;
+  bottom: -14px;
+  top: 96px;
+  padding: 12px;
+  border-radius: 16px 0 0 0;
+  background: #fbf6ec;
+  box-shadow: 0 20px 40px -20px rgba(0, 60, 20, 0.35);
+}
+.why__search {
+  padding: 7px 10px;
+  border-radius: 9px;
+  background: #f1eadf;
+  color: #9a917f;
+  font-size: 13px;
+}
+.why__row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  padding: 8px;
+  border-radius: 12px;
+  font-size: 13px;
+}
+.why__row:first-of-type {
+  background: #efe7db;
+}
+.why__row span {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.why__row small {
+  color: #8a8172;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.why__row em {
+  font-style: normal;
+  color: #a69d8c;
+  font-size: 11.5px;
+}
+.why__dot {
+  position: absolute;
+  right: 10px;
+  bottom: 12px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3d7bf2;
+}
+/* always: a dashed ring around a pill */
+.why__ring {
+  position: absolute;
+  inset: 110px 28px 50px;
+  display: grid;
+  place-items: center;
+  border: 2px dashed #6f98e6;
+  border-radius: 999px;
+}
+.why__pill {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px 14px 28px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 14px 30px -18px rgba(20, 50, 120, 0.45);
+}
+.why__pill b {
+  font-family: var(--display);
+  font-size: 42px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #2f6ee6;
+}
+.why__pill small {
+  color: #6b7a99;
+  font-size: 14px;
+  font-weight: 600;
+  margin-right: 6px;
+}
+/* draft: a card that never sends */
+.why__card {
+  position: absolute;
+  left: 50%;
+  translate: -50% 0;
+  top: 92px;
+  width: min(300px, calc(100% - 48px));
+  padding: 14px;
+  border-radius: 16px;
+  background: #fffdfb;
+  box-shadow: 0 20px 40px -20px rgba(120, 20, 60, 0.35);
+}
+.why__card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+}
+.why__card-top span {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #fff1d6;
+  color: #9a5b00;
+  font-size: 11.5px;
+  font-weight: 700;
+}
+.why__card p {
+  margin: 4px 0 10px;
+  color: #6b6070;
+  font-size: 12.5px;
+}
+.why__card-art {
+  display: grid;
+  place-items: center;
+  height: 96px;
+  border-radius: 12px;
+  background: radial-gradient(circle at 50% 120%, #ffc1d6, #ffe4ee 70%);
+}
+.why__card-btns {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+}
+.why__btn {
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: #f4eef1;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.why__btn--dark {
+  background: #111;
+  color: #fff;
+}
+/* work: a list and the sun peeking up */
+.why__tile--work ul {
+  position: relative;
+  z-index: 1;
+  list-style: none;
+  margin: 18px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 15.5px;
+  font-weight: 550;
+  color: #3a2a00;
+}
+.why__tile--work li::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 10px;
+  border-radius: 50%;
+  background: #ff8a1f;
+  vertical-align: 2px;
+}
+.why__peek {
+  position: absolute;
+  right: -60px;
+  bottom: -110px;
+  z-index: 0;
+  rotate: -12deg;
+}
+/* share: an invite card */
+.why__invite {
+  position: absolute;
+  left: 50%;
+  translate: -50% 0;
+  top: 92px;
+  width: min(320px, calc(100% - 48px));
+  padding: 0 0 18px;
+  border-radius: 16px;
+  background: #fbf3ff;
+  color: #241336;
+  text-align: center;
+  overflow: hidden;
+}
+.why__invite-art {
+  display: grid;
+  place-items: center;
+  height: 130px;
+  margin-bottom: 12px;
+  background: radial-gradient(circle at 50% 100%, #e8d3ff, #f6ecff 70%);
+}
+.why__invite b {
+  display: block;
+  padding: 0 16px;
+  font-size: 16px;
+}
+.why__invite small {
+  display: block;
+  margin-top: 6px;
+  padding: 0 18px;
+  color: #6b5a80;
+  font-size: 12.5px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .why__tile .mascot {
+    transition: transform 300ms var(--ease-out);
+  }
+  .why__tile:hover .mascot {
+    transform: rotate(-6deg) scale(1.04);
+  }
+}
+@media (max-width: 960px) {
+  .why {
+    grid-template-columns: 1fr;
+    grid-auto-rows: auto;
+    margin-top: 96px;
+  }
+  .why__tile {
+    min-height: 340px;
+  }
+  .why__title br {
+    display: none;
+  }
+}
+@media (max-width: 560px) {
+  .poster {
+    min-height: 400px;
+  }
+  .poster__rings i:first-child {
+    width: 280px;
+    height: 280px;
+  }
+  .poster__rings i:last-child {
+    width: 190px;
+    height: 190px;
+  }
+}
+@media (max-width: 560px) {
+  /* long switchers scroll sideways instead of widening the page */
+  .specimen__controls {
+    max-width: 100%;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+  .specimen__controls::-webkit-scrollbar {
+    display: none;
+  }
+  .specimen__controls > * {
+    flex: none;
+  }
+}

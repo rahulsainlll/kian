@@ -1,3 +1,6 @@
+/*
+ * Sidebar: app navigation (header, sections, items, actions, footer).
+ */
 "use client"
 
 import { type ComponentProps, type ReactNode, useId, useState } from "react"

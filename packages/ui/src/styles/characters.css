@@ -1,0 +1,89 @@
+/*
+ * @kian/ui · characters.css
+ * The cast: shapes with faces, blinking eyes and moods.
+ */
+
+/* ── characters: shapes with faces ── */
+.mascot {
+  display: inline-block;
+  overflow: visible;
+  vertical-align: -0.14em;
+}
+.mascot__pupils {
+  transform: translate(var(--px, 0px), var(--py, 0px));
+  transition: transform 180ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+/* blink: eyes squash on their own centre now and then */
+.mascot__eyes {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: blink 5.2s infinite;
+  animation-delay: var(--blink-delay, 0s);
+}
+@keyframes blink {
+  0%,
+  93%,
+  100% {
+    transform: scaleY(1);
+  }
+  96% {
+    transform: scaleY(0.08);
+  }
+}
+.mascot-btn {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  border: 0;
+  padding: 0;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.mascot-btn:active {
+  transform: scale(0.96);
+}
+.mascot__bubble {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  margin-bottom: 0.08em;
+  translate: -50% 0;
+  padding: 10px 16px;
+  border-radius: 16px 16px 16px 4px;
+  background: #fff;
+  color: #17171a;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  box-shadow: 0 10px 30px -10px rgba(15, 23, 48, 0.35);
+  transform-origin: bottom left;
+  transition:
+    opacity 200ms cubic-bezier(0.23, 1, 0.32, 1),
+    transform 260ms cubic-bezier(0.23, 1, 0.32, 1);
+  pointer-events: none;
+}
+.mascot__bubble:not([data-show]) {
+  opacity: 0;
+  transform: translateY(6px) scale(0.96);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mascot__eyes {
+    animation: none;
+  }
+}
+.k-agent-avatar {
+  display: inline-flex;
+  flex: none;
+}
+
+/* iOS zooms the page into inputs under 16px; keep the type bar at 16 on touch screens */
+@media (pointer: coarse) {
+  .k-type__input {
+    font-size: 16px;
+  }
+}

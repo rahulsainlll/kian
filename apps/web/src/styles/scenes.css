@@ -1,0 +1,274 @@
+/*
+ * site · scenes.css
+ * Reveal-on-scroll timing, the scene frame, and the brief and room scenes.
+ */
+
+/* ── reveal on scroll (once): heading, text, then visual ── */
+/* Not a metronome: the title leads and travels furthest, the text follows
+   close behind with less travel, the visual lands on a longer beat. */
+.reveal > * {
+  opacity: 0;
+  transform: translateY(var(--rise, 18px));
+  transition:
+    opacity 600ms var(--ease-out),
+    transform 750ms var(--ease-out);
+}
+.reveal > :nth-child(2) {
+  --rise: 10px;
+  transition-delay: 70ms;
+}
+.reveal > :nth-child(3) {
+  --rise: 24px;
+  transition-delay: 180ms;
+}
+.reveal[data-in] > * {
+  opacity: 1;
+  transform: none;
+}
+.feature__title {
+  font-family: var(--display);
+  margin: 0;
+  font-size: clamp(26px, 3.4vw, 34px);
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+  font-weight: 650;
+  text-wrap: balance;
+}
+.feature__body {
+  margin: 10px 0 0;
+  max-width: 600px;
+  color: var(--ink-2);
+  font-size: 16px;
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+.block {
+  max-width: 1040px;
+  margin: 144px auto 0;
+  scroll-margin-top: 24px;
+}
+.eyebrow {
+  margin: 0 0 12px;
+  color: var(--ink-3);
+  font-size: 13px;
+  font-weight: 500;
+}
+.block__title {
+  font-family: var(--display);
+  margin: 0;
+  max-width: 720px;
+  font-size: clamp(26px, 3.4vw, 36px);
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+  font-weight: 650;
+  text-wrap: balance;
+}
+.block__body {
+  margin-top: 28px;
+}
+
+/* ── scenes ── */
+.scene {
+  position: relative;
+  height: 400px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+  box-shadow: inset 0 0 0 1px rgba(20, 20, 40, 0.05);
+}
+.scene[data-tint='blue'] {
+  background: #3d7bf2;
+}
+.scene[data-tint='green'] {
+  background: #19b86b;
+}
+.scene[data-tint='pink'] {
+  background: #ff7eb0;
+}
+.scene[data-tint='yellow'] {
+  background: #ffcf1f;
+}
+.scene[data-tint='orange'] {
+  background: #ff8a1f;
+}
+.scene[data-tint='red'] {
+  background: #ee3f4f;
+}
+/* the agent in the corner, re-entering with a little pop on each new mood */
+.scene-buddy {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.3);
+  animation: buddy-in 360ms var(--ease-out) both;
+}
+@keyframes buddy-in {
+  from {
+    transform: scale(0.9) rotate(-6deg);
+  }
+}
+
+/* scene parts arrive by moving, never pop; leaving reverses the same path */
+.scene-line,
+.mini-room--new,
+.mini-face,
+.draft-card,
+.decision,
+.notes,
+.notes__tasks li,
+.sheet-change,
+.yaml__line,
+.scene-said {
+  transition:
+    opacity 320ms var(--ease-out),
+    transform 420ms var(--ease-out),
+    background-color 300ms ease;
+}
+.scene-line:not([data-show]),
+.mini-room--new:not([data-show]),
+.draft-card:not([data-show]),
+.decision:not([data-show]),
+.notes:not([data-show]),
+.notes__tasks li:not([data-show]),
+.sheet-change:not([data-show]),
+.yaml__line:not([data-show]),
+.scene-said:not([data-show]) {
+  opacity: 0;
+  transform: translateY(8px);
+}
+.mini-face:not([data-show]) {
+  opacity: 0;
+  transform: scale(0.85);
+}
+.mini-face,
+.notes__tasks li {
+  transition-delay: calc(var(--i, 0) * 70ms);
+}
+
+/* 1. brief */
+.scene-widget {
+  align-self: end;
+}
+.scene-said {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  translate: -50% 0;
+  padding: 10px 16px;
+  border-radius: 16px 16px 16px 4px;
+  background: #fff;
+  box-shadow: 0 8px 24px -8px rgba(0, 0, 40, 0.35);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* 2. room (mini app) */
+.mini-app {
+  display: flex;
+  width: min(620px, 100%);
+  height: 280px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(20, 30, 60, 0.06), 0 20px 40px -16px rgba(30, 60, 50, 0.25);
+}
+.mini-app__rail {
+  width: 168px;
+  flex: none;
+  padding: 12px 8px;
+  background: #f4f6f4;
+  border-right: 1px solid var(--line);
+}
+.mini-app__team {
+  font-weight: 650;
+  font-size: 13px;
+  padding: 0 8px 10px;
+}
+.mini-room {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 7px;
+  font-size: 13px;
+  color: #6b6b73;
+}
+.mini-room span {
+  color: #a1a1aa;
+}
+.mini-room--new[data-show] {
+  background: #e3f5ea;
+  color: #136b3c;
+  font-weight: 600;
+}
+.mini-app__main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.mini-app__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+}
+.mini-faces {
+  display: inline-flex;
+}
+.mini-face + .mini-face {
+  margin-left: -6px;
+}
+.mini-face > * {
+  box-shadow: 0 0 0 2px #fff;
+}
+.mini-app__body {
+  padding: 16px;
+}
+
+/* chat lines inside scenes */
+.scene-line {
+  display: flex;
+  gap: 10px;
+  text-align: left;
+}
+.scene-line__body {
+  min-width: 0;
+  flex: 1;
+}
+.scene-line__who {
+  font-size: 13px;
+  font-weight: 650;
+}
+.scene-line p {
+  margin: 2px 0 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: #27272a;
+}
+.scene-chips {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+.mention {
+  color: #3b6fd9;
+  background: #e8efff;
+  border-radius: 4px;
+  padding: 0 3px;
+  font-weight: 550;
+}

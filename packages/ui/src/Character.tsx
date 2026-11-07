@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
-
-/**
+/*
  * Kian's characters: a blue four-petal flower (and friends) with a face. Its eyes carry the
  * mood of the moment, from the eye set in the brand board. In `look` the
  * pupils follow the pointer (written to CSS variables, no re-render).
  */
+import { useEffect, useRef, useState } from 'react'
+
 export type Mood = 'look' | 'happy' | 'done' | 'excited' | 'surprised' | 'sleepy' | 'oops' | 'wink'
 
 /** The cast. Each agent is a shape: kian the flower, kian-scribe the speech bubble, kian-studio the sun. */

@@ -1,15 +1,14 @@
+/*
+ * Product scenes for the home page. Each one plays a single moment of the
+ * product with the real components, only while on screen, and loops.
+ * Choreography: one lead per beat; support follows; nothing waits on a queue.
+ */
 import { Badge, BrandMark, Button } from '@kian/designs'
 import { CheckIcon, KianWidget, PersonAvatar, Pill, useMicLevel, type RoomMessage } from '@kian/ui'
 import type { ReactNode } from 'react'
 import { Skeleton } from 'skullet/react'
 import { CAST, Mascot, type Mood } from '@kian/ui'
 import { useScene } from './useScene'
-
-/*
- * Product scenes for the home page. Each one plays a single moment of the
- * product with the real components, only while on screen, and loops.
- * Choreography: one lead per beat; support follows; nothing waits on a queue.
- */
 
 function Frame({
   tint,

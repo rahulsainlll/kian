@@ -1,3 +1,7 @@
+/*
+ * Button: the kit's tactile button in its variants and sizes. Styles live in
+ * styles/button.css and styles/hover.css.
+ */
 import type { ComponentProps, ReactNode } from "react"
 import { cn } from "./utils"
 import "./designs.css"

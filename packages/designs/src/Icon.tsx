@@ -1,3 +1,7 @@
+/*
+ * Icon: one icon component by name. Lucide glyphs plus two hand-drawn ones,
+ * so every icon in a row shares a weight.
+ */
 import type { CSSProperties } from "react"
 import { cn } from "./utils"
 import "./designs.css"

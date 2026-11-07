@@ -1,3 +1,7 @@
+/*
+ * BrandMark: a product logo (Gmail, Sheets, Slack...) from the bundled set
+ * in brands/, or a supplied image.
+ */
 import type { CSSProperties } from "react"
 import { type BrandAsset, type BrandName, brandMarks } from "./brands"
 import { cn } from "./utils"

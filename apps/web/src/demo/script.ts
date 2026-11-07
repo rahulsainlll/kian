@@ -1,9 +1,8 @@
-import type { Chip, RoomMessage } from '@kian/ui'
-
-/**
+/*
  * The demo morning from the hackathon plan, played without Switch running.
  * Synthetic people and companies only. Each step is something an agent posts.
  */
+import type { Chip, RoomMessage } from '@kian/ui'
 
 export interface Step {
   delay: number

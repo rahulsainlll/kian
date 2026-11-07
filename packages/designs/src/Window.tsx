@@ -1,3 +1,7 @@
+/*
+ * Window: window chrome (macOS lights and title bar, or glass) to frame a
+ * product preview.
+ */
 import type { CSSProperties, ReactNode } from "react"
 import { cn } from "./utils"
 import "./designs.css"

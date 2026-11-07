@@ -1,3 +1,6 @@
+/*
+ * HoldButton: press and hold to confirm, for approvals.
+ */
 import { Button, type ButtonProps } from '@kian/designs'
 import { useEffect, useRef, useState } from 'react'
 

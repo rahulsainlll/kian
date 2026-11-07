@@ -1,3 +1,7 @@
+/*
+ * The home page: the hero with the self-playing demo (autoplay until the
+ * visitor touches it), then the sections from pages/home/ in story order.
+ */
 import { useState, type ReactNode } from 'react'
 import { Button, Toggle } from '@kian/designs'
 import { KianWidget, Mascot } from '@kian/ui'
@@ -6,7 +10,12 @@ import { ChatApp, Phone } from '../demo/ChatApp'
 import { useAutoplay } from '../demo/useAutoplay'
 import { useDemoDesk } from '../demo/useDemoDesk'
 import { useOnScreen } from '../scenes/useScene'
-import { Cast, Everywhere, Faq, Story, SwitchUse, WhyKian } from './HomeSections'
+import { Cast } from './home/Cast'
+import { Everywhere } from './home/Everywhere'
+import { Faq } from './home/Faq'
+import { Story } from './home/Story'
+import { SwitchUse } from './home/SwitchUse'
+import { WhyKian } from './home/WhyKian'
 
 export function Home() {
   return (
@@ -142,13 +151,6 @@ function MenuBar() {
       <span className="menubar__item">9:00</span>
     </div>
   )
-}
-
-/** Same-origin navigation through the app's tiny router (it listens to popstate). */
-function go(path: string) {
-  history.pushState(null, '', path)
-  dispatchEvent(new PopStateEvent('popstate'))
-  scrollTo(0, 0)
 }
 
 export function LabeledToggle({ on, onChange, children }: { on: boolean; onChange: (v: boolean) => void; children: ReactNode }) {

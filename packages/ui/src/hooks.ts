@@ -1,3 +1,7 @@
+/*
+ * Hooks the widget shares: useMicLevel (live loudness for the waveform),
+ * useSpeak (read a card aloud) and usePrefersReducedMotion.
+ */
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 export type LevelSource = 'mic' | 'simulated' | 'off'

@@ -1,0 +1,207 @@
+/*
+ * site · footer.css
+ * The footer band, stickers, chunky button, card and the logo.
+ */
+
+/* ── footer: grid band, stickers, one chunky button, wavy edge, cream card ── */
+.site-foot {
+  margin-top: 160px;
+  background: #efe6d6;
+  padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+}
+.band {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(16px, 5vw, 64px);
+  min-height: 300px;
+  padding: 48px 24px 72px;
+  background-color: #ff5a33;
+  background-image: linear-gradient(#2a1606 2px, transparent 2px), linear-gradient(90deg, #2a1606 2px, transparent 2px);
+  background-size: 120px 120px;
+  background-position: center -10px;
+}
+.pill3d {
+  display: inline-grid;
+  place-items: center;
+  padding: 0 clamp(28px, 5vw, 64px);
+  height: clamp(84px, 11vw, 132px);
+  border: 4px solid #1d1408;
+  border-radius: 999px;
+  background: #ffb800;
+  color: #1d1408;
+  font-family: var(--display);
+  font-size: clamp(22px, 3.2vw, 38px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: 0 12px 0 #1d1408;
+  transition:
+    transform 140ms var(--ease-out),
+    box-shadow 140ms var(--ease-out);
+}
+/* press: the face sinks onto its own shadow */
+.pill3d:active {
+  transform: translateY(9px);
+  box-shadow: 0 3px 0 #1d1408;
+}
+@media (hover: hover) and (pointer: fine) {
+  .pill3d:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 0 #1d1408;
+  }
+}
+.band__ticket {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 18px 12px;
+  border: 3px solid #0d4d2a;
+  border-radius: 10px;
+  background: #3fd06e;
+  color: #0d4d2a;
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  rotate: -9deg;
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.18);
+}
+.band__ticket small {
+  font-family: var(--ds-font);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.band__burst {
+  display: grid;
+  place-items: center;
+  width: 150px;
+  height: 150px;
+  background: #2546c9;
+  color: #fff;
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 800;
+  text-align: center;
+  line-height: 1;
+  rotate: 10deg;
+  clip-path: polygon(50% 0, 57% 12%, 69% 4%, 72% 18%, 85% 15%, 83% 29%, 96% 31%, 89% 43%, 100% 50%, 89% 57%, 96% 69%, 83% 71%, 85% 85%, 72% 82%, 69% 96%, 57% 88%, 50% 100%, 43% 88%, 31% 96%, 28% 82%, 15% 85%, 17% 71%, 4% 69%, 11% 57%, 0 50%, 11% 43%, 4% 31%, 17% 29%, 15% 15%, 28% 18%, 31% 4%, 43% 12%);
+}
+.band__burst span {
+  max-width: 90px;
+}
+.band__wave {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  width: 100%;
+  height: 40px;
+  fill: #efe6d6;
+}
+.site-foot__card {
+  margin-top: 24px;
+  padding-top: 40px;
+  padding-bottom: 28px;
+  border-radius: 28px;
+  background: #fbf7ef;
+  box-shadow: 0 0 0 1px rgba(40, 30, 10, 0.06);
+  overflow: hidden;
+}
+.site-foot__top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 40px;
+  padding: 0 16px;
+}
+.site-foot__tag {
+  margin: 0;
+  max-width: 420px;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: #2a1606;
+}
+.site-foot__cols {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  gap: 48px;
+}
+.site-foot__col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+}
+.site-foot__title {
+  margin-bottom: 4px;
+  font-weight: 700;
+}
+.site-foot__col a {
+  color: #4a3a28;
+  text-decoration: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .site-foot__col a:hover {
+    color: #111;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}
+.site-foot__mark {
+  display: flex;
+  margin-top: 40px;
+  padding: 0 8px;
+  /* the line box would otherwise reserve 1.5× a 280px glyph of empty space */
+  line-height: 0.8;
+  font-size: clamp(110px, 22vw, 280px);
+}
+@media (max-width: 860px) {
+  .band {
+    flex-direction: column;
+  }
+  .site-foot__top {
+    grid-template-columns: 1fr;
+  }
+  .site-foot__cols {
+    grid-template-columns: repeat(2, auto);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pill3d:active,
+  .pill3d:hover {
+    transform: none;
+  }
+}
+
+/* ── the logo: wordmark + Kian ── */
+.logo {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 0.08em;
+  font-family: var(--display);
+  font-weight: 800;
+  letter-spacing: -0.06em;
+  line-height: 0.8;
+  color: #1d1408;
+}
+.logo__word {
+  user-select: none;
+}
+.logo__buddy {
+  font-size: 0.5em;
+  margin-bottom: 0.04em;
+  rotate: 8deg;
+}
+.nav__mark {
+  padding: 4px 0;
+}
+/* small logos need a bigger Kian to keep the eyes readable */
+.nav .logo__buddy,
+.hub__logo .logo__buddy {
+  font-size: 0.72em;
+}

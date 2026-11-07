@@ -1,3 +1,6 @@
+/*
+ * Toggle: an on/off switch on Radix Switch.
+ */
 "use client"
 
 import { Switch } from "radix-ui"

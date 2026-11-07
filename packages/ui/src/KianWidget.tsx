@@ -1,3 +1,6 @@
+/*
+ * KianWidget: the whole floating widget, used by the website and Electron.
+ */
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { MessageCard, NudgeCard, TypeBar } from './Card'
 import { Pill } from './Pill'

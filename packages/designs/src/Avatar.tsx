@@ -1,3 +1,7 @@
+/*
+ * Avatar: an image or initials in a circle, with tones and a stable colour
+ * per person name.
+ */
 import type { ComponentProps } from "react"
 import { cn } from "./utils"
 import "./designs.css"
