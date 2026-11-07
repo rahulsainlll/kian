@@ -1,0 +1,125 @@
+/*
+ * The desk decides what reaches the widget. A room message becomes a card
+ * when an agent wrote it and it either ends with an answer line or mentions
+ * the person. Approval cards (a hold answer in the approvals room) are only
+ * for the sales lead. One card shows at a time; the rest wait in a queue.
+ *
+ * Answers are posted back as replies in the message's thread, exactly what
+ * typing them in Mattermost would do. The desk keeps nothing else.
+ */
+import type { RoomMessage } from '@kian/ui'
+import { parseAnswers } from '../shared/answers'
+import type { Connection, DeskState, RoomEvent, Settings } from '../shared/types'
+import type { Rooms } from './rooms/types'
+
+const PENDING_TIMEOUT_MS = 25_000
+const DRAFT_LINK = /https:\/\/mail\.google\.com\/\S+/
+
+export class Desk {
+  private queue: { event: RoomEvent; message: RoomMessage }[] = []
+  private pending: DeskState['pending'] = null
+  private pendingTimer: NodeJS.Timeout | null = null
+  private connection: Connection = 'connecting'
+  private snoozedUntil = 0
+  private feed: RoomEvent[] = []
+
+  constructor(
+    private rooms: Rooms,
+    private settings: () => Settings,
+    private onChange: (state: DeskState) => void,
+    private onEvent: (event: RoomEvent) => void,
+  ) {
+    rooms.onMessage((e) => this.consider(e))
+    rooms.onStatus((online) => this.setConnection(online ? (rooms.kind === 'mock' ? 'demo' : 'online') : 'offline'))
+  }
+
+  state(): DeskState {
+    const head = Date.now() < this.snoozedUntil ? null : this.queue[0]
+    return {
+      message: head?.message ?? null,
+      queued: Math.max(0, this.queue.length - 1),
+      pending: head ? null : this.pending,
+      connection: this.connection,
+      deskRoom: this.settings().deskRoom,
+    }
+  }
+
+  history(): RoomEvent[] {
+    return this.feed
+  }
+
+  setConnection(c: Connection) {
+    this.connection = c
+    this.emit()
+  }
+
+  /** The person said something to the desk (by voice or typing). */
+  async say(text: string) {
+    const room = this.settings().deskRoom
+    await this.rooms.post(room, text)
+    this.setPending({ author: this.settings().agents[0] ?? 'kian', room })
+  }
+
+  async answer(messageId: string, reply: string) {
+    const item = this.queue.find((q) => q.message.id === messageId)
+    if (!item) return
+    this.drop(messageId)
+    await this.rooms.post(item.event.room, reply, { rootId: item.event.rootId ?? item.event.id })
+  }
+
+  dismiss(messageId: string) {
+    this.drop(messageId)
+  }
+
+  snooze(minutes: number) {
+    this.snoozedUntil = Date.now() + minutes * 60_000
+    setTimeout(() => this.emit(), minutes * 60_000 + 50)
+    this.emit()
+  }
+
+  private consider(event: RoomEvent) {
+    this.feed = [...this.feed.slice(-199), event]
+    this.onEvent(event)
+    if (!event.authorIsAgent) return
+    if (this.pending && event.room === this.pending.room) this.setPending(null)
+
+    const { body, chips } = parseAnswers(event.text)
+    const isApproval = event.room === this.settings().approvalsRoom && chips.some((c) => c.hold)
+    // In the demo you play both the rep and the sales lead.
+    if (isApproval && !this.settings().approver && this.rooms.kind !== 'mock') return
+    if (!chips.length && !event.mentionsMe) return
+
+    const draft = DRAFT_LINK.exec(body)?.[0]
+    const message: RoomMessage = {
+      id: event.id,
+      room: event.room,
+      author: event.author,
+      text: body.replace(DRAFT_LINK, '').replace(/\s+:\s*$/, '').trim(),
+      chips,
+      voiceReply: chips.length > 0,
+      link: draft
+        ? { label: 'Open draft in Gmail', href: draft }
+        : event.permalink
+          ? { label: 'Open in Mattermost', href: event.permalink }
+          : undefined,
+    }
+    this.queue.push({ event, message })
+    this.emit()
+  }
+
+  private drop(id: string) {
+    this.queue = this.queue.filter((q) => q.message.id !== id)
+    this.emit()
+  }
+
+  private setPending(p: DeskState['pending']) {
+    this.pending = p
+    if (this.pendingTimer) clearTimeout(this.pendingTimer)
+    this.pendingTimer = p ? setTimeout(() => this.setPending(null), PENDING_TIMEOUT_MS) : null
+    this.emit()
+  }
+
+  private emit() {
+    this.onChange(this.state())
+  }
+}
