@@ -85,7 +85,7 @@ export function GuideMac({ fluid }: { fluid?: boolean }) {
         </>
       }
     >
-      <Step n={1} title="Download" line="kain-murex.vercel.app/guide, or the Download button, then your Mac’s file.">
+      <Step n={1} title="Download" line="kiandesk.vercel.app/guide, or the Download button, then your Mac’s file.">
         <div className="g-buttons">
           <span className="g-pill g-pill--on">Mac, Apple silicon</span>
           <span className="g-pill">Mac, Intel</span>
@@ -126,7 +126,7 @@ export function GuideMac({ fluid }: { fluid?: boolean }) {
         </div>
       </Step>
 
-      <Step n={4} title="Open Anyway" line="System Settings → Privacy & Security, scroll down, then confirm.">
+      <Step n={4} title="Open Anyway" line="Right after step 3: System Settings → Privacy & Security, scroll to Security at the bottom.">
         <div className="g-window g-settings">
           <div className="g-settings__side">
             <span>Notifications</span>
@@ -142,7 +142,7 @@ export function GuideMac({ fluid }: { fluid?: boolean }) {
             </div>
           </div>
         </div>
-        <p className="g-hint">On macOS 14 or older: right-click Kian, choose Open.</p>
+        <p className="g-hint">No button? Open Kian once more, then look again. On macOS 14 or older: right-click Kian, choose Open.</p>
       </Step>
 
       <Step n={5} title="Say “morning, Kian”" line="The flower is in your menu bar. Hover the line at the bottom of the screen, or press ⌘⇧K.">
@@ -166,7 +166,7 @@ export function GuideWindows({ fluid }: { fluid?: boolean }) {
         </>
       }
     >
-      <Step n={1} title="Download" line="kain-murex.vercel.app/guide, or the Download button, then Windows.">
+      <Step n={1} title="Download" line="kiandesk.vercel.app/guide, or the Download button, then Windows.">
         <div className="g-buttons">
           <span className="g-pill g-pill--on">Windows</span>
         </div>

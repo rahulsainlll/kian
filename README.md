@@ -147,7 +147,7 @@ python3 -m unittest -v           # ranking and safety rules
 
 **The desktop app.** [Download it](https://github.com/rahulsainlll/kian/releases/latest) for macOS or Windows, or run
 it from source. It plays a demo morning until you connect it to Switch in Settings. Install guides with every screen:
-[kain-murex.vercel.app/guide](https://kain-murex.vercel.app/guide) (also as images: [macOS](docs/assets/install-mac.png),
+[kiandesk.vercel.app/guide](https://kiandesk.vercel.app/guide) (also as images: [macOS](docs/assets/install-mac.png),
 [Windows](docs/assets/install-windows.png)). More in
 [apps/desktop/README.md](apps/desktop/README.md).
 

@@ -22,7 +22,7 @@ jobs:
     steps:
       - name: Create the release
         run: |
-          notes="Kian for macOS (Apple silicon and Intel) and Windows. Not yet signed with an Apple Developer ID. On a Mac, open it once, then go to System Settings, Privacy and Security, and choose Open Anyway. On Windows, choose More info, then Run anyway. Step by step, with every screen: https://kain-murex.vercel.app/guide"
+          notes="Kian for macOS (Apple silicon and Intel) and Windows. Not yet signed with an Apple Developer ID. On a Mac, open it once, then go to System Settings, Privacy and Security, and choose Open Anyway. On Windows, choose More info, then Run anyway. Step by step, with every screen: https://kiandesk.vercel.app/guide"
           gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" \
             || gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --title "Kian $GITHUB_REF_NAME" --notes "$notes"
         env:

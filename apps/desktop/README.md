@@ -12,7 +12,7 @@ Get the latest build from [GitHub Releases](https://github.com/rahulsainlll/kian
 silicon or Intel Macs, and an installer for Windows.
 
 The builds are not signed with an Apple Developer ID yet, so the first launch needs one extra step. These two guides
-show every screen. Send people to [kain-murex.vercel.app/guide](https://kain-murex.vercel.app/guide), or share the
+show every screen. Send people to [kiandesk.vercel.app/guide](https://kiandesk.vercel.app/guide), or share the
 images:
 
 | macOS | Windows |
