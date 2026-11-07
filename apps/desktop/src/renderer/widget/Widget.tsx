@@ -1,8 +1,8 @@
 /*
  * The desktop widget: the shared KianWidget, fed by the desk in the main
- * process. At rest it is a small bubble with the Kian flower; hovering grows
- * it into the pill with the hotkey beside it, and agent messages pop up from
- * it as cards. The hotkey or the mic starts listening; stopping
+ * process. At rest it is just the Kian flower, whose face changes; clicking
+ * it opens the chat bar (type, or hold fn for Wispr Flow), and agent messages
+ * pop up from it as cards. The hotkey or the mic starts listening; stopping
  * transcribes and posts to the desk room. With no voice engine set, the type
  * bar opens so Wispr Flow or the system's dictation can type instead. The
  * window only takes clicks while the pointer is over the widget.
@@ -113,7 +113,8 @@ export function Widget() {
   }
 
   const side = desk.position === 'left' || desk.position === 'right'
-  const resting = voiceState === 'idle' && !desk.message && !desk.pending && !hovered
+  // At rest it's only the flower; clicking it (or the hotkey) opens the chat bar.
+  const resting = voiceState === 'idle' && !desk.message && !desk.pending
 
   return (
     <div
@@ -132,7 +133,11 @@ export function Widget() {
       <KianWidget
         orientation={side ? 'vertical' : 'horizontal'}
         collapsed={resting}
-        restIcon={<Mascot size={30} mood={desk.queued || desk.message ? 'excited' : 'happy'} />}
+        restIcon={<Mascot size={40} mood={hovered ? 'excited' : desk.connection === 'offline' ? 'sleepy' : 'happy'} />}
+        onRestClick={() => {
+          cue('listen')
+          setVoiceState('typing')
+        }}
         hint={
           desk.hotkey ? (
             <>

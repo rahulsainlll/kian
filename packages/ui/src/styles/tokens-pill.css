@@ -196,17 +196,31 @@
   opacity: 0;
 }
 
-/* At rest with an icon: a round glass bubble holding the Kian flower */
+/* At rest with an icon: just the Kian flower, clickable, nothing behind it */
 .k-line--icon,
 .k-widget[data-orientation='vertical'] .k-line--icon {
   display: grid;
   place-items: center;
-  width: 46px;
-  height: 46px;
+  width: auto;
+  height: auto;
+  padding: 4px;
+  border: 0;
   border-radius: 50%;
-  background: var(--k-surface);
-  border: 1px solid var(--k-hairline);
-  box-shadow: var(--k-shadow);
+  background: none;
+  box-shadow: none;
+  cursor: pointer;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.25));
+}
+.k-dock[data-collapsed] > .k-line--icon {
+  pointer-events: auto;
+}
+@media (hover: hover) and (pointer: fine) {
+  .k-dock[data-collapsed] > .k-line--icon:hover {
+    transform: scale(1.08);
+  }
+}
+.k-dock[data-collapsed] > .k-line--icon:active {
+  transform: scale(0.95);
 }
 
 /* The hint beside the idle pill, e.g. "Talk ⌘⇧K" */

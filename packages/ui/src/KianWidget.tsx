@@ -36,6 +36,8 @@ export interface KianWidgetProps {
   hint?: ReactNode
   /** What the widget shows at rest instead of the plain line, e.g. the Kian flower. */
   restIcon?: ReactNode
+  /** Clicking the resting icon, e.g. to open the chat bar. */
+  onRestClick?: () => void
 }
 
 /**
@@ -88,9 +90,13 @@ export function KianWidget(p: KianWidgetProps) {
     <div className="kian k-widget dark" data-orientation={orientation}>
       <Presence item={floating} />
       <div className="k-dock" data-collapsed={(p.collapsed && !floating) || undefined}>
-        <span className={p.restIcon ? 'k-line k-line--icon' : 'k-line'} aria-hidden>
-          {p.restIcon}
-        </span>
+        {p.restIcon ? (
+          <button className="k-line k-line--icon" aria-label="Talk to Kian" onClick={p.onRestClick}>
+            {p.restIcon}
+          </button>
+        ) : (
+          <span className="k-line" aria-hidden />
+        )}
         {p.hint && !floating && p.voiceState === 'idle' && <span className="k-hint">{p.hint}</span>}
         <Pill
           state={p.voiceState}
