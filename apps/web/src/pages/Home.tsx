@@ -16,6 +16,7 @@ import { Everywhere } from './home/Everywhere'
 import { Faq } from './home/Faq'
 import { Story } from './home/Story'
 import { SwitchUse } from './home/SwitchUse'
+import { Watch } from './home/Watch'
 import { WhyKian } from './home/WhyKian'
 
 export function Home() {
@@ -29,6 +30,7 @@ export function Home() {
       </div>
 
       <main className="page">
+        <Watch />
         <WhyKian />
         <Cast />
         <Story />
