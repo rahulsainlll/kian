@@ -144,7 +144,7 @@ apps/desktop      the Electron app for macOS and Windows: the widget and the hub
 apps/web          kian website: live self-playing demo, dashboard, components, blog, contact
 packages/ui       @kian/ui: the widget (pill, cards, waveform, hold to approve), the cast, dashboard parts
 packages/designs  the design system: buttons, sidebar, rows, tokens and brand marks
-switch/           the Switch templates, the agents' toolkit and a sample workspace
+switch/           the Switch templates and the agents' toolkit
 docs/             research, design and architecture notes, and the README art
 scripts/          render-art.sh renders the README art; check-files.mjs enforces the house rules
 ```
@@ -160,15 +160,16 @@ scripts/          render-art.sh renders the README art; check-files.mjs enforces
 - [x] `kian.template.yaml`: the three agents, the desk, approvals and content rooms, and their links
 - [x] `kian_tools.py`: brief, deal, meetings, draft, send (only with a named yes), row, tasks, schedule, agenda, and tests
 - [x] `team.template.yaml`: an agent per person, their desks and the team room, run live on Switch
-- [x] `seed.py`: loads a sample team's leads, emails and meetings into a Google account
+- [x] `seed.py`: sets up a team's leads, emails and meetings in a Google account
 - [x] Desktop app for macOS and Windows: the widget, the hub, and dmg and NSIS installers
 
 No real customer data lives in this repo.
 
 ## Run it
 
-**The desk.** Install Switch Console, import `switch/kian.template.yaml`, and say “morning” in kian-desk. It runs on
-a sample workspace out of the box, and on each person's own Gmail, Calendar and Tasks after one sign-in. Every step is in [switch/README.md](switch/README.md).
+**The team.** Install Switch Console, import `switch/team.template.yaml`, and talk to your agent in your desk room.
+Each person signs in once, and their agent works with their own Gmail, Calendar and Tasks. Every step is in
+[switch/TEAM.md](switch/TEAM.md); the sales desk is in [switch/README.md](switch/README.md).
 
 ```bash
 cd switch/toolkit
@@ -177,7 +178,7 @@ python3 -m unittest -v           # ranking and safety rules
 ```
 
 **The desktop app.** [Download it](https://github.com/rahulsainlll/kian/releases/latest) for macOS or Windows, or run
-it from source. It opens on a sample morning until you connect it to Switch in Settings. Install guides with every screen:
+it from source. Connect it to your Switch rooms in Settings. Install guides with every screen:
 [kiandesk.vercel.app/guide](https://kiandesk.vercel.app/guide) (also as images: [macOS](docs/assets/install-mac.png),
 [Windows](docs/assets/install-windows.png)). More in
 [apps/desktop/README.md](apps/desktop/README.md).
