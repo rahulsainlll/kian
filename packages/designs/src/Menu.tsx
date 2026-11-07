@@ -1,3 +1,6 @@
+/*
+ * Menu: a dropdown menu on Radix, with items, separators and labels.
+ */
 "use client"
 
 import { DropdownMenu } from "radix-ui"

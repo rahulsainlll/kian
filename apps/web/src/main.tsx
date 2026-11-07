@@ -1,3 +1,8 @@
+/*
+ * Website entry. Loads the stylesheets in cascade order (Tailwind and HeroUI,
+ * kit tokens, kit components, widget, site) and routes by pathname: /,
+ * /components, /dashboard, /blog[/slug], /contact and /art/<name>.
+ */
 import { StrictMode, useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import './tailwind.css'

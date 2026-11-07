@@ -1,0 +1,102 @@
+/*
+ * @kian/designs · badge-search.css
+ * The medallion Badge and the SearchField clear dissolve.
+ * Loaded by designs.css in cascade order; keep the import order when editing.
+ */
+
+/* Badge, medallion style: a soft tint, a rim of the same tone, then a band of the page and
+   a faint neutral ring around it, with the glyph in the tone's saturated color.
+   Each tone sets --ds-badge-tone; fill, rim and glyph derive from it. The halo is a
+   shadow (no layout), so leave ~10px between badges. Set --ds-badge-halo to the color
+   of the surface it sits on if that isn't the default surface. */
+@layer components {
+  .ds-badge {
+    --ds-badge-tone: var(--ds-text);
+    --ds-badge-fill: var(--ds-ink-2);
+    background: var(--ds-badge-fill);
+    box-shadow:
+      inset 0 0 0 1px color-mix(in srgb, var(--ds-badge-tone) 22%, transparent),
+      0 0 0 2px var(--ds-badge-halo, var(--ds-surface)),
+      0 0 0 3px var(--ds-ink-3);
+    transition: background-color 0.35s ease, color 0.35s ease, box-shadow 0.35s ease;
+  }
+
+  .ds-badge[data-tone="accent"] { --ds-badge-tone: var(--ds-accent); --ds-badge-fill: var(--ds-accent-soft); }
+  .ds-badge[data-tone="success"] { --ds-badge-tone: var(--ds-success); --ds-badge-fill: var(--ds-success-soft); }
+  .ds-badge[data-tone="warning"] { --ds-badge-tone: var(--ds-warning); --ds-badge-fill: var(--ds-warning-soft); }
+  .ds-badge[data-tone="danger"] { --ds-badge-tone: var(--ds-danger); --ds-badge-fill: var(--ds-danger-soft); }
+
+  /* The glyph is the saturated mark; the words keep the tone's darker text color */
+  .ds-badge__dot {
+    background: var(--ds-badge-tone);
+  }
+
+  .ds-badge > .ds-icon {
+    color: var(--ds-badge-tone);
+  }
+}
+
+/* SearchField's clear dissolve (SearchField.tsx): the input sits in a field with three
+   layers over it. The mirror shows the old text only while it falls out; the placeholder
+   is a layer of its own so it can fall in; the glow is a streak under the words. */
+@layer components {
+  .ds-search__field {
+    position: relative;
+    display: flex;
+    flex: 1;
+    align-items: center;
+    min-width: 0;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .ds-search__layer {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    white-space: pre;
+    pointer-events: none;
+  }
+
+  .ds-search__mirror {
+    color: var(--ds-search-ink);
+    opacity: 0;
+  }
+
+  .ds-search__field[data-clearing] .ds-search__mirror {
+    opacity: 1;
+  }
+
+  .ds-search__mirror > span {
+    flex: none;
+  }
+
+  .ds-search__placeholder {
+    color: var(--ds-search-placeholder);
+  }
+
+  .ds-search[data-filled] .ds-search__placeholder {
+    opacity: 0;
+  }
+
+  /* Darkens on light, lightens on dark */
+  .ds-search__glow {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    mix-blend-mode: multiply;
+    pointer-events: none;
+  }
+
+  .dark .ds-search__glow {
+    mix-blend-mode: screen;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ds-search__glow {
+      display: none;
+    }
+  }
+}

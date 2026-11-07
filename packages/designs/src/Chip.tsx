@@ -1,3 +1,6 @@
+/*
+ * Chip: a removable filter chip that opens and closes its own width.
+ */
 "use client"
 
 import { type ReactNode, useLayoutEffect, useRef, useState } from "react"

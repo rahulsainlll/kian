@@ -1,0 +1,134 @@
+/*
+ * @kian/ui · dashboard-parts.css
+ * Dashboard parts: panels, activity rows, rooms, approvals.
+ */
+
+/* ── dashboard parts (kit tokens) ──────────────────────────────────────── */
+
+.k-panel {
+  border-radius: var(--ds-radius-window);
+  background: var(--ds-surface);
+  box-shadow: var(--ds-shadow-card), inset 0 0 0 1px var(--ds-line-faint);
+  padding: 8px;
+  min-width: 0;
+}
+.k-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 32px;
+  padding: 4px 8px 8px 12px;
+}
+.k-panel__title {
+  font-family: var(--ds-font);
+  font-size: var(--text-ds-label);
+  line-height: var(--text-ds-label--line-height);
+  letter-spacing: var(--text-ds-label--letter-spacing);
+  font-weight: 600;
+  color: var(--ds-text-strong);
+}
+
+.k-strong {
+  font-weight: 600;
+  color: var(--ds-text-strong);
+}
+
+.k-room-hash {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--ds-radius-sm);
+  background: var(--ds-fill);
+  color: var(--ds-icon);
+  font-family: var(--ds-font);
+  font-weight: 600;
+}
+
+.k-glyph-tile {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--ds-radius-sm);
+  background: var(--ds-raised);
+  box-shadow: inset 0 0 0 1px var(--ds-line-faint);
+  color: var(--ds-text-strong);
+}
+
+.k-approval {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px;
+  border-radius: var(--ds-radius-lg);
+  background: var(--ds-raised);
+  box-shadow: inset 0 0 0 1px var(--ds-line-faint);
+  font-family: var(--ds-font);
+}
+.k-approval__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.k-approval__by {
+  font-size: var(--text-ds-caption);
+  line-height: var(--text-ds-caption--line-height);
+  color: var(--ds-text-faint);
+}
+.k-approval__deal {
+  font-size: var(--text-ds-title);
+  line-height: var(--text-ds-title--line-height);
+  letter-spacing: var(--text-ds-title--letter-spacing);
+  font-weight: 600;
+  color: var(--ds-text-strong);
+}
+.k-approval__ask,
+.k-approval__detail {
+  margin: 0;
+  font-size: var(--text-ds-small);
+  line-height: var(--text-ds-small--line-height);
+  letter-spacing: var(--text-ds-small--letter-spacing);
+  color: var(--ds-text);
+  text-wrap: pretty;
+}
+.k-approval__detail {
+  color: var(--ds-text-faint);
+}
+.k-approval__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+}
+.k-approval[data-refused] {
+  opacity: 0.7;
+}
+
+.k-stack {
+  display: inline-flex;
+  align-items: center;
+}
+.k-stack > * {
+  box-shadow: 0 0 0 2px var(--ds-surface);
+  border-radius: 50%;
+}
+.k-stack > * + * {
+  margin-left: -6px;
+}
+.k-stack__more {
+  display: grid;
+  place-items: center;
+  height: 20px;
+  min-width: 20px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--ds-fill);
+  color: var(--ds-text);
+  font-family: var(--ds-font);
+  font-size: 10px;
+  font-weight: 600;
+}

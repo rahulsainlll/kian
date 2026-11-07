@@ -1,6 +1,7 @@
+/*
+ * Synthetic data for the dashboard prototype. Same people and deals as the demo morning.
+ */
 import type { Activity, Approval, Room } from '@kian/ui'
-
-// Synthetic data for the dashboard prototype. Same people and deals as the demo morning.
 
 export const STATS = [
   { label: 'Replies waiting', value: 3, hint: 'Oldest is 14 hours' },

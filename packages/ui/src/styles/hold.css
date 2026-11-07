@@ -1,0 +1,40 @@
+/*
+ * @kian/ui · hold.css
+ * Hold to confirm on the kit Button.
+ */
+
+/* ── hold to confirm (on the kit's Button) ─────────────────────────────── */
+
+.k-hold {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  touch-action: none;
+  user-select: none;
+}
+.k-hold__fill {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: rgba(255, 255, 255, 0.28);
+  clip-path: inset(0 100% 0 0);
+  /* release: drain fast on the ease-out */
+  transition: clip-path 200ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.k-hold[data-holding] .k-hold__fill {
+  clip-path: inset(0 0 0 0);
+  transition: clip-path var(--k-hold, 900ms) linear;
+}
+.k-hold[data-variant='secondary'] .k-hold__fill {
+  background: color-mix(in srgb, var(--ds-accent) 22%, transparent);
+}
+.k-hold[data-done] {
+  pointer-events: none;
+}
+.k-hold[data-done] .k-hold__fill {
+  clip-path: inset(0 0 0 0);
+  transition: none;
+}
+.k-hold__text {
+  font-variant-numeric: tabular-nums;
+}

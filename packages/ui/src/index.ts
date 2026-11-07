@@ -1,3 +1,8 @@
+/*
+ * @kian/ui: the Kian widget, its cards, the cast of characters and the
+ * dashboard parts. Shared by the website and the Electron app; import
+ * `@kian/ui/styles.css` once per app.
+ */
 export * from './types'
 export * from './icons'
 export { Pill, type PillProps } from './Pill'

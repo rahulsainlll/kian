@@ -1,3 +1,7 @@
+/*
+ * ActionButton: a button that shows its own progress (idle, pending, done)
+ * without changing size.
+ */
 "use client"
 
 import type { ComponentProps, ReactNode } from "react"

@@ -1,13 +1,12 @@
-import { Badge, BrandMark, Window } from '@kian/designs'
-import { ChipButton, Mascot, MicIcon, PersonAvatar, type Chip, type Mood, type RoomMessage, type Shape } from '@kian/ui'
-import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
-import type { LogLine } from './useDemoDesk'
-
 /*
  * The rooms, the way a person sees them: Mattermost, simplified to what the
  * story needs (after Grok Bot's demo). Rooms are rows with a face and a
  * preview; agent messages that need you are action cards whose buttons work.
  */
+import { Badge, BrandMark, Window } from '@kian/designs'
+import { ChipButton, Mascot, MicIcon, PersonAvatar, type Chip, type Mood, type RoomMessage, type Shape } from '@kian/ui'
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
+import type { LogLine } from './useDemoDesk'
 
 const ROOMS: { id: string; title: string; shape: Shape; color: string; mood: Mood; topic: string; members: string[] }[] = [
   { id: 'kian-desk', title: 'Desk', shape: 'flower', color: '#3d7bf2', mood: 'happy', topic: 'Your morning, one item at a time', members: ['Yukti', 'kian'] },

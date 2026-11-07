@@ -1,3 +1,6 @@
+/*
+ * Segmented: a segmented control on Radix ToggleGroup with a sliding thumb.
+ */
 "use client"
 
 import { ToggleGroup } from "radix-ui"

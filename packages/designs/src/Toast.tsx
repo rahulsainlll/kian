@@ -1,3 +1,6 @@
+/*
+ * Toast and notify(): confirmation pills, shown through Sonner.
+ */
 "use client"
 
 import type { ReactNode } from "react"

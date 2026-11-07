@@ -1,0 +1,121 @@
+/*
+ * site · content-scene.css
+ * The content scene and space reserved so nothing shifts its neighbours.
+ */
+
+/* 7. content scene */
+.voice-note {
+  align-self: flex-end;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 16px 16px 4px 16px;
+  background: #17171a;
+  color: #fff;
+}
+.voice-note__play {
+  width: 0;
+  height: 0;
+  border-left: 9px solid #fff;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+}
+.voice-note__wave {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 22px;
+}
+.voice-note__wave i {
+  width: 3px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.85);
+}
+.voice-note__time {
+  font-size: 12px;
+  opacity: 0.7;
+  font-variant-numeric: tabular-nums;
+}
+.voice-note:not([data-show]) {
+  opacity: 0;
+  transform: translateY(8px);
+}
+.voice-note {
+  transition:
+    opacity 320ms var(--ease-out),
+    transform 420ms var(--ease-out);
+}
+.post-card {
+  margin-top: 6px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #fafafa;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.post-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+}
+.post-card p {
+  margin: 6px 0 0;
+  font-size: 13.5px;
+}
+.where__dl {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+.where__btn {
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #fff;
+  color: #1a2b6b;
+  font-size: 14px;
+  font-weight: 700;
+}
+.where__soon {
+  max-width: none;
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+/* nothing that changes should push its neighbours: reserve the space up front */
+.story__copy {
+  min-height: 176px;
+}
+.demo__hint {
+  min-height: 2.9em;
+}
+@media (max-width: 720px) {
+  .story__copy {
+    min-height: 236px;
+  }
+}
+.post__figure {
+  margin: 28px -120px 12px;
+}
+@media (max-width: 1000px) {
+  .post__figure {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+.nb__me {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #ff7eb0;
+  color: #fff;
+  font-style: normal;
+  font-size: 13px;
+  font-weight: 700;
+}

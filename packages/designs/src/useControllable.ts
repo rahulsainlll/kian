@@ -1,3 +1,7 @@
+/*
+ * useControllable: the controlled-or-uncontrolled state hook every input in
+ * the kit uses.
+ */
 "use client"
 
 import { useCallback, useState } from "react"

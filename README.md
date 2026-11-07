@@ -113,8 +113,11 @@ apps/web          kian website: live self-playing demo, dashboard, components, b
 packages/ui       @kian/ui: the widget (pill, cards, waveform, hold to approve), the cast, dashboard parts
 packages/designs  the design system: buttons, sidebar, rows, tokens and brand marks
 docs/             research, design and architecture notes, and the README art
-scripts/          render-art.sh renders the OG image and README art with headless Chrome
+scripts/          render-art.sh renders the README art; check-files.mjs enforces the house rules
 ```
+
+**House rules.** No source file is longer than 400 lines, and every file opens with a comment that says what it does.
+`pnpm check` typechecks the workspace and enforces both.
 
 ### Status
 

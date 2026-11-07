@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "pnpm --filter @kian/web dev",
     "build": "pnpm --filter @kian/web build",
-    "typecheck": "pnpm -r typecheck"
+    "typecheck": "pnpm -r typecheck",
+    "check:files": "node scripts/check-files.mjs",
+    "check": "pnpm typecheck && pnpm check:files"
   }
 }

@@ -1,3 +1,6 @@
+/*
+ * SearchField: a search input whose clear button dissolves the text.
+ */
 "use client"
 
 import { type ComponentProps, useEffect, useRef } from "react"

@@ -1,3 +1,9 @@
+/*
+ * Scroll and timing hooks for the home page: useInView and useOnScreen (is
+ * it visible), useScene (step through beats while visible) and useReveal
+ * (reveal once). Visibility is measured from scroll, so it also works in
+ * embedded and hidden panes where IntersectionObserver is unreliable.
+ */
 import { useEffect, useRef, useState } from 'react'
 
 /** True while the element is at least `threshold` on screen. */

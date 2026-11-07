@@ -1,3 +1,6 @@
+/*
+ * Select: a single choice from a list, on Radix Select.
+ */
 "use client"
 
 import { Select as SelectPrimitive } from "radix-ui"

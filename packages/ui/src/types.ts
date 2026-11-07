@@ -1,3 +1,8 @@
+/*
+ * Types the widget renders: room messages with answer chips, nudges, voice
+ * states and the agents' colours. Hosts normalise Switch room events into
+ * these shapes.
+ */
 export type AgentName = 'kian' | 'kian-scribe' | 'kian-studio' | (string & {})
 
 /** One message from a Switch room, already normalised by the rooms adapter. */

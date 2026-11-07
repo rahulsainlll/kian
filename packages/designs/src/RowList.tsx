@@ -1,3 +1,6 @@
+/*
+ * RowList: a list of Rows with the kit's spacing.
+ */
 import { Children, type CSSProperties, type ReactNode } from "react"
 import { cn } from "./utils"
 import "./designs.css"

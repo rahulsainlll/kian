@@ -1,0 +1,169 @@
+/*
+ * site · demo.css
+ * The live demo frame: window, widget satellite and the Telegram phone.
+ */
+
+/* ── live demo (the hero's product shot) ── */
+.demo {
+  margin-top: 64px;
+  animation: hero-in 900ms var(--ease-out) 150ms both;
+}
+.desk {
+  position: relative;
+  max-width: 1040px;
+  margin: 0 auto;
+  border-radius: 22px;
+  overflow: hidden;
+  background:
+    radial-gradient(55% 60% at 50% 100%, #ffc98f, transparent 70%),
+    linear-gradient(180deg, #7ea9e2 0%, #a9c5ec 40%, #f2cfaa 100%);
+  box-shadow: 0 0 0 1px rgba(20, 30, 60, 0.08), 0 40px 80px -30px rgba(40, 50, 90, 0.45);
+}
+.menubar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 28px;
+  padding: 0 14px;
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(16px) saturate(160%);
+  font-size: 12.5px;
+  color: #13203d;
+  text-align: left;
+}
+.menubar__app {
+  font-weight: 700;
+}
+.menubar__spacer {
+  flex: 1;
+}
+.demo__stage {
+  position: relative;
+  height: 600px;
+  display: flex;
+  justify-content: center;
+  padding-top: 36px;
+}
+.chat {
+  width: min(760px, 100%);
+  height: 480px;
+  text-align: left;
+  border-radius: 14px;
+  box-shadow: 0 0 0 1px rgba(20, 30, 60, 0.08), 0 30px 60px -20px rgba(40, 50, 90, 0.35), 0 8px 20px -8px rgba(40, 50, 90, 0.2);
+}
+/* satellite: the widget straddles the window's lower right corner, anchored by the pill's centre */
+.demo__widget {
+  position: absolute;
+  z-index: 3;
+  left: min(calc(50% + 330px), calc(100% - 190px));
+  bottom: 18px;
+  transform: translateX(-50%);
+  text-align: left;
+}
+.demo__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px 24px;
+  margin-top: 12px;
+}
+.demo__hint {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 14px;
+}
+.demo__hint b {
+  color: var(--ink);
+  font-weight: 600;
+}
+.demo__toggles {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+.labeled-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink-2);
+  cursor: pointer;
+}
+
+/* Telegram on the phone: a satellite straddling the window's left edge */
+.phone {
+  position: absolute;
+  z-index: 2;
+  left: max(12px, calc(50% - 380px - 170px));
+  bottom: -70px;
+  width: 190px;
+  height: 400px;
+  padding: 10px;
+  border-radius: 34px;
+  background: #111;
+  box-shadow: 0 30px 60px -20px rgba(20, 20, 40, 0.55);
+  text-align: left;
+  rotate: -4deg;
+}
+.phone__notch {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  translate: -50% 0;
+  width: 60px;
+  height: 16px;
+  border-radius: 999px;
+  background: #111;
+  z-index: 1;
+}
+.phone__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 34px 12px 10px;
+  border-radius: 26px 26px 0 0;
+  background: #f3f5f8;
+  font-size: 12px;
+}
+.phone__head > div {
+  display: flex;
+  flex-direction: column;
+}
+.phone__head span {
+  color: #7a8394;
+  font-size: 10.5px;
+}
+.phone__list {
+  height: calc(100% - 78px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 6px;
+  padding: 10px;
+  border-radius: 0 0 26px 26px;
+  background: #dfe8d4 radial-gradient(circle at 20% 20%, #e8efdd, transparent 60%);
+  overflow: hidden;
+}
+.phone__msg {
+  align-self: flex-start;
+  max-width: 88%;
+  padding: 6px 9px;
+  border-radius: 12px 12px 12px 4px;
+  background: #fff;
+  font-size: 11.5px;
+  line-height: 1.35;
+  color: #1b1f27;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.06);
+  animation: line-in 260ms var(--ease-out) both;
+}
+.phone__msg[data-old] {
+  opacity: 0.7;
+}
+.phone__msg[data-me] {
+  align-self: flex-end;
+  border-radius: 12px 12px 4px 12px;
+  background: #d9f6c4;
+}
