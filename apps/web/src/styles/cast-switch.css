@@ -1,0 +1,303 @@
+/*
+ * site · cast-switch.css
+ * Cast posters, the Switch notebook cards and the FAQ.
+ */
+
+/* ── posters (Headspace): flat colour, sun rings, big character, words at the bottom ── */
+.cast {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.poster {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 460px;
+  padding: 24px;
+  border-radius: 28px;
+  background: var(--bg);
+  color: var(--ink);
+  overflow: hidden;
+  isolation: isolate;
+}
+.poster__rings {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+.poster__rings i {
+  position: absolute;
+  left: 50%;
+  top: 36%;
+  border-radius: 50%;
+  translate: -50% -50%;
+  background: var(--ring);
+}
+.poster__rings i:first-child {
+  width: 330px;
+  height: 330px;
+  opacity: 0.55;
+}
+.poster__rings i:last-child {
+  width: 230px;
+  height: 230px;
+}
+.poster__squiggle {
+  position: absolute;
+  right: -14px;
+  top: 40px;
+  width: 90px;
+  z-index: -1;
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 9;
+  stroke-linecap: round;
+  opacity: 0.85;
+}
+.poster__art {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  padding: 24px 0 8px;
+  transition: transform 300ms var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .poster:hover .poster__art {
+    transform: translateY(-4px) rotate(-3deg);
+  }
+}
+.poster__title {
+  font-family: var(--display);
+  font-size: 34px;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+}
+.poster__sub {
+  margin-top: 8px;
+  color: var(--accent);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-wrap: pretty;
+}
+.poster__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 16px;
+}
+.poster__job {
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0.75;
+}
+.poster__room {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  text-decoration: none;
+}
+.poster__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+/* ── how Kian uses Switch: three notebook cards bound with rings ── */
+.notebook {
+  display: grid;
+  grid-template-columns: 1.25fr 0.8fr 1.1fr;
+  gap: 14px;
+}
+.nb {
+  position: relative;
+  min-height: 330px;
+  padding: 24px;
+  border-radius: 24px;
+  color: #fff;
+}
+.nb--rooms {
+  background: #ec7493;
+}
+.nb--work {
+  background: #f2c14a;
+  color: #3a2a00;
+}
+.nb--live {
+  background: #6b4fc8;
+}
+/* the binding: white rings that cross the gap between neighbours */
+.nb__rings {
+  position: absolute;
+  left: -27px;
+  top: 40px;
+  bottom: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  z-index: 1;
+}
+.nb__rings i {
+  width: 40px;
+  height: 12px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+}
+.nb__title {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 24px;
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.nb__rooms {
+  list-style: none;
+  margin: 20px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.nb__rooms li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.2);
+}
+.nb__rooms span {
+  display: flex;
+  flex-direction: column;
+  font-size: 14.5px;
+}
+.nb__rooms small {
+  opacity: 0.85;
+  font-size: 12.5px;
+}
+.nb__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 16px;
+}
+.nb__tags span {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.25);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.nb__checks {
+  list-style: none;
+  margin: 20px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 14.5px;
+  font-weight: 600;
+}
+.nb__checks li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0.6;
+}
+.nb__checks li[data-done] {
+  opacity: 1;
+}
+.nb__checks i {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2px currentColor;
+}
+.nb__checks li[data-done] i {
+  background: #3a2a00 radial-gradient(circle, #f2c14a 0 3px, transparent 3.5px);
+  box-shadow: none;
+}
+.nb__chat {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+}
+.nb__msg {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+.nb__msg span {
+  padding: 8px 12px;
+  border-radius: 14px 14px 14px 4px;
+  background: rgba(255, 255, 255, 0.18);
+}
+.nb__msg--right {
+  justify-content: flex-end;
+}
+.nb__msg--right span {
+  border-radius: 14px 14px 4px 14px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #2b1d63;
+}
+.nb-more {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 14px 0 0;
+  padding: 0;
+}
+.nb-more li {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--line);
+  border-top: 4px solid var(--c);
+  font-size: 14px;
+}
+.nb-more span {
+  color: var(--ink-2);
+}
+@media (max-width: 900px) {
+  .notebook,
+  .nb-more {
+    grid-template-columns: 1fr;
+  }
+  .nb__rings {
+    display: none;
+  }
+}
+
+/* ── faq (HeroUI Accordion) ── */
+.faq {
+  max-width: 760px;
+}
+.faq__q {
+  font-size: 16px;
+  font-weight: 600;
+}
+.faq__a {
+  color: var(--ink-2);
+  font-size: 15px;
+  line-height: 1.6;
+}

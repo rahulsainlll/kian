@@ -1,0 +1,83 @@
+/*
+ * site · responsive.css
+ * Breakpoints for everything above this file in the import order.
+ */
+
+/* ── responsive ── */
+@media (max-width: 980px) {
+
+  .cast {
+    grid-template-columns: 1fr;
+  }
+  .phone {
+    display: none;
+  }
+}
+@media (max-width: 860px) {
+  .specimen-grid {
+    grid-template-columns: 1fr;
+  }
+  .demo__widget {
+    left: 50%;
+  }
+}
+@media (max-width: 560px) {
+  :root {
+    --gutter: 16px;
+  }
+  .cast {
+    grid-template-columns: 1fr;
+  }
+
+  /* on a phone the widget sits under the chat window instead of over it */
+  .demo__stage {
+    height: auto;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 12px 20px;
+  }
+  .chat {
+    height: 380px;
+  }
+  .demo__widget {
+    position: static;
+    transform: none;
+    /* reserve the tallest card so a new one never pushes the controls */
+    min-height: 270px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  .demo__controls {
+    flex-direction: column;
+    text-align: center;
+  }
+  .chat__rail,
+  .mini-app__rail {
+    display: none;
+  }
+  .scene {
+    height: 380px;
+    padding: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .hero__copy,
+  .demo,
+  .scene-buddy {
+    animation: none;
+  }
+  .reveal > * {
+    transform: none;
+    transition: opacity 300ms ease;
+  }
+  .scene * {
+    transition-property: opacity !important;
+    transform: none !important;
+  }
+}

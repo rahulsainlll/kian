@@ -1,0 +1,204 @@
+/*
+ * site · scene-moments.css
+ * Scenes for the hand-off, approval, meeting and template moments.
+ */
+
+/* 3. handoff */
+.mini-chat {
+  width: min(560px, 100%);
+  padding: 16px 18px 20px;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(20, 30, 60, 0.06), 0 20px 40px -16px rgba(60, 40, 110, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.mini-chat__head {
+  font-weight: 650;
+  font-size: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+}
+.draft-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #fafafa;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.draft-card__text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+}
+.draft-card__text span {
+  color: var(--ink-3);
+  font-size: 12px;
+}
+
+/* 4. approval */
+.approve-stack {
+  width: min(460px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.approve-card {
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(20, 30, 60, 0.06), 0 20px 40px -16px rgba(120, 60, 30, 0.25);
+  text-align: left;
+}
+.decision {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(20, 30, 60, 0.06), 0 10px 20px -12px rgba(120, 60, 30, 0.3);
+  text-align: left;
+  font-size: 13px;
+}
+.decision > div {
+  display: flex;
+  flex-direction: column;
+}
+.decision span {
+  color: var(--ink-3);
+  font-size: 12px;
+}
+.decision__icon {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #2fb36b;
+  color: #fff;
+}
+
+/* 5. meeting */
+.meeting {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: min(460px, 100%);
+}
+.notes {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(20, 30, 60, 0.06), 0 20px 40px -16px rgba(110, 80, 20, 0.25);
+  text-align: left;
+}
+.notes__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+.notes__head span {
+  margin-left: auto;
+  color: var(--ink-3);
+  font-size: 12px;
+}
+.notes__tasks {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13.5px;
+}
+.notes__tasks li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.notes__check {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+  background: #e3f5ea;
+  color: #1c8a4f;
+}
+.sheet-change {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  font-size: 13.5px;
+}
+.sheet-change > span {
+  flex: 1;
+}
+.sheet-change s {
+  color: var(--ink-3);
+}
+
+/* 6. template */
+.yaml {
+  width: min(600px, 100%);
+  border-radius: 14px;
+  overflow: hidden;
+  background: #0f121a;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 30px 60px -20px rgba(0, 0, 0, 0.6);
+  text-align: left;
+}
+.yaml__bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 38px;
+  padding: 0 14px;
+  color: #9aa3b8;
+  font-size: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.yaml__dots {
+  display: flex;
+  gap: 6px;
+}
+.yaml__dots i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #2c3242;
+}
+.yaml__code {
+  margin: 0;
+  padding: 14px 16px 18px;
+  font-size: 13px;
+  line-height: 1.75;
+  color: #dbe2f1;
+}
+.yaml__line {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+.yaml__line code {
+  white-space: pre;
+}
+.yaml__note {
+  font-family: var(--ds-font);
+  font-size: 11px;
+  color: #7fb4ff;
+  background: rgba(76, 141, 255, 0.12);
+  border-radius: 999px;
+  padding: 0 8px;
+  align-self: center;
+}

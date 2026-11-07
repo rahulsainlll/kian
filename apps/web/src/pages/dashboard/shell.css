@@ -1,0 +1,213 @@
+/*
+ * dashboard · shell.css
+ * Hub tokens and grid, the sidebar and the paper panel.
+ */
+
+.hub {
+  --hub-bg: #f1ece4;
+  --hub-paper: #fbfaf7;
+  --hub-ink: #1d1b18;
+  --hub-ink-2: #5d5850;
+  --hub-ink-3: #8e877c;
+  --hub-line: rgba(40, 30, 10, 0.08);
+  --hub-teal: #1f6f6b;
+  --hub-teal-2: #3fa59c;
+  --hub-orange: #f5a23c;
+  --serif: 'Instrument Serif', Georgia, serif;
+
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 12px;
+  min-height: 100dvh;
+  padding: 12px 12px 12px 0;
+  background: var(--hub-bg);
+  color: var(--hub-ink);
+}
+
+/* ── sidebar ── */
+.hub__side {
+  position: sticky;
+  top: 12px;
+  height: calc(100dvh - 24px);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 12px 16px;
+}
+.hub__logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px 8px;
+  text-decoration: none;
+  font-family: var(--display);
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+.hub__chip {
+  padding: 2px 8px;
+  border-radius: 8px;
+  background: #ead9fb;
+  color: #6b2fb0;
+  font-family: var(--ds-font);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.hub__nav,
+.hub__side-foot {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.hub__side-foot {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--hub-line);
+}
+.hub__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--hub-ink);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+.hub__item[aria-current='page'] {
+  background: #e7e0d5;
+}
+.hub__icon {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  color: var(--hub-ink-2);
+}
+.hub__count {
+  margin-left: auto;
+  min-width: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--hub-orange);
+  color: #2a1606;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+@media (hover: hover) and (pointer: fine) {
+  .hub__item:hover:not([aria-current='page']) {
+    background: rgba(40, 30, 10, 0.05);
+    transition-duration: 0s;
+  }
+}
+
+.setup-card {
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--hub-paper);
+  box-shadow: 0 0 0 1px var(--hub-line), 0 1px 2px rgba(40, 30, 10, 0.04);
+}
+.setup-card__title {
+  font-size: 14px;
+  font-weight: 600;
+}
+.setup-card__bar {
+  height: 6px;
+  margin: 10px 0 12px;
+  border-radius: 999px;
+  background: #ebe6de;
+  overflow: hidden;
+}
+.setup-card__bar i {
+  display: block;
+  height: 100%;
+  background: var(--hub-teal);
+  border-radius: inherit;
+  transform-origin: left;
+  transition: transform 600ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.setup-card ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.setup-card__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 4px 0;
+  border: 0;
+  background: none;
+  color: var(--hub-ink);
+  font: inherit;
+  font-size: 13.5px;
+  text-align: left;
+  cursor: pointer;
+}
+.setup-card__row[data-done] {
+  color: var(--hub-ink-2);
+  cursor: default;
+}
+.setup-card__check {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px #b9b2a6;
+}
+.setup-card__row[data-done] .setup-card__check {
+  background: #d8efe9;
+  box-shadow: none;
+  color: var(--hub-teal);
+}
+
+/* ── the paper panel ── */
+.hub__panel {
+  min-width: 0;
+  padding: 48px 56px 64px;
+  border-radius: 24px;
+  background: var(--hub-paper);
+  box-shadow: 0 0 0 1px var(--hub-line), 0 2px 8px rgba(40, 30, 10, 0.04);
+  animation: panel-in 300ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+.hub__title {
+  margin: 0 0 28px;
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+.hub__sub {
+  margin: -16px 0 28px;
+  color: var(--hub-ink-2);
+}
+.hub__label {
+  margin: 40px 0 12px;
+  color: var(--hub-ink-2);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}

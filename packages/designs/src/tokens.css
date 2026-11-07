@@ -1,16 +1,18 @@
+/*
+ * @kian/designs · tokens.css
+ * The kit's design tokens: the Inter type scale, light and dark colours as
+ * --color-ds-* values, and the --ds-* aliases that components read. html.light
+ * switches to the light set. Load this before designs.css.
+ */
+
 /* ── designs/components: type scale, measured from onboarding.lens.xyz (Inter) ──
    Five sizes, three weights. Hierarchy comes from weight and ink (100 / 60 / 40%),
    not from many sizes. Tracking tightens as size grows. Each step is one Tailwind
    utility (text-ds-title sets size, leading, tracking and weight together).
    static: the variables always ship, since component CSS reads them directly. */
 :root {
-  --font-ds: var(--font-inter), system-ui, sans-serif;
 
   /* Page and section headings: "Choose Username" */
-  --text-ds-display: 26px;
-  --text-ds-display--line-height: 32px;
-  --text-ds-display--letter-spacing: -0.47px;
-  --text-ds-display--font-weight: 600;
 
   /* Card and item titles: a username, a row title */
   --text-ds-title: 16px;
@@ -43,52 +45,6 @@
   --text-ds-caption--font-weight: 400;
 }
 
-/* ── designs/components: the library page (src/app/designs/components) ──
-   Measured from benji.org/agentation: the page, the frame each component sits in, and
-   the ink the nav and captions are drawn in (40% for quiet text, 80% for the active item). */
-:root {
-  --color-ds-lib-page-light: #fdfdfc;
-  --color-ds-lib-page-dark: #0f0f10;
-  --color-ds-lib-frame-light: #f6f5f4;
-  --color-ds-lib-frame-dark: #19191b;
-  --color-ds-lib-ink-light: #111111;
-  --color-ds-lib-ink-dark: #ededed;
-}
-
-:root,
-.dark {
-  --ds-lib-page: var(--color-ds-lib-page-dark);
-  --ds-lib-frame: var(--color-ds-lib-frame-dark);
-  --ds-lib-ink: var(--color-ds-lib-ink-dark);
-}
-
-.light {
-  --ds-lib-page: var(--color-ds-lib-page-light);
-  --ds-lib-frame: var(--color-ds-lib-frame-light);
-  --ds-lib-ink: var(--color-ds-lib-ink-light);
-}
-
-/* ── designs/components: LevelSlider (src/components/designs/LevelSlider.tsx) ──
-   The fill warms from mauve to lavender as the level rises; the galaxy level swaps the
-   fill for an animated pixel dither drawn on a canvas, which reads these at runtime
-   (static, so they ship even though no utility uses them). */
-:root {
-  --color-ds-level-warm: #d16ba5;
-  --color-ds-level-cool: #8b7cf6;
-  --color-ds-galaxy-deep: #2e1d8f;
-  --color-ds-galaxy-violet: #6d4fe0;
-  --color-ds-galaxy-orchid: #b67cf2;
-  --color-ds-galaxy-pink: #f3a6e8;
-  --color-ds-galaxy-sky: #9cc8ff;
-  --color-ds-galaxy-star: #ffffff;
-  --color-ds-galaxy-label: #a9d1ff;
-  --color-ds-galaxy-brain: #cbbcff;
-  --color-ds-galaxy-brain-ink: #231e9c;
-  --color-ds-galaxy-brain-from: #a9b2ff;
-  --color-ds-galaxy-brain-to: #e7a4ef;
-  --color-ds-galaxy-glow: #5a5cff;
-}
-
 /* ── designs/components: the Stageshow kit's tokens, exact (src/components/designs) ── */
 :root {
   --color-ds-canvas-light: #f6f5f4;
@@ -99,8 +55,6 @@
   --color-ds-raised-dark: #26262a;
   --color-ds-fill-light: #ebebeb;
   --color-ds-fill-dark: #313134;
-  --color-ds-well-light: #efeeec;
-  --color-ds-well-dark: #0a0a0b;
   --color-ds-ink-1-light: #0000000a;
   --color-ds-ink-1-dark: #ffffff0d;
   --color-ds-ink-2-light: #0000000f;
@@ -123,16 +77,12 @@
   --color-ds-text-faint-dark: #6c6c70;
   --color-ds-icon-light: #707074;
   --color-ds-icon-dark: #9a9aa0;
-  --color-ds-icon-faint-light: #c4c4c7;
-  --color-ds-icon-faint-dark: #4a4a50;
   --color-ds-accent-light: #3b82f6;
   --color-ds-accent-dark: #3b82f6;
   --color-ds-accent-soft-light: #3b82f61f;
   --color-ds-accent-soft-dark: #3b82f633;
   --color-ds-accent-text-light: #306bca;
   --color-ds-accent-text-dark: #76a8f9;
-  --color-ds-accent-2-light: #8b5cf6;
-  --color-ds-accent-2-dark: #8b5cf6;
   --color-ds-success-light: #22c55e;
   --color-ds-success-dark: #22c55e;
   --color-ds-danger-light: #ef4444;
@@ -155,14 +105,6 @@
   --color-ds-toast-dark: #26262a;
   --color-ds-toast-ink-light: #ffffff;
   --color-ds-toast-ink-dark: #ececee;
-  --color-ds-code-key-light: #7c3aed;
-  --color-ds-code-key-dark: #c4b5fd;
-  --color-ds-code-str-light: #15803d;
-  --color-ds-code-str-dark: #86efac;
-  --color-ds-code-num-light: #b45309;
-  --color-ds-code-num-dark: #fdba74;
-  --color-ds-code-fn-light: #2563eb;
-  --color-ds-code-fn-dark: #93c5fd;
   --color-ds-paper-light: #f4f4f3;
   --color-ds-paper-dark: #161618;
   --color-ds-grid-light: #0000000b;
@@ -179,39 +121,14 @@
   --color-ds-control-muted-dark: #9d9da1;
   --color-ds-control-placeholder-light: #8b8b8e;
   --color-ds-control-placeholder-dark: #6c6c70;
-  --color-ds-frame-edge-light: #00000038;
-  --color-ds-frame-edge-dark: #ffffff38;
-  --color-ds-frame-name-light: #79797d;
-  --color-ds-frame-name-dark: #8a8a8f;
-  --color-ds-track-light: #00000018;
-  --color-ds-track-dark: #ffffff24;
-  --color-ds-thumb-edge-light: #00000026;
-  --color-ds-thumb-edge-dark: #00000066;
   --color-ds-button-drop-light: #00000040;
   --color-ds-button-drop-dark: #00000080;
   --color-ds-white: #ffffff;
-  --color-ds-sky: #5bb2f4;
-  --color-ds-si-field-light: #f7f7f7;
-  --color-ds-si-field-dark: #202f36;
-  --color-ds-si-edge-light: #e5e5e5;
-  --color-ds-si-edge-dark: #37464f;
-  --color-ds-si-focus-light: #1cb0f6;
-  --color-ds-si-focus-dark: #49c0f8;
-  --color-ds-si-ink-light: #4b4b4b;
-  --color-ds-si-ink-dark: #f1f7fb;
-  --color-ds-si-hint-light: #777777;
-  --color-ds-si-hint-dark: #dce6ec;
-  --color-ds-si-muted-light: #afafaf;
-  --color-ds-si-muted-dark: #52656d;
-  --color-ds-scrim-light: #0000004d;
-  --color-ds-scrim-dark: #000000a6;
   --color-ds-tooltip: #26262a;
   --color-ds-knob-drop: #00000024;
   --color-ds-knob-edge: #0000000a;
   --color-ds-thumb-drop: #00000014;
   --color-ds-thumb-edge: #0000000f;
-  --color-ds-pin-edge: #0000000f;
-  --color-ds-pin-drop: #00000040;
   --color-ds-toast-action: #ffffff99;
   --color-ds-person-1: #c98f6e;
   --color-ds-person-2: #6f9b7d;
@@ -234,14 +151,6 @@
   --color-ds-glass-url-ink: #50617a;
   --color-ds-glass-lock: #667691;
   --color-ds-glass-page-drop: #1717170f;
-  --color-ds-night: #111113;
-  --color-ds-night-ink: #f5f5f7;
-  --color-ds-night-muted: #a5a5ac;
-  --color-ds-night-track: #ffffff2e;
-  --color-ds-night-art-edge: #ffffff14;
-  --color-ds-night-art-drop: #000000b3;
-  --color-ds-key-tile-top: #ff7438;
-  --color-ds-key-tile-bottom: #ff5a1f;
   --color-ds-key-face: #ffffff;
   --color-ds-key-face-end: #f4f3f1;
   --color-ds-key-ink: #2a2826;
@@ -250,64 +159,18 @@
   --color-ds-key-edge: #0000000a;
   --color-ds-key-shine: #ffffffe6;
   --color-ds-key-drop: #0000004d;
-  --color-ds-icon-edge: #0000000f;
-  --color-ds-icon-shine: #ffffff40;
-  --color-ds-icon-drop: #00000059;
-  --color-ds-remove: #c7c7cc;
-  --color-ds-remove-ink: #3a3a3c;
-  --color-ds-calendar-red: #e44242;
-  --color-ds-cover-top: #ffcf9c;
-  --color-ds-cover-mid: #ff9a62;
-  --color-ds-cover-low: #f0645a;
-  --color-ds-sun-core: #fff6e0;
-  --color-ds-sun-edge: #ffd9a0;
-  --color-ds-sun-halo: #ffe6be2e;
-  --color-ds-sun-glow: #ffdcaa73;
-  --color-ds-sea-top: #3d3aa8;
-  --color-ds-sea-bottom: #232067;
-  --color-ds-sea-glint: #ffd6aa8c;
-  --color-ds-chart-violet: #5b5bf6;
   --color-ds-delete-top: #e36323;
   --color-ds-delete-bottom: #df5a18;
   --color-ds-delete-glow: #fc6010;
   --color-ds-delete-rim: #bf4a0f;
-  --color-ds-band-1: #ff5b2e;
-  --color-ds-band-2: #ff8a3d;
-  --color-ds-band-3: #ffb547;
-  --color-ds-band-4: #ffd9a0;
-  --color-ds-band-5: #c8bdff;
-  --color-ds-band-6: #8b7bff;
-  --color-ds-band-7: #5b5bf6;
-  --color-ds-wheel-1: #f97316;
-  --color-ds-wheel-2: #eab308;
-  --color-ds-wheel-3: #22c55e;
-  --color-ds-wheel-4: #06b6d4;
-  --color-ds-wheel-5: #3b82f6;
-  --color-ds-wheel-6: #a855f7;
-  --color-ds-wheel-7: #ec4899;
-  --color-ds-app-blue: #0a7cff;
-  --color-ds-app-orange: #ff9500;
-  --color-ds-app-black: #1c1c1e;
-  --color-ds-app-green: #2fc455;
-  --color-ds-app-purple: #7a5cff;
-  --color-ds-app-red: #ff3b45;
-  --color-ds-app-sky: #2bb3f0;
-  --color-ds-app-yellow: #ffcc00;
-  --color-ds-app-yellow-ink: #6b4e00;
-  --color-ds-app-teal: #1fb38a;
-  --color-ds-app-coral: #ff6a3d;
   --shadow-ds-float-light: 0 0 0 1px #00000014, 0 4px 16px #0000001f, 0 12px 32px #00000014;
   --shadow-ds-float-dark: 0 0 0 1px #ffffff1a, 0 4px 16px #00000066, 0 12px 32px #0000004d;
   --shadow-ds-satellite-light: 0 0 0 1px #0000000a, 0 14px 32px -8px #32325d3d, 0 4px 10px -4px #0000001a;
   --shadow-ds-satellite-dark: 0 0 0 1px #ffffff1a, 0 14px 32px -8px #000000b3, 0 4px 10px -4px #00000080;
   --shadow-ds-window-light: 0 0 0 1px #0000000f, 0 4px 16px #00000014;
   --shadow-ds-window-dark: 0 0 0 1px #ffffff14, 0 4px 16px #00000066;
-  --shadow-ds-pill-light: 0 0 0 1px #0000000f, 0 2px 6px #0000000d, 0 4px 42px #0000000f;
-  --shadow-ds-pill-dark: 0 0 0 1px #ffffff14, 0 2px 6px #00000040, 0 4px 42px #00000059;
   --shadow-ds-card-light: 0 1.25px 2.5px #00000007;
   --shadow-ds-card-dark: 0 1.25px 2.5px #00000066;
-  --shadow-ds-bar-light: 0 1px 2px #00000018;
-  --shadow-ds-bar-dark: 0 1px 2px #00000066;
 }
 
 :root,
@@ -325,7 +188,6 @@
   --ds-surface: var(--color-ds-surface-dark);
   --ds-raised: var(--color-ds-raised-dark);
   --ds-fill: var(--color-ds-fill-dark);
-  --ds-well: var(--color-ds-well-dark);
   --ds-ink-1: var(--color-ds-ink-1-dark);
   --ds-ink-2: var(--color-ds-ink-2-dark);
   --ds-ink-3: var(--color-ds-ink-3-dark);
@@ -337,11 +199,9 @@
   --ds-text-strong: var(--color-ds-text-strong-dark);
   --ds-text-faint: var(--color-ds-text-faint-dark);
   --ds-icon: var(--color-ds-icon-dark);
-  --ds-icon-faint: var(--color-ds-icon-faint-dark);
   --ds-accent: var(--color-ds-accent-dark);
   --ds-accent-soft: var(--color-ds-accent-soft-dark);
   --ds-accent-text: var(--color-ds-accent-text-dark);
-  --ds-accent-2: var(--color-ds-accent-2-dark);
   --ds-success: var(--color-ds-success-dark);
   --ds-danger: var(--color-ds-danger-dark);
   --ds-warning: var(--color-ds-warning-dark);
@@ -353,10 +213,6 @@
   --ds-warning-text: var(--color-ds-warning-text-dark);
   --ds-toast: var(--color-ds-toast-dark);
   --ds-toast-ink: var(--color-ds-toast-ink-dark);
-  --ds-code-key: var(--color-ds-code-key-dark);
-  --ds-code-str: var(--color-ds-code-str-dark);
-  --ds-code-num: var(--color-ds-code-num-dark);
-  --ds-code-fn: var(--color-ds-code-fn-dark);
   --ds-paper: var(--color-ds-paper-dark);
   --ds-grid: var(--color-ds-grid-dark);
   --ds-control: var(--color-ds-control-dark);
@@ -365,24 +221,11 @@
   --ds-control-ink: var(--color-ds-control-ink-dark);
   --ds-control-muted: var(--color-ds-control-muted-dark);
   --ds-control-placeholder: var(--color-ds-control-placeholder-dark);
-  --ds-frame-edge: var(--color-ds-frame-edge-dark);
-  --ds-frame-name: var(--color-ds-frame-name-dark);
-  --ds-track: var(--color-ds-track-dark);
-  --ds-thumb-edge: var(--color-ds-thumb-edge-dark);
   --ds-button-drop: var(--color-ds-button-drop-dark);
   --ds-shadow-float: var(--shadow-ds-float-dark);
   --ds-shadow-satellite: var(--shadow-ds-satellite-dark);
   --ds-shadow-window: var(--shadow-ds-window-dark);
-  --ds-shadow-pill: var(--shadow-ds-pill-dark);
   --ds-shadow-card: var(--shadow-ds-card-dark);
-  --ds-shadow-bar: var(--shadow-ds-bar-dark);
-  --ds-scrim: var(--color-ds-scrim-dark);
-  --ds-si-field: var(--color-ds-si-field-dark);
-  --ds-si-edge: var(--color-ds-si-edge-dark);
-  --ds-si-focus: var(--color-ds-si-focus-dark);
-  --ds-si-ink: var(--color-ds-si-ink-dark);
-  --ds-si-hint: var(--color-ds-si-hint-dark);
-  --ds-si-muted: var(--color-ds-si-muted-dark);
 }
 
 .light {
@@ -399,7 +242,6 @@
   --ds-surface: var(--color-ds-surface-light);
   --ds-raised: var(--color-ds-raised-light);
   --ds-fill: var(--color-ds-fill-light);
-  --ds-well: var(--color-ds-well-light);
   --ds-ink-1: var(--color-ds-ink-1-light);
   --ds-ink-2: var(--color-ds-ink-2-light);
   --ds-ink-3: var(--color-ds-ink-3-light);
@@ -411,11 +253,9 @@
   --ds-text-strong: var(--color-ds-text-strong-light);
   --ds-text-faint: var(--color-ds-text-faint-light);
   --ds-icon: var(--color-ds-icon-light);
-  --ds-icon-faint: var(--color-ds-icon-faint-light);
   --ds-accent: var(--color-ds-accent-light);
   --ds-accent-soft: var(--color-ds-accent-soft-light);
   --ds-accent-text: var(--color-ds-accent-text-light);
-  --ds-accent-2: var(--color-ds-accent-2-light);
   --ds-success: var(--color-ds-success-light);
   --ds-danger: var(--color-ds-danger-light);
   --ds-warning: var(--color-ds-warning-light);
@@ -427,10 +267,6 @@
   --ds-warning-text: var(--color-ds-warning-text-light);
   --ds-toast: var(--color-ds-toast-light);
   --ds-toast-ink: var(--color-ds-toast-ink-light);
-  --ds-code-key: var(--color-ds-code-key-light);
-  --ds-code-str: var(--color-ds-code-str-light);
-  --ds-code-num: var(--color-ds-code-num-light);
-  --ds-code-fn: var(--color-ds-code-fn-light);
   --ds-paper: var(--color-ds-paper-light);
   --ds-grid: var(--color-ds-grid-light);
   --ds-control: var(--color-ds-control-light);
@@ -439,45 +275,16 @@
   --ds-control-ink: var(--color-ds-control-ink-light);
   --ds-control-muted: var(--color-ds-control-muted-light);
   --ds-control-placeholder: var(--color-ds-control-placeholder-light);
-  --ds-frame-edge: var(--color-ds-frame-edge-light);
-  --ds-frame-name: var(--color-ds-frame-name-light);
-  --ds-track: var(--color-ds-track-light);
-  --ds-thumb-edge: var(--color-ds-thumb-edge-light);
   --ds-button-drop: var(--color-ds-button-drop-light);
   --ds-shadow-float: var(--shadow-ds-float-light);
   --ds-shadow-satellite: var(--shadow-ds-satellite-light);
   --ds-shadow-window: var(--shadow-ds-window-light);
-  --ds-shadow-pill: var(--shadow-ds-pill-light);
   --ds-shadow-card: var(--shadow-ds-card-light);
-  --ds-shadow-bar: var(--shadow-ds-bar-light);
-  --ds-scrim: var(--color-ds-scrim-light);
-  --ds-si-field: var(--color-ds-si-field-light);
-  --ds-si-edge: var(--color-ds-si-edge-light);
-  --ds-si-focus: var(--color-ds-si-focus-light);
-  --ds-si-ink: var(--color-ds-si-ink-light);
-  --ds-si-hint: var(--color-ds-si-hint-light);
-  --ds-si-muted: var(--color-ds-si-muted-light);
-}
-
-/* designs/components: shared keyframes */
-@keyframes ds-wobble {
-  from {
-    rotate: -1.4deg;
-  }
-  to {
-    rotate: 1.4deg;
-  }
 }
 
 @keyframes ds-spin {
   to {
     rotate: 1turn;
-  }
-}
-
-@keyframes ds-caret {
-  50% {
-    opacity: 0;
   }
 }
 

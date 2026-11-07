@@ -1,0 +1,192 @@
+/*
+ * @kian/ui · card.css
+ * Message and nudge cards, the type bar and accessibility helpers.
+ */
+
+/* ── card ───────────────────────────────────────────────────────────────── */
+
+.k-card {
+  width: 340px;
+  max-width: calc(100vw - 32px);
+  border-radius: var(--k-card-r);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.k-card--nudge {
+  width: max-content;
+  max-width: min(300px, calc(100vw - 32px));
+  gap: 12px;
+}
+.k-card--nudge .k-card__foot {
+  flex-wrap: nowrap;
+}
+
+.k-card__head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  margin: -4px -4px 0 0; /* the dismiss button's 28px hit area sits in the corner */
+}
+.k-card__who {
+  flex: none;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.k-card__room {
+  min-width: 0;
+  color: var(--k-ink-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.k-card__spacer {
+  flex: 1;
+}
+.k-card__queue {
+  color: var(--k-ink-3);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.k-card__text {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+  text-wrap: pretty;
+  overflow-wrap: anywhere;
+  /* long transcripts stay inside the card */
+  max-height: 8.4em;
+  overflow-y: auto;
+}
+.k-card__foot {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.k-avatar {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.k-kbd {
+  /* reset: host pages often style kbd */
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  font-size: 11px;
+  color: var(--k-ink-3);
+}
+.k-chip[data-variant='primary'] .k-kbd,
+.k-chip[data-variant='danger'] .k-kbd {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.k-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--k-ink-2);
+  text-decoration: none;
+  font-weight: 500;
+  padding-inline: 4px;
+  transition: color 150ms ease;
+}
+
+.k-speaking {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 12px;
+  margin-left: 2px;
+}
+.k-speaking span {
+  width: 2px;
+  height: 100%;
+  border-radius: 1px;
+  background: var(--k-agent-kian);
+  animation: k-speak 900ms ease-in-out infinite;
+}
+.k-speaking span:nth-child(2) {
+  animation-delay: -300ms;
+}
+.k-speaking span:nth-child(3) {
+  animation-delay: -600ms;
+}
+@keyframes k-speak {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+/* ── type bar ───────────────────────────────────────────────────────────── */
+
+.k-type {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 320px;
+  max-width: calc(100vw - 32px);
+  padding: 4px 4px 4px 14px;
+  border-radius: 999px;
+}
+.k-type__input {
+  flex: 1;
+  min-width: 0;
+  height: 32px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--k-ink-1);
+  font: inherit;
+  font-size: 14px;
+}
+.k-type__input::placeholder {
+  color: var(--k-ink-3);
+}
+
+/* ── accessibility ──────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .k-float,
+  .k-float[data-phase='closing'],
+  .k-pill__body,
+  .k-roll__item {
+    --k-from: none;
+    animation-duration: 120ms;
+  }
+  .k-pill[data-attention='true']::after,
+  .k-rec--live,
+  .k-speaking span {
+    animation: none;
+  }
+  .k-btn:active {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .kian {
+    --k-surface: #18181b;
+  }
+  .k-glass {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
