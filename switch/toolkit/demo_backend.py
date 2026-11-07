@@ -80,10 +80,10 @@ class DemoBackend:
         return [{"from": m["from"], "subject": m["subject"], "body": m["body"]} for m in self.data["emails"] if m["thread"] == thread_id]
 
     def create_draft(self, to: str, subject: str, body: str, thread_id: str | None) -> Draft:
-        draft_id = f"demo-draft-{len(self.state['drafts']) + 1}"
+        draft_id = f"draft-{len(self.state['drafts']) + 1}"
         self.state["drafts"].append({"id": draft_id, "to": to, "subject": subject, "body": body, "thread": thread_id})
         self._save()
-        return Draft(draft_id, to, subject, f"demo://drafts/{draft_id}")
+        return Draft(draft_id, to, subject, f"local://drafts/{draft_id}")
 
     def update_cell(self, row: int, column: str, value: str) -> None:
         if column not in COLUMNS:
@@ -114,7 +114,7 @@ class DemoBackend:
     def add_event(self, title: str, start: datetime, minutes: int, note: str) -> str:
         self.state["events"].append({"title": title, "start": start.isoformat(), "minutes": minutes, "note": note})
         self._save()
-        return f"demo://calendar/{len(self.state['events'])}"
+        return f"local://calendar/{len(self.state['events'])}"
 
     def send_draft(self, draft_id: str) -> str:
         draft = next((d for d in self.state["drafts"] if d["id"] == draft_id), None)
@@ -122,7 +122,7 @@ class DemoBackend:
             raise ValueError(f"no draft {draft_id}")
         self.state["sent"].append(draft_id)
         self._save()
-        return f"demo-sent-{draft_id}"
+        return f"sent-{draft_id}"
 
     @staticmethod
     def reset() -> None:

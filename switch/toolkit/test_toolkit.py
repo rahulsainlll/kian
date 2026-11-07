@@ -60,10 +60,10 @@ class Safety(unittest.TestCase):
 
     def test_send_refuses_without_a_named_yes(self) -> None:
         run("--profile", "test", "draft", "--to", "a@b.example", "--subject", "Hi", "--body", "Hello")
-        code, out = run("--profile", "test", "send", "--draft", "demo-draft-1")
+        code, out = run("--profile", "test", "send", "--draft", "draft-1")
         self.assertEqual(code, 2)
         self.assertIn("--approved-by", out)
-        code, out = run("--profile", "test", "send", "--draft", "demo-draft-1", "--approved-by", "Mayank")
+        code, out = run("--profile", "test", "send", "--draft", "draft-1", "--approved-by", "Mayank")
         self.assertEqual(code, 0)
         self.assertIn("approved by Mayank", out)
 
