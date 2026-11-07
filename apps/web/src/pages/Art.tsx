@@ -10,6 +10,7 @@ import { SwitchNotebook } from './home/SwitchUse'
 import './art.css'
 import { GuideMac, GuideWindows } from './art/Guides'
 import { HowItWorks } from './art/HowItWorks'
+import { XArchitecture, XClosing, XHowKian, XImpact, XProblem, XWhySwitch } from './art/Explainer'
 
 const BRIEF: RoomMessage = {
   id: 'a1',
@@ -149,13 +150,24 @@ function TrayIcon() {
   )
 }
 
-const ART: Record<string, () => ReactNode> = { og: Og, hero: Hero, cast: Cast, switch: Switch, widget: Widget, appicon: AppIcon, trayicon: TrayIcon, 'guide-mac': () => <GuideMac />, 'guide-windows': () => <GuideWindows />, 'how-it-works': HowItWorks }
+const ART: Record<string, () => ReactNode> = { og: Og, hero: Hero, cast: Cast, switch: Switch, widget: Widget, appicon: AppIcon, trayicon: TrayIcon, 'guide-mac': () => <GuideMac />, 'guide-windows': () => <GuideWindows />, 'how-it-works': HowItWorks,
+  'x-problem': XProblem,
+  'x-why-switch': XWhySwitch,
+  'x-how-kian': XHowKian,
+  'x-architecture': XArchitecture,
+  'x-impact': XImpact,
+  'x-closing': XClosing,
+}
 const CLEAR = new Set(['appicon', 'trayicon'])
 
 export function Art({ name }: { name?: string }) {
   const Piece = (name && ART[name]) || Og
   return (
-    <div className={`art-page${name && CLEAR.has(name) ? ' art-page--clear' : ''}`}>
+    <div
+      className={`art-page${name && CLEAR.has(name) ? ' art-page--clear' : ''}`}
+      // ?t=<seconds> seeks the slide animations, for frame-by-frame video capture
+      style={{ ['--t' as string]: `${new URLSearchParams(location.search).get('t') ?? 10}s` }}
+    >
       <Piece />
     </div>
   )
