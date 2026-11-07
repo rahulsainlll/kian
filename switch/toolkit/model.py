@@ -1,5 +1,5 @@
 # model.py: the shapes the toolkit passes around, independent of where the
-# data came from. Backends (demo_backend.py, google_backend.py) produce these;
+# data came from (leads, mail, meetings, drafts, and a person's tasks). Backends (demo_backend.py, google_backend.py) produce these;
 # ranking.py and kian_tools.py only ever read these.
 from __future__ import annotations
 
@@ -55,6 +55,15 @@ class Meeting:
 
 
 @dataclass
+class Task:
+    id: str
+    title: str
+    due: str  # YYYY-MM-DD, or "" for no date
+    done: bool = False
+    note: str = ""
+
+
+@dataclass
 class Draft:
     id: str
     to: str
@@ -74,3 +83,9 @@ class Backend(Protocol):
     def create_draft(self, to: str, subject: str, body: str, thread_id: str | None) -> Draft: ...
     def update_cell(self, row: int, column: str, value: str) -> None: ...
     def check(self) -> dict[str, str]: ...
+    # The person's own day: tasks, calendar entries, and sending a draft after a yes
+    def tasks(self) -> list[Task]: ...
+    def add_task(self, title: str, due: str, note: str) -> Task: ...
+    def complete_task(self, task_id: str) -> Task: ...
+    def add_event(self, title: str, start: datetime, minutes: int, note: str) -> str: ...
+    def send_draft(self, draft_id: str) -> str: ...

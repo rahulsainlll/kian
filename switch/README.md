@@ -1,14 +1,20 @@
 # Kian on Switch
 
-Everything Kian needs on the Switch side: two templates, the agents' toolkit and the demo data. The website and the
+Everything Kian needs on the Switch side: the templates, the agents' toolkit and the demo data.
+
+**For a team, start with [TEAM.md](TEAM.md):** an agent for every person, talking to each other in one room.
+The sales desk below is one team's setup on top of it. The website and the
 desktop widget are clients of the rooms this creates; they hold no work of their own.
 
 ```
 switch/
-  kian.template.yaml       the desk: 3 agents, a room group of 3 rooms, links
+  team.template.yaml       an agent per person, their desks, and the room where the agents talk
+  TEAM.md                  how to set up the team version
+  kian.template.yaml       the sales desk: 3 agents, a room group of 3 rooms, links
   deal-room.template.yaml  one customer's room, for opening a deal by hand
   toolkit/
-    kian_tools.py          brief, deal, meetings, draft, row (no send command)
+    kian_tools.py          brief, deal, meetings, draft, send (with a named yes), row, login
+    personal.py            agenda, tasks, schedule: each person's own day
     ranking.py             how the morning is ranked
     demo_backend.py        fixtures.json as if it were Gmail, Calendar and Sheets
     google_backend.py      the same against a real Google account
@@ -97,14 +103,14 @@ The desk runs on demo data until you connect Google. Use a throwaway account, ne
 2. Install the client and seed the account:
 
    ```bash
-   python3 -m pip install -r requirements.txt
+   python3 -m venv .venv && .venv/bin/pip install -r requirements.txt   # kian_tools.py uses .venv by itself
    python3 seed.py                    # signs in, then prints KIAN_SHEET_ID
    cp .env.example .env               # set KIAN_SHEET_ID, and KIAN_BACKEND=google
    python3 kian_tools.py brief --check
    ```
 
 The toolkit asks for Gmail read and compose, Calendar read, and Sheets. Compose is the scope Gmail needs for drafts.
-The code never calls send, and a test checks that no send command exists.
+`send` refuses to run without `--approved-by`, and a test checks that.
 
 ### 5. Telegram (optional)
 
@@ -125,10 +131,10 @@ contact's email (Templates, Import template, then run it); kian loads the histor
 
 ## The rules
 
-1. Never send an email or a message to a customer. Create a Gmail draft and post its link.
+1. Never send an email or a message without its owner's yes in the chat. Create a Gmail draft and post its link.
 2. Never change a price or a discount without a decision recorded in kian-approvals.
 3. Before writing to the lead Sheet, post the column, the old value and the new value, and wait for a yes.
 4. When unsure who a sender is, ask in kian-desk rather than guess.
 
-Rule 1 is enforced by the toolkit, which has no send command. Rules 2 and 3 are enforced by the room instructions
+Rule 1 is enforced by the toolkit, whose `send` needs `--approved-by`. Rules 2 and 3 are enforced by the room instructions
 and by `row apply`, which refuses to run without `--approved-by`.

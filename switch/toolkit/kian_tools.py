@@ -5,12 +5,17 @@
 #   brief [--json] [--check]        the ranked morning, most urgent first
 #   deal <email or company>         one customer: lead row, threads, meetings
 #   meetings [--days N]             upcoming meetings with their lead
-#   draft --to --subject --body-file [--thread]   a Gmail draft, never sent
+#   draft --to --subject --body-file [--thread]   a Gmail draft (prints its id)
+#   send --draft ID --approved-by NAME   send it, only after a named yes in the chat
 #   row propose|apply ...           show a lead Sheet change, then make it after a yes
-#   reset-demo                      forget demo drafts and edits
+#   agenda | tasks | schedule       the person's own day (see personal.py)
+#   login                           sign a profile in to its Google account
+#   reset-demo                      forget demo state
 #
-# There is no send command. KIAN_BACKEND=demo (the default until Google is set
-# up) uses fixtures.json; KIAN_BACKEND=google uses the account in token.json.
+# --profile NAME (or KIAN_PROFILE) picks whose account: each person's agent
+# runs with its own profile, so it only ever touches its own person's Gmail,
+# Calendar and Tasks. KIAN_BACKEND=demo (the default until that profile has
+# signed in) uses fixtures.json; google uses token-<profile>.json.
 from __future__ import annotations
 
 import argparse
@@ -23,6 +28,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
+import personal  # noqa: E402
 from model import COLUMNS, Backend, Lead  # noqa: E402
 from ranking import headline, rank  # noqa: E402
 
@@ -37,15 +43,16 @@ def load_env() -> None:
                 os.environ.setdefault(key.strip(), value.strip())
 
 
-def backend() -> Backend:
-    choice = os.environ.get("KIAN_BACKEND") or ("google" if (HERE / "token.json").exists() else "demo")
+def backend(profile: str = "") -> Backend:
+    token = HERE / (f"token-{profile}.json" if profile else "token.json")
+    choice = os.environ.get("KIAN_BACKEND") or ("google" if token.exists() else "demo")
     if choice == "google":
         from google_backend import GoogleBackend
 
-        return GoogleBackend()
+        return GoogleBackend(profile)
     from demo_backend import DemoBackend
 
-    return DemoBackend()
+    return DemoBackend(profile=profile)
 
 
 def find_lead(leads: list[Lead], key: str) -> Lead | None:
@@ -126,7 +133,7 @@ def cmd_draft(b: Backend, args) -> int:
         return 2
     draft = b.create_draft(args.to, args.subject, body, args.thread)
     print(f"Draft saved, not sent: {draft.link}")
-    print(f"To {draft.to}, “{draft.subject}”.")
+    print(f"To {draft.to}, “{draft.subject}”. Draft id {draft.id}: send it only after a yes in the chat.")
     return 0
 
 
@@ -151,6 +158,15 @@ def cmd_row(b: Backend, args) -> int:
     return 0
 
 
+def cmd_login(_b, args) -> int:
+    """Signs a profile in to Google once; its agent uses the saved token from then on."""
+    from google_backend import GoogleBackend
+
+    g = GoogleBackend(args.profile)
+    print(f"Signed in as {g.me()} for profile {args.profile or '(default)'}. Its agent now uses this account.")
+    return 0
+
+
 def cmd_reset(_b, _args) -> int:
     from demo_backend import DemoBackend
 
@@ -160,7 +176,8 @@ def cmd_reset(_b, _args) -> int:
 
 
 def parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(prog="kian_tools.py", description="Kian's toolkit. Reads the desk's data; drafts, never sends.")
+    p = argparse.ArgumentParser(prog="kian_tools.py", description="Kian's toolkit. Reads the desk's data; sends only with a named yes.")
+    p.add_argument("--profile", default=os.environ.get("KIAN_PROFILE", ""), help="whose account: rahul, mayank, yukti…")
     sub = p.add_subparsers(dest="command", required=True)
 
     s = sub.add_parser("brief", help="the ranked morning")
@@ -177,7 +194,7 @@ def parser() -> argparse.ArgumentParser:
     s.add_argument("--days", type=int, default=1)
     s.set_defaults(run=cmd_meetings)
 
-    s = sub.add_parser("draft", help="save a Gmail draft (never sends)")
+    s = sub.add_parser("draft", help="save a Gmail draft")
     s.add_argument("--to", required=True)
     s.add_argument("--subject", required=True)
     s.add_argument("--body")
@@ -193,6 +210,11 @@ def parser() -> argparse.ArgumentParser:
     s.add_argument("--approved-by")
     s.set_defaults(run=cmd_row)
 
+    personal.register(sub)
+
+    s = sub.add_parser("login", help="sign this profile in to its Google account (opens the browser once)")
+    s.set_defaults(run=cmd_login, no_backend=True)
+
     s = sub.add_parser("reset-demo", help="clear demo drafts and edits")
     s.set_defaults(run=cmd_reset, no_backend=True)
     return p
@@ -201,8 +223,17 @@ def parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     load_env()
     args = parser().parse_args(argv)
-    return args.run(None if getattr(args, "no_backend", False) else backend(), args)
+    return args.run(None if getattr(args, "no_backend", False) else backend(args.profile), args)
+
+
+def use_toolkit_venv() -> None:
+    """Agents call plain `python3 kian_tools.py`; when the toolkit has its own
+    virtual environment (where the Google client is installed), run inside it."""
+    venv_py = HERE / ".venv" / "bin" / "python"
+    if venv_py.exists() and Path(sys.prefix).resolve() != (HERE / ".venv").resolve():
+        os.execv(str(venv_py), [str(venv_py), str(Path(__file__).resolve()), *sys.argv[1:]])
 
 
 if __name__ == "__main__":
+    use_toolkit_venv()
     sys.exit(main())

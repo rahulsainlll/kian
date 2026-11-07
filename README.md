@@ -23,9 +23,39 @@
 
 ---
 
-> **Switch’s examples are engineering teams fixing incidents. Kian is a sales team closing deals.**
+> **Everyone on the team gets their own agent, and the agents work together in Switch rooms.**
 
-Kian is a sales desk that lives in team chat. A rep says “morning, Kian” and gets back who replied overnight, which
+## An agent for every person
+
+Rahul, Mayank and Yukti each have an agent that acts only with their own Gmail, Calendar and Tasks. The agents meet in
+one Switch room, `kian-team`, and ask each other for things by name, where the people can watch.
+
+```text
+rahul-desk   rahul       @rahul-kian remind mayank to send the Lumen proposal by tomorrow 10am
+kian-team    rahul-kian  @mayank-kian Reminder request from rahul for mayank: send the Lumen proposal, due Sun 8 Nov, 10:00 am
+kian-team    mayank-kian Done: on Mayank's tasks (due Sun 8 Nov) and his calendar at 10:00 with a reminder. Letting him know now.
+mayank-desk  mayank-kian Rahul asked me to remind you to send the Lumen proposal by Sun 8 Nov, 10:00 am. I added it
+                         to your tasks and put it on your calendar at 10:00 with a reminder.  → done · not yet
+rahul-desk   rahul-kian  Mayank's agent confirmed the reminder: on his tasks for tomorrow and his calendar at 10:00.
+```
+
+That exchange is from a real run. Rahul's agent never touches Mayank's calendar: it asks Mayank's agent, which changes
+Mayank's own account and tells him who asked. “Take an update from Mayank” works the same way, and meeting notes
+pasted into your desk turn into your own tasks plus reminders sent to your teammates' agents.
+
+| Switch feature | What it does here |
+|---|---|
+| An agent per person | `team.template.yaml` creates one agent per teammate, a private desk room each, and the team room |
+| Agents addressing agents | `send_targeted_message` in `kian-team`, one thread per request, visible to everyone |
+| Private rooms | `{name}-desk`: you and your agent, in Mattermost, the Kian widget or Telegram |
+| Room instructions | The team room states the rule: an agent changes only its own person's tasks, calendar and mail |
+
+Email goes out only after its owner says **send** in their desk; the toolkit refuses to send without a named approval.
+Set it up with [switch/TEAM.md](switch/TEAM.md).
+
+## The sales desk
+
+Kian is also a sales desk that lives in team chat. A rep says “morning, Kian” and gets back who replied overnight, which
 meeting is first, and who has waited too long. Every deal gets its own room, where agents draft the follow-ups, write
 the meeting notes and keep the lead list current. **Nothing reaches a customer until a person says yes.**
 
@@ -37,7 +67,7 @@ Sales is the most common business workflow there is, and most of a rep’s morni
 |---|---|---|
 | **Triage** | Every morning starts in three tabs: the inbox, the calendar and the lead sheet, sorted by hand. | One ranked brief, one item at a time, answered with *done*, *skip* or *draft*. |
 | **Memory** | A customer’s context is split across email threads, notes docs and someone’s head. Handovers lose half of it. | Every deal has a Switch room. The history is the memory; adding a teammate is the handover. |
-| **Trust** | AI tools that write for you also send for you. One wrong price in a customer’s inbox and the team turns it off. | Agents only draft. Prices wait for the sales lead. The toolkit has no send command at all. |
+| **Trust** | AI tools that write for you also send for you. One wrong price in a customer’s inbox and the team turns it off. | Agents draft; they send only after a named yes. Prices wait for the sales lead. |
 
 ## What Kian is
 
@@ -94,7 +124,7 @@ documents are the audit trail.** Take Switch away and there is no product left.
 
 **The four rules every agent follows**
 
-1. Never send an email or a message to a customer. Create a Gmail draft and post its link.
+1. Never send an email or a message without its owner's yes in the chat. Create a Gmail draft and post its link.
 2. Never change a price or a discount without a decision recorded in #approvals.
 3. Before writing to the lead Sheet, post the column, the old value and the new value, and wait for a yes.
 4. When unsure who a sender is, ask in #kian-desk rather than guess.
@@ -128,7 +158,8 @@ scripts/          render-art.sh renders the README art; check-files.mjs enforces
 - [x] Widget components shared by the website and the desktop app
 - [x] Team dashboard prototype (Wispr Flow style) and the component gallery
 - [x] `kian.template.yaml`: the three agents, the desk, approvals and content rooms, and their links
-- [x] `kian_tools.py`: brief, deal, meetings, draft and row, with no send command, and tests
+- [x] `kian_tools.py`: brief, deal, meetings, draft, send (only with a named yes), row, tasks, schedule, agenda, and tests
+- [x] `team.template.yaml`: an agent per person, their desks and the team room, run live on Switch
 - [x] `seed.py`: synthetic leads, emails and meetings in a fresh Google account
 - [x] Desktop app for macOS and Windows: the widget, the hub, and dmg and NSIS installers
 
