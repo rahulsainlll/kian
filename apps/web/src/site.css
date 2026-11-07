@@ -189,11 +189,6 @@ kbd {
     radial-gradient(60% 50% at 50% 78%, rgba(255, 214, 170, 0.9), transparent 70%),
     linear-gradient(180deg, #8fb8e8 0%, #b9d2ef 24%, #e9dccd 58%, var(--paper) 100%);
 }
-.sunrise--end {
-  background:
-    radial-gradient(60% 60% at 50% 100%, rgba(255, 214, 170, 0.8), transparent 70%),
-    linear-gradient(180deg, var(--paper) 0%, #efe1d2 34%, #c4d8f0 70%, #9cc0ea 100%);
-}
 
 /* ── hero ── */
 .hero {
@@ -788,13 +783,6 @@ kbd {
   opacity: 1;
   transform: none;
 }
-
-/* ── feature sections ── */
-.feature {
-  max-width: 880px;
-  margin: 128px auto 0;
-  scroll-margin-top: 24px;
-}
 .feature__title {
   font-family: var(--display);
   margin: 0;
@@ -811,9 +799,6 @@ kbd {
   font-size: 16px;
   line-height: 1.55;
   text-wrap: pretty;
-}
-.feature__visual {
-  margin-top: 28px;
 }
 
 .block {
@@ -836,12 +821,6 @@ kbd {
   letter-spacing: -0.03em;
   font-weight: 650;
   text-wrap: balance;
-}
-.block__lede {
-  margin: 0 0 24px;
-  max-width: 600px;
-  color: var(--ink-2);
-  font-size: 16px;
 }
 .block__body {
   margin-top: 28px;
@@ -1253,8 +1232,7 @@ kbd {
 }
 
 /* ── posters (Headspace): flat colour, sun rings, big character, words at the bottom ── */
-.cast,
-.downloads {
+.cast {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
@@ -1362,119 +1340,6 @@ kbd {
   height: 8px;
   border-radius: 50%;
   background: var(--accent);
-}
-.poster__room--link {
-  background: #111;
-  color: #fff;
-}
-
-/* ── who it's for: bento ── */
-.bento {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-}
-.bento__card {
-  --tone: #3d7bf2;
-  --soft: #dce8ff;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 24px;
-  min-height: 250px;
-  padding: 24px;
-  border-radius: 28px;
-  background: var(--soft);
-  overflow: hidden;
-}
-.bento__card[data-tone='yellow'] {
-  --tone: #e8650a;
-  --soft: #ffe68a;
-}
-.bento__card[data-tone='green'] {
-  --tone: #118a4c;
-  --soft: #c9f0d9;
-}
-.bento__card[data-tone='pink'] {
-  --tone: #d6336c;
-  --soft: #ffd3e3;
-}
-.bento__top {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-.bento__who {
-  font-family: var(--display);
-  font-size: 24px;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-}
-.bento__line {
-  margin-top: 2px;
-  color: var(--tone);
-  font-weight: 600;
-  font-size: 15px;
-}
-.bento__snip {
-  padding: 14px 16px;
-  border-radius: 18px;
-  background: #fff;
-  box-shadow: 0 14px 30px -18px rgba(0, 0, 0, 0.35);
-  font-size: 14px;
-  transition: transform 300ms var(--ease-out);
-}
-@media (hover: hover) and (pointer: fine) {
-  .bento__card:hover .bento__snip {
-    transform: translateY(-4px) rotate(-1deg);
-  }
-}
-.snip-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.snip-stack div {
-  padding: 8px 10px;
-  border-radius: 10px;
-  background: #f4f6fb;
-}
-.snip-stack b {
-  color: var(--tone);
-}
-.snip-sheet div {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-.snip-trail {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  color: var(--ink-2);
-}
-.snip-trail__join {
-  color: var(--ink);
-  font-weight: 600;
-}
-.snip-sheet {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.snip-sheet span {
-  flex: 1;
-  font-weight: 600;
-}
-.snip-sheet s {
-  color: var(--ink-3);
-}
-.snip-sheet b {
-  padding: 2px 8px;
-  border-radius: 6px;
-  background: var(--soft);
-  color: var(--tone);
 }
 
 /* ── how Kian uses Switch: three notebook cards bound with rings ── */
@@ -1651,79 +1516,6 @@ kbd {
   }
 }
 
-/* ── judging, setup, downloads: one card shape ── */
-.criteria,
-.steps {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
-}
-.steps {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.criteria__item,
-.step,
-.download {
-  padding: 18px;
-  border-radius: 18px;
-  background: #fff;
-  box-shadow: 0 0 0 1px var(--line);
-}
-.criteria__a {
-  margin: 12px 0 0;
-  color: var(--ink-2);
-  font-size: 14px;
-  line-height: 1.5;
-  text-wrap: pretty;
-}
-.step__n {
-  display: grid;
-  place-items: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: #17171a;
-  color: #fff;
-  font-size: 13px;
-  font-weight: 650;
-}
-.step__title,
-.download__os {
-  margin-top: 14px;
-  font-weight: 600;
-}
-.download__os {
-  margin-top: 0;
-  font-size: 17px;
-}
-.step__body,
-.download__body {
-  margin: 4px 0 0;
-  color: var(--ink-2);
-  font-size: 14px;
-}
-.download__status,
-.download__link {
-  display: inline-block;
-  margin-top: 14px;
-  padding: 3px 10px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 600;
-  background: #f1f1f3;
-  color: var(--ink-2);
-}
-.download--web {
-  background: linear-gradient(170deg, #e7f0fd, #fff);
-}
-.download__link {
-  background: #111114;
-  color: #fff;
-  text-decoration: none;
-}
-
 /* ── faq (HeroUI Accordion) ── */
 .faq {
   max-width: 760px;
@@ -1897,13 +1689,8 @@ kbd {
 
 /* ── responsive ── */
 @media (max-width: 980px) {
-  .criteria,
-  .steps {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 
-  .cast,
-  .downloads {
+  .cast {
     grid-template-columns: 1fr;
   }
   .phone {
@@ -1911,8 +1698,7 @@ kbd {
   }
 }
 @media (max-width: 860px) {
-  .specimen-grid,
-  .downloads {
+  .specimen-grid {
     grid-template-columns: 1fr;
   }
   .demo__widget {
@@ -1923,9 +1709,6 @@ kbd {
   :root {
     --gutter: 16px;
   }
-  .bento,
-  .criteria,
-  .steps,
   .cast {
     grid-template-columns: 1fr;
   }
@@ -1962,9 +1745,6 @@ kbd {
     height: 380px;
     padding: 16px;
   }
-  .feature {
-    margin-top: 96px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1973,7 +1753,6 @@ kbd {
   }
   .hero__copy,
   .demo,
-  .chat__line,
   .scene-buddy {
     animation: none;
   }
@@ -2409,13 +2188,6 @@ kbd {
     transform: translateY(-3px);
   }
 }
-.blog__date,
-.post__date {
-  margin-top: 16px;
-  color: var(--ink-3);
-  font-size: 13px;
-  font-weight: 500;
-}
 .blog__title {
   margin-top: 4px;
   font-family: var(--display);
@@ -2722,19 +2494,6 @@ kbd {
   /* the line box would otherwise reserve 1.5× a 280px glyph of empty space */
   line-height: 0.8;
   font-size: clamp(110px, 22vw, 280px);
-}
-.site-foot__word {
-  font-family: var(--display);
-  font-weight: 800;
-  line-height: 0.78;
-  letter-spacing: -0.06em;
-  color: #1d1408;
-  user-select: none;
-}
-.site-foot__buddy {
-  font-size: 0.42em;
-  margin-bottom: 0.05em;
-  rotate: 8deg;
 }
 @media (max-width: 860px) {
   .band {

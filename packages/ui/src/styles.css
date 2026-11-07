@@ -480,12 +480,6 @@
   }
 }
 
-/* pending card: skeleton lines while an agent is working */
-.k-card--pending .k-card__who {
-  color: var(--k-ink-2);
-  font-weight: 500;
-}
-
 /* ── type bar ───────────────────────────────────────────────────────────── */
 
 .k-type {
@@ -608,7 +602,6 @@
   font-weight: 600;
   color: var(--ds-text-strong);
 }
-
 
 .k-room-hash {
   display: grid;

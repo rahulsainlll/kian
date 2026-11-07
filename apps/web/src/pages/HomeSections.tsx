@@ -1,28 +1,10 @@
-import { Accordion, Chip } from '@heroui/react'
-import { CAST, Mascot, PersonAvatar, type Mood, type Shape } from '@kian/ui'
+import { Accordion } from '@heroui/react'
+import { CAST, Mascot, type Mood, type Shape } from '@kian/ui'
 import { useEffect, useState, type ReactNode } from 'react'
 import { ContentScene, MeetingScene, RoomScene } from '../scenes/Scenes'
 import { useReveal } from '../scenes/useScene'
 
 /* Home page sections. One idea each: a short heading, one sentence, a visual. */
-
-/** Reveals once on scroll: heading, then text, then the visual (marketing timing). */
-export function Feature({ id, title, body, children }: { id?: string; title: string; body: string; children: ReactNode }) {
-  const ref = useReveal<HTMLElement>()
-  return (
-    <section className="feature reveal" id={id} ref={ref}>
-      <h2 className="feature__title" style={{ ['--i' as string]: 0 }}>
-        {title}
-      </h2>
-      <p className="feature__body" style={{ ['--i' as string]: 1 }}>
-        {body}
-      </p>
-      <div className="feature__visual" style={{ ['--i' as string]: 2 }}>
-        {children}
-      </div>
-    </section>
-  )
-}
 
 export function Block({ id, eyebrow, title, children }: { id?: string; eyebrow?: string; title: string; children: ReactNode }) {
   const ref = useReveal<HTMLElement>()
@@ -194,89 +176,6 @@ export function WhyKian() {
         </div>
       </article>
     </section>
-  )
-}
-
-// ── Who it's for: a bento, each person a character with what they actually see ──
-
-export function People() {
-  return (
-    <Block id="who" eyebrow="Who it’s for" title="Built for the whole team">
-      <div className="bento">
-        <article className="bento__card" data-tone="blue">
-          <div className="bento__top">
-            <Mascot size={56} shape="blob" color="#ff7eb0" mood="happy" />
-            <div>
-              <div className="bento__who">The rep</div>
-              <div className="bento__line">A ranked morning instead of three tabs.</div>
-            </div>
-          </div>
-          <div className="bento__snip snip-stack" aria-hidden>
-            <div>Priya wants Tuesday · <b>draft</b></div>
-            <div>Rahul at 10:30 · <b>done</b></div>
-            <div>Harbor quiet 6 days · <b>skip</b></div>
-          </div>
-        </article>
-
-        <article className="bento__card" data-tone="yellow">
-          <div className="bento__top">
-            <Mascot size={56} shape="sun" color="#ee3f4f" mood="excited" />
-            <div>
-              <div className="bento__who">The sales lead</div>
-              <div className="bento__line">Every discount in one room, margin stated.</div>
-            </div>
-          </div>
-          <div className="bento__snip snip-sheet" aria-hidden>
-            <div>
-              <span>Lumen · 15% off</span>
-              <b>Approved</b>
-            </div>
-            <div>
-              <span>Northwind · 25% off</span>
-              <s>Refused</s>
-            </div>
-            <div>
-              <span>Kestrel · pilot price</span>
-              <b>Waiting</b>
-            </div>
-          </div>
-        </article>
-
-        <article className="bento__card" data-tone="green">
-          <div className="bento__top">
-            <Mascot size={56} shape="bubble" color="#3d7bf2" mood="surprised" />
-            <div>
-              <div className="bento__who">The teammate taking over</div>
-              <div className="bento__line">Join the room, read the trail, done.</div>
-            </div>
-          </div>
-          <div className="bento__snip snip-trail" aria-hidden>
-            <div className="snip-trail__join">Meera joined the Lumen room</div>
-            <div>12 messages · 2 decisions · 1 draft</div>
-          </div>
-        </article>
-
-        <article className="bento__card" data-tone="pink">
-          <div className="bento__top">
-            <Mascot size={56} shape="flower" color="#ff8a1f" mood="wink" />
-            <div>
-              <div className="bento__who">The founder selling alone</div>
-              <div className="bento__line">A sales desk without hiring one.</div>
-            </div>
-          </div>
-          <div className="bento__snip snip-sheet" aria-hidden>
-            <div>
-              <span>Kestrel</span>
-              <s>Discovery</s> <b>Pilot</b>
-            </div>
-            <div>
-              <span>Lumen</span>
-              <b>Proposal</b>
-            </div>
-          </div>
-        </article>
-      </div>
-    </Block>
   )
 }
 
@@ -574,57 +473,6 @@ export function Everywhere() {
         <li style={{ ['--c' as string]: '#ff8a1f' }}>Reduced motion respected</li>
         <li style={{ ['--c' as string]: '#ff5a8a' }}>Voice on or off</li>
       </ul>
-    </Block>
-  )
-}
-
-// ── Judging ─────────────────────────────────────────────────────────────────
-
-const CRITERIA = [
-  ['Use of Switch', 'Rooms per deal, agent hand-offs, approvals, rules, tasks, decisions, two bridges, a template.'],
-  ['Technical execution', 'One template, a toolkit with no send command, a seed script with synthetic leads.'],
-  ['Creativity and impact', 'Every Switch example is engineering triage. Kian is sales, the most common workflow there is.'],
-  ['Presentation', 'A three minute video of one real morning, each beat labelled with its Switch feature.'],
-]
-
-export function Criteria() {
-  return (
-    <Block id="judging" eyebrow="For the judges" title="What Kian shows for each criterion">
-      <div className="criteria">
-        {CRITERIA.map(([name, a], i) => (
-          <article className="criteria__item" key={name}>
-            <Chip size="sm" variant="soft" color={(['accent', 'success', 'warning', 'danger'] as const)[i]}>
-              {name}
-            </Chip>
-            <p className="criteria__a">{a}</p>
-          </article>
-        ))}
-      </div>
-    </Block>
-  )
-}
-
-// ── Setup ───────────────────────────────────────────────────────────────────
-
-const STEPS = [
-  ['Install Switch Console', 'Run the quickstart until an agent answers in Mattermost.'],
-  ['Seed a demo account', 'seed.py adds 7 synthetic leads, 6 emails and 2 meetings.'],
-  ['Import the template', 'kian.template.yaml creates the agents and rooms.'],
-  ['Say “morning, Kian”', 'From the widget, Mattermost or Telegram.'],
-]
-
-export function Setup() {
-  return (
-    <Block id="setup" eyebrow="Try it" title="Four steps to your first brief">
-      <ol className="steps">
-        {STEPS.map(([t, b], i) => (
-          <li className="step" key={t}>
-            <span className="step__n">{i + 1}</span>
-            <div className="step__title">{t}</div>
-            <p className="step__body">{b}</p>
-          </li>
-        ))}
-      </ol>
     </Block>
   )
 }

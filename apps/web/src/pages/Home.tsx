@@ -144,13 +144,6 @@ function MenuBar() {
   )
 }
 
-/** Same-origin navigation through the app's tiny router (it listens to popstate). */
-function go(path: string) {
-  history.pushState(null, '', path)
-  dispatchEvent(new PopStateEvent('popstate'))
-  scrollTo(0, 0)
-}
-
 export function LabeledToggle({ on, onChange, children }: { on: boolean; onChange: (v: boolean) => void; children: ReactNode }) {
   return (
     <label className="labeled-toggle">
