@@ -9,6 +9,7 @@
 #   send --draft ID --approved-by NAME   send it, only after a named yes in the chat
 #   row propose|apply ...           show a lead Sheet change, then make it after a yes
 #   agenda | tasks | schedule       the person's own day (see personal.py)
+#   login                           sign a profile in to its Google account
 #   reset-demo                      forget demo state
 #
 # --profile NAME (or KIAN_PROFILE) picks whose account: each person's agent
@@ -157,6 +158,15 @@ def cmd_row(b: Backend, args) -> int:
     return 0
 
 
+def cmd_login(_b, args) -> int:
+    """Signs a profile in to Google once; its agent uses the saved token from then on."""
+    from google_backend import GoogleBackend
+
+    g = GoogleBackend(args.profile)
+    print(f"Signed in as {g.me()} for profile {args.profile or '(default)'}. Its agent now uses this account.")
+    return 0
+
+
 def cmd_reset(_b, _args) -> int:
     from demo_backend import DemoBackend
 
@@ -201,6 +211,9 @@ def parser() -> argparse.ArgumentParser:
     s.set_defaults(run=cmd_row)
 
     personal.register(sub)
+
+    s = sub.add_parser("login", help="sign this profile in to its Google account (opens the browser once)")
+    s.set_defaults(run=cmd_login, no_backend=True)
 
     s = sub.add_parser("reset-demo", help="clear demo drafts and edits")
     s.set_defaults(run=cmd_reset, no_backend=True)

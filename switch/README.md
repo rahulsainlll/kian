@@ -1,14 +1,20 @@
 # Kian on Switch
 
-Everything Kian needs on the Switch side: two templates, the agents' toolkit and the demo data. The website and the
+Everything Kian needs on the Switch side: the templates, the agents' toolkit and the demo data.
+
+**For a team, start with [TEAM.md](TEAM.md):** an agent for every person, talking to each other in one room.
+The sales desk below is one team's setup on top of it. The website and the
 desktop widget are clients of the rooms this creates; they hold no work of their own.
 
 ```
 switch/
-  kian.template.yaml       the desk: 3 agents, a room group of 3 rooms, links
+  team.template.yaml       an agent per person, their desks, and the room where the agents talk
+  TEAM.md                  how to set up the team version
+  kian.template.yaml       the sales desk: 3 agents, a room group of 3 rooms, links
   deal-room.template.yaml  one customer's room, for opening a deal by hand
   toolkit/
-    kian_tools.py          brief, deal, meetings, draft, row (no send command)
+    kian_tools.py          brief, deal, meetings, draft, send (with a named yes), row, login
+    personal.py            agenda, tasks, schedule: each person's own day
     ranking.py             how the morning is ranked
     demo_backend.py        fixtures.json as if it were Gmail, Calendar and Sheets
     google_backend.py      the same against a real Google account
