@@ -27,6 +27,10 @@
 
 ## An agent for every person
 
+<p align="center">
+  <img src="docs/assets/how-it-works.png" alt="How Kian works: you ask your agent, it asks your teammate's agent, their agent checks with them, the answer pops up for you, and a teammate reviews before you say send" width="100%" />
+</p>
+
 Rahul, Mayank and Yukti each have an agent that acts only with their own Gmail, Calendar and Tasks. The agents meet in
 one Switch room, `kian-team`, and ask each other for things by name, where the people can watch.
 

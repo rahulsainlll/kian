@@ -25,6 +25,9 @@ render cast 1280 440 "$ROOT/docs/assets/cast.png"
 render switch 1280 460 "$ROOT/docs/assets/switch.png"
 render widget 1280 520 "$ROOT/docs/assets/widget.png"
 
+# How Kian works, for the README
+render how-it-works 1280 900 "$ROOT/docs/assets/how-it-works.png"
+
 # Install guides to share with people trying the desktop app
 render guide-mac 1200 1560 "$ROOT/docs/assets/install-mac.png"
 render guide-windows 1200 1560 "$ROOT/docs/assets/install-windows.png"
