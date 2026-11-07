@@ -1,9 +1,9 @@
 <p align="center">
-  <img src="docs/assets/hero.png" alt="kian: a sales desk run by agents in your team’s Switch rooms" width="100%" />
+  <img src="docs/assets/hero.png" alt="kian: an agent for everyone on your team, working together in Switch rooms" width="100%" />
 </p>
 
 <p align="center">
-  <b>Your sales desk, run by agents. You just say yes.</b>
+  <b>An agent for everyone on your team. They work it out together; you just say yes.</b>
 </p>
 
 <p align="center">
