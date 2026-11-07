@@ -164,3 +164,31 @@
   font-weight: 650;
   box-shadow: 0 12px 30px -10px rgba(0, 0, 40, 0.35);
 }
+
+/* icons: drawn on nothing, so the PNG keeps its transparency */
+.art-page--clear {
+  background: transparent;
+}
+html:has(.art-page--clear),
+html:has(.art-page--clear) body {
+  background: transparent !important;
+}
+.appicon {
+  display: grid;
+  place-items: center;
+}
+.appicon__tile {
+  width: 412px;
+  height: 412px;
+  display: grid;
+  place-items: center;
+  border-radius: 92px;
+  background: linear-gradient(180deg, #fffaf3, #f3e9dc);
+  box-shadow:
+    0 10px 24px rgba(40, 30, 10, 0.18),
+    inset 0 0 0 1px rgba(40, 30, 10, 0.06);
+}
+.trayicon {
+  display: grid;
+  place-items: center;
+}

@@ -127,12 +127,33 @@ function Widget() {
   )
 }
 
-const ART: Record<string, () => ReactNode> = { og: Og, hero: Hero, cast: Cast, switch: Switch, widget: Widget }
+/** The desktop app's icon, 512×512: the blue flower on a cream squircle with room around it, as macOS expects. */
+function AppIcon() {
+  return (
+    <div className="appicon" style={{ width: 512, height: 512 }}>
+      <div className="appicon__tile">
+        <Mascot size={300} mood="happy" />
+      </div>
+    </div>
+  )
+}
+
+/** The menu bar icon, 18×18: the flower alone, on nothing. */
+function TrayIcon() {
+  return (
+    <div className="trayicon" style={{ width: 18, height: 18 }}>
+      <Mascot size={18} mood="happy" />
+    </div>
+  )
+}
+
+const ART: Record<string, () => ReactNode> = { og: Og, hero: Hero, cast: Cast, switch: Switch, widget: Widget, appicon: AppIcon, trayicon: TrayIcon }
+const CLEAR = new Set(['appicon', 'trayicon'])
 
 export function Art({ name }: { name?: string }) {
   const Piece = (name && ART[name]) || Og
   return (
-    <div className="art-page">
+    <div className={`art-page${name && CLEAR.has(name) ? ' art-page--clear' : ''}`}>
       <Piece />
     </div>
   )
