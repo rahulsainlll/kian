@@ -4,7 +4,7 @@
  * connects to the rooms (mock or Mattermost, from settings) and wires the
  * IPC the preload bridge exposes. Saving settings reconnects the rooms.
  */
-import { BrowserWindow, Notification, app, globalShortcut, ipcMain } from 'electron'
+import { BrowserWindow, Notification, app, globalShortcut, ipcMain, screen } from 'electron'
 import type { DeskState, RoomEvent, SettingsUpdate, WidgetPosition } from '../shared/types'
 import { captureRun } from './capture'
 import { Desk } from './desk'
@@ -106,12 +106,19 @@ function wireIpc() {
     if (on) widget?.focus()
   })
   ipcMain.on('desk:open-hub', () => openHub())
-  ipcMain.on('desk:move-by', (_e, dx: number, dy: number) => {
+  // Dragging follows the real cursor from where the drag began, so it never drifts.
+  let dragFrom: { cursor: Electron.Point; win: number[] } | null = null
+  ipcMain.on('desk:drag-start', () => {
     if (!widget || widget.isDestroyed()) return
-    const [x, y] = widget.getPosition()
-    widget.setPosition(Math.round(x + dx), Math.round(y + dy))
+    dragFrom = { cursor: screen.getCursorScreenPoint(), win: widget.getPosition() }
+  })
+  ipcMain.on('desk:drag-move', () => {
+    if (!widget || widget.isDestroyed() || !dragFrom) return
+    const now = screen.getCursorScreenPoint()
+    widget.setPosition(dragFrom.win[0] + now.x - dragFrom.cursor.x, dragFrom.win[1] + now.y - dragFrom.cursor.y)
   })
   ipcMain.on('desk:move-end', () => {
+    dragFrom = null
     if (widget && !widget.isDestroyed()) saveSettings({ widgetXY: widget.getPosition() as [number, number] })
   })
 

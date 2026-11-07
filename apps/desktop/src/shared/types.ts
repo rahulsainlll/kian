@@ -92,8 +92,9 @@ export interface KianBridge {
     dismiss(messageId: string): Promise<void>
     transcribe(audio: ArrayBuffer, mime: string): Promise<string | null>
     setInteractive(on: boolean): void
-    /** Drag the widget: move the window by this much, then save where it ended. */
-    moveBy(dx: number, dy: number): void
+    /** Drag the widget: the main process follows the real cursor, then saves where it ended. */
+    dragStart(): void
+    dragMove(): void
     moveEnd(): void
     openHub(): void
   }
