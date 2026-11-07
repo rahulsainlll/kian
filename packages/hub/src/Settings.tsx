@@ -1,15 +1,13 @@
 /*
  * The settings modal: general, agents, connectors, team and privacy tabs.
- * A bottom sheet on phones. Connectors show a connect button that resolves.
+ * A bottom sheet on phones. The rows here are the demo's; a host replaces
+ * any tab with its own rows, built from the exported SetRow and Connector.
  */
 import { ActionButton, BrandMark, type ActionStatus, type BrandName } from '@kian/designs'
 import { BoltIcon, ChatIcon, CheckIcon, CloseIcon, GearIcon, PlaneIcon, ShieldIcon, TableIcon } from '@kian/ui'
 import { useEffect, useState, type ReactNode } from 'react'
-import { NavItem } from '../Dashboard'
-
-// ── Settings modal ──────────────────────────────────────────────────────────
-
-export type SettingsTab = 'general' | 'agents' | 'connectors' | 'team' | 'privacy'
+import { NavItem } from './NavItem'
+import type { SettingsTab } from './types'
 
 const TABS: { id: SettingsTab; label: string; icon: ReactNode }[] = [
   { id: 'general', label: 'General', icon: <GearIcon /> },
@@ -19,7 +17,7 @@ const TABS: { id: SettingsTab; label: string; icon: ReactNode }[] = [
   { id: 'privacy', label: 'Data and privacy', icon: <ShieldIcon /> },
 ]
 
-export function Settings({ tab, onTab, onClose }: { tab: SettingsTab; onTab: (t: SettingsTab) => void; onClose: () => void }) {
+export function Settings({ tab, rows, onTab, onClose }: { tab: SettingsTab; rows?: Partial<Record<SettingsTab, ReactNode>>; onTab: (t: SettingsTab) => void; onClose: () => void }) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
     addEventListener('keydown', onKey)
@@ -42,14 +40,14 @@ export function Settings({ tab, onTab, onClose }: { tab: SettingsTab; onTab: (t:
             <CloseIcon />
           </button>
           <h2 className="modal__title">{TABS.find((t) => t.id === tab)?.label}</h2>
-          <div className="set-rows">{ROWS[tab]}</div>
+          <div className="set-rows">{rows?.[tab] ?? ROWS[tab]}</div>
         </div>
       </div>
     </div>
   )
 }
 
-function SetRow({ title, desc, action }: { title: string; desc: ReactNode; action: ReactNode }) {
+export function SetRow({ title, desc, action }: { title: string; desc: ReactNode; action: ReactNode }) {
   return (
     <div className="set-row">
       <div>
@@ -63,8 +61,9 @@ function SetRow({ title, desc, action }: { title: string; desc: ReactNode; actio
 
 const wait = (ms: number) => new Promise<void>((r) => setTimeout(r, ms))
 
-function Connector({ name, desc, brand, glyph, connected }: { name: string; desc: string; brand?: BrandName; glyph?: ReactNode; connected?: boolean }) {
+export function Connector({ name, desc, brand, glyph, connected, onConnect }: { name: string; desc: string; brand?: BrandName; glyph?: ReactNode; connected?: boolean; onConnect?: () => Promise<boolean> }) {
   const [status, setStatus] = useState<ActionStatus>(connected ? 'done' : 'idle')
+  useEffect(() => setStatus(connected ? 'done' : 'idle'), [connected])
   return (
     <div className="set-row">
       <div className="set-row__lead">
@@ -84,8 +83,8 @@ function Connector({ name, desc, brand, glyph, connected }: { name: string; desc
           doneLabel="Connected"
           onClick={async () => {
             setStatus('pending')
-            await wait(1300)
-            setStatus('done')
+            const ok = onConnect ? await onConnect() : (await wait(1300), true)
+            setStatus(ok ? 'done' : 'idle')
           }}
         >
           Connect
@@ -95,8 +94,9 @@ function Connector({ name, desc, brand, glyph, connected }: { name: string; desc
   )
 }
 
-export const change = <button className="cream-btn">Change</button>
+const change = <button className="cream-btn">Change</button>
 
+/** The demo's rows, shown for any tab the host doesn't replace. */
 const ROWS: Record<SettingsTab, ReactNode> = {
   general: (
     <>

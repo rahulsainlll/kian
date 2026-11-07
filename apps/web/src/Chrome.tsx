@@ -2,7 +2,7 @@
  * Site chrome shared by every page: the Logo (wordmark plus Kian), the
  * floating Nav pill, the Stage frame for showing a component, and the footer.
  */
-import { Mascot } from '@kian/ui'
+import { Logo, Mascot } from '@kian/ui'
 import type { ReactNode } from 'react'
 
 const LINKS = [
@@ -12,20 +12,8 @@ const LINKS = [
   { href: '/contact', label: 'Contact', key: 'contact' },
 ] as const
 
-/**
- * The logo: the chunky wordmark with Kian beside it. One component everywhere;
- * `size` is the wordmark's font size in px, or it inherits from the parent.
- */
-export function Logo({ size, talk = false }: { size?: number; talk?: boolean }) {
-  return (
-    <span className="logo" style={size ? { fontSize: size } : undefined}>
-      <span className="logo__word">kian</span>
-      <span className="logo__buddy">
-        <Mascot talk={talk} />
-      </span>
-    </span>
-  )
-}
+
+export { Logo }
 
 export function Nav({ active }: { active: 'home' | 'components' | 'dashboard' | 'blog' | 'contact' }) {
   return (

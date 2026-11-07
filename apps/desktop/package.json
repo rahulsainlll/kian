@@ -1,0 +1,33 @@
+{
+  "name": "@kian/desktop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Kian for macOS and Windows: the widget and the hub, on the same Switch rooms.",
+  "main": "out/main/index.js",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "dist:mac": "electron-vite build && electron-builder --mac",
+    "dist:win": "electron-vite build && electron-builder --win",
+    "test": "node --experimental-strip-types --no-warnings --test src/shared/*.test.ts"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@kian/designs": "workspace:*",
+    "@kian/hub": "workspace:*",
+    "@kian/ui": "workspace:*",
+    "@types/node": "22.10.2",
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "4.3.4",
+    "electron": "44.9.3",
+    "electron-builder": "26.17.0",
+    "electron-vite": "5.0.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "skullet": "0.0.3",
+    "typescript": "5.9.3",
+    "vite": "6.4.5"
+  }
+}

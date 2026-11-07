@@ -1,113 +1,135 @@
 # 03 · Architecture
 
+Kian has no backend of its own. Switch runs the agents and the rooms; the rooms hold the work. Everything else is a
+client of those rooms or a tool the agents call.
+
+```
+                       ┌──────────── Switch ────────────┐
+   kian.template.yaml ─▶  agents: kian, kian-scribe,    │       Gmail · Calendar · lead Sheet
+                       │          kian-studio (Claude)  │──run──▶ switch/toolkit/kian_tools.py
+                       │  rooms:  kian-desk, approvals, │         (reads; drafts; rows after a yes;
+                       │          content, deal-*       │          no send command)
+                       └───────────────┬────────────────┘
+                                       │ bots post as the agents
+                                       ▼
+          Telegram group ◀─ bridge ─ Mattermost (started by Switch Console) ─▶ people in the browser
+                                       ▲
+                                       │ REST /api/v4 + WebSocket, signed in as the person
+                       ┌───────────────┴────────────────┐
+                       │  Kian desktop (Electron)       │
+                       │  widget: pill, one card, voice │
+                       │  hub: today, approvals, rooms  │
+                       └────────────────────────────────┘
+```
+
 ## Repo layout
 
 ```
-packages/ui     @kian/ui — Pill, Waveform, MessageCard, NudgeCard, TypeBar, KianWidget (React + one CSS file)
-apps/web        kian website: / (live demo of the morning) and /components (every component, every state)
-apps/desktop    Electron widget for Mac + Windows (next) — renders the same @kian/ui components
+switch/            the Switch side: templates, the toolkit, demo data, seed script
+packages/ui        @kian/ui: the widget, the cast, dashboard parts (presentational)
+packages/designs   @kian/designs: the design kit (ds- classes on --ds-* tokens)
+apps/web           the website: self-playing demo, dashboard prototype, components, blog
+apps/desktop       the Electron app for macOS and Windows (widget + hub)
 ```
 
-`@kian/ui` is presentational. Each host supplies the state: the website uses a
-scripted demo desk, and the desktop app uses the Mattermost adapter below over IPC.
+`@kian/ui` is presentational. Each host supplies the state: the website from a scripted demo desk, the desktop app
+from the rooms.
 
+## The Switch layer
 
-```
- ┌──────────────────── Kian widget (Electron, Mac + Windows) ────────────────────┐
- │                                                                               │
- │  renderer (widget.html)            preload            main process            │
- │  ┌─────────────────────┐        ┌──────────┐   ┌──────────────────────────┐   │
- │  │ pill / card / input │◀──────▶│ kian.*   │◀─▶│ main.js  window, tray,   │   │
- │  │ mic → MediaRecorder │  IPC   │ bridge   │   │          shortcuts, IPC  │   │
- │  │ waveform, TTS       │        └──────────┘   │ desk.js  queue + rules   │   │
- │  └─────────────────────┘                       │ stt.js   audio → text    │   │
- │                                                │ rooms/   mattermost.js   │   │
- │                                                │          mock.js         │   │
- │                                                └───────────┬──────────────┘   │
- └────────────────────────────────────────────────────────────┼──────────────────┘
-                                   REST /api/v4 + WebSocket    │   (as Yukti)
-                                                               ▼
-     Telegram ◀── bridge ──  Mattermost (started by Switch Console)  ◀── bots ── Switch ── kian, kian-scribe, kian-studio
-                             #kian-desk #deal-* #approvals #content
-```
-
-## Boundaries
-
-- **The widget holds no business state.** It keeps a short in-memory queue of messages it hasn't shown yet, and that's all. The source of truth is the rooms.
-- **Main process owns the network and secrets.** The renderer never sees the Mattermost token or the STT key. It gets display events and sends intents (`say`, `reply`, `dismiss`).
-- **Rooms adapter interface.** `mattermost.js` and `mock.js` expose the same shape, so the app runs and demos with no Switch running:
-
-```js
-connect() → Promise<{ me: {id, username} }>
-on('message', ({ id, rootId, channel, author, isAgent, text, mentionsMe, permalink }) => …)
-post(channelName, text, { rootId }) → Promise<void>
-close()
-```
-
-## Modules
-
-| File | Job |
-|---|---|
-| `src/main/main.js` | App lifecycle, the transparent always-on-top widget window, click-through on empty pixels, tray menu (mute, snooze, voice-out, quit), global shortcuts, IPC wiring, morning timer |
-| `src/main/config.js` | Loads `.env` (dev) and `~/.kian/config.json`; defaults; validates |
-| `src/main/rooms/mattermost.js` | Login (PAT or user + password), resolves team and channel IDs, WebSocket with reconnect and back-off, `posted` → normalised message, bot detection via `GET /users/{id}` (cached) |
-| `src/main/rooms/mock.js` | Scripted demo morning: replies to "morning, Kian" with the brief one item at a time, handles done/skip/draft, raises an approval |
-| `src/main/desk.js` | Decides **what surfaces** (room + author + approver rules from the design doc), picks chips, queue, snooze, which items get spoken |
-| `src/main/stt.js` | `transcribe(buffer, mime)` → text via an OpenAI-compatible `/audio/transcriptions` endpoint; returns `null` when unconfigured, and the UI falls back to typing |
-| `src/preload.js` | `contextBridge` exposing `window.kian` |
-| `src/renderer/*` | React + Vite, mounts `<KianWidget>` from `@kian/ui` — the same components as the website's `/components` page |
-
-## Message flow — "morning, Kian" by voice
-
-1. Hotkey → main sends `listen:toggle` → renderer starts `MediaRecorder`, waveform from an `AnalyserNode`.
-2. Hotkey again or ■ → the audio blob goes over IPC as an `ArrayBuffer` → `stt.transcribe` → "Morning, Kian."
-3. `rooms.post('kian-desk', mentionPrefix + text)`. The renderer shows "sent ✓".
-4. Switch delivers to the `kian` agent → kian posts brief items as the `kian` bot.
-5. The WebSocket `posted` event → `desk.consider(msg)` → surface? yes (agent, #kian-desk) → queue → renderer card with done/skip/draft; TTS reads it.
-6. Chip `draft` → `rooms.post('kian-desk', 'draft', { rootId: msg.id })` (or a plain channel post if `replyMode=channel`).
-
-## Config (`.env` or `~/.kian/config.json`)
-
-| Key | Default | Notes |
+| Piece | Where | Notes |
 |---|---|---|
-| `KIAN_BACKEND` | `mock` | `mattermost` to use a real Switch setup |
-| `MM_URL` | `http://localhost:8065` | from Switch Console → Messaging apps |
-| `MM_TOKEN` *or* `MM_USER` + `MM_PASSWORD` | – | the human's account, not a bot |
-| `MM_TEAM` | – | team slug |
-| `KIAN_ROOMS` | `kian-desk,approvals,content` | plus every channel starting with `deal-` the user is in |
-| `KIAN_AGENTS` | `kian,kian-scribe,kian-studio` | extra signal besides `is_bot` |
-| `KIAN_APPROVER` | `false` | show approve/refuse chips |
-| `KIAN_MENTION_PREFIX` | `` | e.g. `@kian ` if the room needs a mention |
-| `KIAN_REPLY_MODE` | `thread` | `thread` or `channel` |
-| `KIAN_MORNING` | `09:00` | empty disables |
-| `STT_API_KEY`, `STT_BASE_URL`, `STT_MODEL` | –, `https://api.openai.com/v1`, `gpt-4o-mini-transcribe` | no key → type/Wispr mode |
+| Agents | `kian.template.yaml` | Instructions, addressing (`anyone` / `owner-agents`), provider, directory |
+| Rooms | the same template, as a group | Room instructions carry the rules; kickoffs wake each agent; links connect the desk to approvals and content |
+| Deal rooms | `create_room` by kian, or `deal-room.template.yaml` | Private, kian + kian-scribe + the rep |
+| Hand-offs | `send_targeted_message` | In the deal room, so the hand-off is visible |
+| Next steps | room document "Deal summary" | Owned by kian-scribe; Switch has no task objects |
+| Decisions | room document "Decisions" in approvals | Owned by kian; one line per yes or no with a name and date |
+| Phone | a Telegram group kian is invited to | Telegram bots can't create groups, so this is set up by hand |
 
-## Platform notes
+Agents reach Google only through `kian_tools.py`. It writes Gmail drafts and Sheet cells (after `--approved-by`) and
+nothing else. The demo backend serves `fixtures.json`, so the whole desk runs with no Google account.
 
-- **macOS:** `app.dock.hide()` and `setVisibleOnAllWorkspaces(true, {visibleOnFullScreen:true})`, always-on-top level `floating`; ask for mic access with `systemPreferences.askForMediaAccess`. The packaged build carries `NSMicrophoneUsageDescription`.
-- **Windows:** `skipTaskbar`, always-on-top level `screen-saver` so it stays above full-screen windows; NSIS target. Tray icon instead of a menu bar.
-- **Click-through:** the window is bigger than the pill, so the card can grow. Empty pixels pass clicks through (`setIgnoreMouseEvents(true, {forward:true})`), toggled by the renderer on pointer enter/leave of the visible parts.
+### The answer line
 
-## Later (not tonight)
+An agent message that needs a person ends with one line: `→ done · skip · draft`, or `→ approve (hold) · refuse`. People
+answer in the message's thread. The desktop app parses this line into buttons, so the agents decide what can be
+answered, and a person in plain Mattermost sees the same choices as text.
 
-Local Whisper, true hold-to-talk on the global hotkey (`uiohook-napi`), room
-tasks and decisions once Switch documents them, and auto-update.
+## The desktop app
 
-## Running it for the team (free tiers + Claude API)
+Electron, TypeScript throughout, built with electron-vite. Two windows share one renderer bundle and the same
+`@kian/ui` components as the website.
 
-| Piece | Where it runs | Cost |
+```
+ main process                                     renderer
+ ┌──────────────────────────────────────┐         ┌─────────────────────────────┐
+ │ index.ts     lifecycle, single lock  │         │ widget/  KianWidget, voice  │
+ │ windows.ts   widget (transparent,    │◀─ IPC ─▶│ hub/     today, approvals,  │
+ │              always on top), hub     │ preload │          rooms, setup       │
+ │ tray.ts      menu, snooze, quit      │  kian.* │                             │
+ │ shortcuts.ts global hotkey           │         └─────────────────────────────┘
+ │ settings.ts  config; token in the OS │
+ │              keychain (safeStorage)  │
+ │ desk.ts      what surfaces, queue    │
+ │ rooms/       mattermost.ts, mock.ts  │
+ └──────────────────────────────────────┘
+```
+
+### Boundaries
+
+- **No business state.** The app keeps a short queue of messages not yet shown. The rooms are the source of truth.
+- **The main process owns the network and the secrets.** The renderer never sees the Mattermost token. It receives
+  display events and sends intents: `say`, `answer`, `dismiss`, `snooze`.
+- **One rooms interface, two implementations.** `mock.ts` plays the demo morning with no server; `mattermost.ts`
+  talks to the real one. Same shape:
+
+```ts
+interface Rooms {
+  connect(): Promise<{ me: { id: string; username: string } }>
+  on(event: 'message', fn: (m: RoomEvent) => void): () => void
+  post(room: string, text: string, opts?: { rootId?: string }): Promise<void>
+  rooms(): Promise<RoomSummary[]>          // for the hub
+  close(): void
+}
+```
+
+### What surfaces (desk.ts)
+
+A message becomes a card when it is from an agent, in a room the person is in, and either ends with an answer line or
+mentions them. Approvals cards appear only for the sales lead. Everything else stays in the rooms and shows in the hub.
+One card at a time; the rest wait in the queue, and the pill shows how many.
+
+### Voice
+
+The pill's mic records with `MediaRecorder`; the waveform reads an `AnalyserNode`. Speech becomes text through the
+system's dictation or a configured transcription endpoint, and with neither, the type bar is focused instead, which is
+where Wispr Flow dictates. Cards can be read aloud with the system voice.
+
+### Message flow: “morning, Kian” by voice
+
+1. Hotkey: the widget starts listening; the waveform moves.
+2. Hotkey again: the text is posted to kian-desk as the person.
+3. kian runs `brief` and posts one item per message, each ending with an answer line.
+4. The WebSocket `posted` event reaches `desk.ts`, which queues it; the widget shows the card with its buttons.
+5. A button posts the answer as a reply in that message's thread, exactly as typing it in Mattermost would.
+
+### Platform notes
+
+- **macOS:** hidden from the Dock, visible on all Spaces and over full-screen apps, microphone permission requested
+  on first use, `NSMicrophoneUsageDescription` in the bundle.
+- **Windows:** skips the taskbar, stays above full-screen windows, tray icon, NSIS installer.
+- **Click-through:** the widget window is larger than the pill so cards can grow; empty pixels pass clicks through and
+  the renderer turns that off while the pointer is over a visible part.
+
+## Hosting
+
+| Piece | Where | Cost |
 |---|---|---|
-| Agents (kian, kian-scribe, kian-studio) | Switch server, as Claude agents (Claude API key or Claude subscription) | Claude usage only |
-| Rooms | Mattermost started by Switch Console, on one always-on machine | free |
-| Website + dashboard (`apps/web`) | Vercel (static Vite build) | free (Hobby) |
-| Team sign-in, dashboard data, live activity | Supabase: Auth, Postgres, Realtime | free tier |
-| Desktop widget | Electron app on each teammate's Mac or Windows machine, signed in to the same Mattermost | free |
-| Google data | Each rep's own Gmail, Calendar and Sheets via OAuth | free |
+| Agents and rooms | Switch Console on one always-on machine, Claude for the agents | Claude usage |
+| Website | Vercel, static Vite build | free |
+| Desktop app | GitHub Releases: a dmg for macOS, an NSIS installer for Windows | free |
+| Google data | each rep's own account, through the toolkit | free |
 
-The dashboard stays a reader of the rooms: a small sync job mirrors room
-events (messages, tasks, decisions) into Supabase so the dashboard loads
-fast and updates live, and every action the dashboard offers still posts
-to the room. Supabase is the cache, Switch is the source of truth.
-
-Alternatives if a free tier runs out: Cloudflare Pages instead of Vercel;
-Neon (Postgres) plus Clerk (auth) instead of Supabase.
+There is no database. The website's dashboard is a prototype on synthetic data; the live view of the rooms is the
+desktop hub, which reads Mattermost as the signed-in person.

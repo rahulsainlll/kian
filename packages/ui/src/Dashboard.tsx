@@ -46,7 +46,7 @@ export interface Activity {
 const KIND: Record<NonNullable<Activity['kind']>, { label: string; tone: 'neutral' | 'accent' | 'success' | 'warning' }> = {
   draft: { label: 'Draft', tone: 'accent' },
   decision: { label: 'Decision', tone: 'success' },
-  task: { label: 'Task', tone: 'neutral' },
+  task: { label: 'Next step', tone: 'neutral' },
   message: { label: 'Message', tone: 'neutral' },
   sheet: { label: 'Sheet', tone: 'warning' },
 }

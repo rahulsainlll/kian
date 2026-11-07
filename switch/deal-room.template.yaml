@@ -1,0 +1,52 @@
+# deal-room.template.yaml: one customer's room, for opening a deal by hand.
+#
+# kian opens deal rooms itself with create_room when a new company writes in.
+# This template is the same room for a person: pick the company and the rep,
+# and it creates `deal-<company>` with kian and kian-scribe, the desk's rules
+# as room instructions, and a kickoff that has kian load the history.
+#
+# Needs kian.template.yaml deployed first, with the same desk name.
+version: 1
+
+params:
+  team:
+    type: string
+    label: Desk name
+    description: The desk name you used for kian.template.yaml.
+    default: kian
+    pattern: "[a-z][a-z0-9-]*"
+  company:
+    type: string
+    label: Company
+    description: Lowercase, dashes for spaces, as in lumen-health.
+    pattern: "[a-z0-9][a-z0-9-]*"
+  contact:
+    type: string
+    label: Contact email
+    description: The customer's address, so kian can find the thread.
+  rep:
+    type: user
+    label: Rep
+    description: Who owns the deal. Defaults to you.
+  bridge:
+    type: bridge
+    default: [Mattermost, $first]
+
+room:
+  name: "deal-{company}"
+  description: Everything about {company}, drafted by agents, sent by people.
+  bridge: "{bridge}"
+  channel_type: channel_private
+  agents: ["{team}", "{team}-scribe"]
+  users: ["{$creator}", "{rep}"]
+  instructions: |
+    Rules for this room, for agents and people alike:
+    1. Agents never send an email or message to a customer. Drafts only.
+    2. No price or discount without a decision in {team}-approvals.
+    3. Before a change to the lead Sheet, show old and new, then wait for a yes.
+    The room document "Deal summary" is the current state of this deal.
+
+kickoff: |
+  @{team} this is the room for {company} ({contact}). Run `deal {contact}`,
+  post what you find in five lines, and ask @{team}-scribe to start the
+  "Deal summary" document.

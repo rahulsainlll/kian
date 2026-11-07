@@ -1,0 +1,79 @@
+/*
+ * The widget window's own layout: a transparent page with the widget pinned
+ * to its chosen spot (bottom centre, a bottom corner, or an edge, upright),
+ * and a small notice when the rooms are unreachable.
+ */
+html.kian-widget-page,
+html.kian-widget-page body {
+  margin: 0;
+  height: 100%;
+  background: transparent;
+  overflow: hidden;
+  user-select: none;
+}
+
+#root {
+  height: 100%;
+  display: flex;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.widget-stage {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Where the widget sits inside its window, matching where the window sits on screen */
+#root:has([data-position='bottom']) {
+  align-items: flex-end;
+  justify-content: center;
+}
+#root:has([data-position='bottom-left']) {
+  align-items: flex-end;
+  justify-content: flex-start;
+}
+#root:has([data-position='bottom-right']) {
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+#root:has([data-position='left']) {
+  align-items: center;
+  justify-content: flex-start;
+}
+#root:has([data-position='right']) {
+  align-items: center;
+  justify-content: flex-end;
+}
+.widget-stage[data-position='bottom-left'] {
+  align-items: flex-start;
+}
+.widget-stage[data-position='bottom-right'] {
+  align-items: flex-end;
+}
+
+/* On the left edge the card opens to the right of the pill, and the hint too */
+.widget-stage[data-position='left'] .k-widget {
+  flex-direction: row-reverse;
+}
+.widget-stage[data-position='left'] .k-hint,
+.widget-stage[data-position='bottom-left'] .k-hint {
+  right: auto;
+  left: calc(100% + 8px);
+}
+.widget-stage[data-position='left'] .k-float {
+  transform-origin: center left;
+  --k-from: translateX(-8px) scale(0.96);
+}
+
+.widget-offline {
+  font: 500 12px/1 -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  color: #fafafa;
+  background: rgba(24, 24, 27, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  padding: 7px 12px;
+  cursor: pointer;
+}

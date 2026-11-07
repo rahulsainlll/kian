@@ -19,7 +19,7 @@ function choose(m: RoomMessage): Chip | undefined {
   const by = (label: string) => chips.find((c) => c.label === label)
   if (m.room === 'approvals') return by('approved')
   if (/Priya/.test(m.text) && m.room === 'kian-desk') return by('draft')
-  if (/Harbor/.test(m.text)) return by('skip')
+  if (/Northwind/.test(m.text)) return by('skip')
   return by('go') ?? by('yes') ?? by('done') ?? chips[0]
 }
 

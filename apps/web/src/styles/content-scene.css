@@ -77,11 +77,22 @@
   color: #1a2b6b;
   font-size: 14px;
   font-weight: 700;
+  text-decoration: none;
+  transition: transform 140ms ease-out;
+}
+.where__btn:active {
+  transform: scale(0.97);
+}
+@media (hover: hover) and (pointer: fine) {
+  .where__btn:hover {
+    transform: translateY(-1px);
+  }
 }
 .where__soon {
   max-width: none;
   font-size: 13px;
   opacity: 0.8;
+  color: inherit;
 }
 
 /* nothing that changes should push its neighbours: reserve the space up front */

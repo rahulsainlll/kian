@@ -1,0 +1,25 @@
+{
+  "_about": "Synthetic demo data. Every person and company is made up. Times are relative to now so the brief always looks like this morning. Used by the demo backend and by seed.py.",
+  "rep": { "name": "Yukti", "email": "yukti@kian-demo.example" },
+  "leads": [
+    { "company": "Lumen Health", "contact": "Priya Shah", "email": "priya@lumenhealth.example", "stage": "Proposal", "value": 18000, "owner": "Yukti", "days_ago": 2, "next_step": "Call on Thursday" },
+    { "company": "Kestrel Logistics", "contact": "Rahul Mehta", "email": "rahul@kestrellogistics.example", "stage": "Discovery", "value": 9000, "owner": "Yukti", "days_ago": 3, "next_step": "Discovery call" },
+    { "company": "Northwind Supply", "contact": "Ben Ortiz", "email": "ben@northwindsupply.example", "stage": "Proposal", "value": 12000, "owner": "Yukti", "days_ago": 6, "next_step": "Waiting on proposal feedback" },
+    { "company": "Atlas Clinics", "contact": "Mei Tan", "email": "mei@atlasclinics.example", "stage": "Pilot", "value": 6000, "owner": "Yukti", "days_ago": 1, "next_step": "Pilot check-in" },
+    { "company": "Juniper Labs", "contact": "Sam Okafor", "email": "sam@juniperlabs.example", "stage": "Qualified", "value": 4000, "owner": "Yukti", "days_ago": 4, "next_step": "Book a demo" },
+    { "company": "Orbit Retail", "contact": "Lena Fischer", "email": "lena@orbitretail.example", "stage": "Closed won", "value": 15000, "owner": "Yukti", "days_ago": 9, "next_step": "Onboarding" },
+    { "company": "Pine and Co", "contact": "Ava Brooks", "email": "ava@pineandco.example", "stage": "Closed lost", "value": 7000, "owner": "Yukti", "days_ago": 20, "next_step": "Revisit next quarter" }
+  ],
+  "emails": [
+    { "id": "m1", "thread": "t1", "from": "Priya Shah <priya@lumenhealth.example>", "subject": "Can we move Thursday to Tuesday?", "body": "Hi Yukti, something came up on Thursday. Could we move the call to Tuesday afternoon instead? Also, if we went annual, could you do 15% off? Priya", "hours_ago": 9 },
+    { "id": "m2", "thread": "t2", "from": "Rahul Mehta <rahul@kestrellogistics.example>", "subject": "SOC 2 before 10:30?", "body": "Looking forward to 10:30. Could you send your SOC 2 report beforehand so our security lead can join prepared? Rahul", "hours_ago": 14 },
+    { "id": "m3", "thread": "t3", "from": "Dana Lee <dana@harborfoods.example>", "subject": "Do you work with food distributors?", "body": "Saw your talk last week. We run 40 trucks across the coast and our reps live in spreadsheets. Do you work with distributors? Dana, Harbor Foods", "hours_ago": 2 },
+    { "id": "m4", "thread": "t4", "from": "Mei Tan <mei@atlasclinics.example>", "subject": "Pilot numbers next week", "body": "Quick note: the pilot is going well, the clinic leads are using it daily. Full numbers next week. Mei", "hours_ago": 20, "answered": true },
+    { "id": "m5", "thread": "t5", "from": "SaaS Weekly <news@saasweekly.example>", "subject": "This week in SaaS: pricing pages", "body": "The five pricing page patterns that convert, and more.", "hours_ago": 6, "bulk": true },
+    { "id": "m6", "thread": "t6", "from": "Lena Fischer <lena@orbitretail.example>", "subject": "Invoice for November", "body": "Thanks, the invoice is paid. See you at the onboarding review. Lena", "hours_ago": 50, "answered": true }
+  ],
+  "meetings": [
+    { "id": "e1", "title": "Discovery call", "today_at": "10:30", "attendees": ["rahul@kestrellogistics.example"] },
+    { "id": "e2", "title": "Pilot check-in", "today_at": "16:00", "attendees": ["mei@atlasclinics.example"] }
+  ]
+}

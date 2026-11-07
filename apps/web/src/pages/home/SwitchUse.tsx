@@ -101,7 +101,7 @@ export function SwitchNotebook() {
 const MORE: { name: string; use: string; color: string }[] = [
   { name: 'Rules', use: 'Every room says it: agents draft, people send.', color: '#ff7eb0' },
   { name: 'Who can talk to whom', use: 'Only the sales lead can approve a price.', color: '#ffcf1f' },
-  { name: 'Bridges', use: 'The desk is on Telegram and Mattermost at once.', color: '#7c5cff' },
+  { name: 'Bridges', use: 'kian answers on Telegram as well as Mattermost.', color: '#7c5cff' },
   { name: 'One template', use: 'One YAML creates every agent and room.', color: '#19b86b' },
 ]
 

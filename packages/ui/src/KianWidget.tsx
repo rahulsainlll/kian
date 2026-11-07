@@ -30,6 +30,10 @@ export interface KianWidgetProps {
   onDismiss?: (message: RoomMessage) => void
   onNudgeAction?: () => void
   onNudgeDismiss?: () => void
+  /** Rest as a thin line (the desktop app, while idle and not hovered). The pill grows back in place. */
+  collapsed?: boolean
+  /** A small label beside the idle pill, e.g. the hotkey. */
+  hint?: ReactNode
 }
 
 /**
@@ -81,17 +85,21 @@ export function KianWidget(p: KianWidgetProps) {
   return (
     <div className="kian k-widget dark" data-orientation={orientation}>
       <Presence item={floating} />
-      <Pill
-        state={p.voiceState}
-        orientation={orientation}
-        getLevel={p.getLevel}
-        room={p.room}
-        attention={!!p.nudge && !p.message}
-        onTalk={p.onTalk}
-        onRecord={p.onRecord}
-        onStop={p.onStop}
-        onCancel={p.onCancel}
-      />
+      <div className="k-dock" data-collapsed={(p.collapsed && !floating) || undefined}>
+        <span className="k-line" aria-hidden />
+        {p.hint && !floating && p.voiceState === 'idle' && <span className="k-hint">{p.hint}</span>}
+        <Pill
+          state={p.voiceState}
+          orientation={orientation}
+          getLevel={p.getLevel}
+          room={p.room}
+          attention={!!p.nudge && !p.message}
+          onTalk={p.onTalk}
+          onRecord={p.onRecord}
+          onStop={p.onStop}
+          onCancel={p.onCancel}
+        />
+      </div>
     </div>
   )
 }

@@ -4,9 +4,11 @@
   "packageManager": "pnpm@11.5.2",
   "scripts": {
     "dev": "pnpm --filter @kian/web dev",
+    "desktop": "pnpm --filter @kian/desktop dev",
     "build": "pnpm --filter @kian/web build",
     "typecheck": "pnpm -r typecheck",
+    "test": "pnpm --filter @kian/desktop test && cd switch/toolkit && python3 -m unittest -q",
     "check:files": "node scripts/check-files.mjs",
-    "check": "pnpm typecheck && pnpm check:files"
+    "check": "pnpm typecheck && pnpm check:files && pnpm test"
   }
 }

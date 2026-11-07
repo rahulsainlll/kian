@@ -1,0 +1,3 @@
+# Only needed for KIAN_BACKEND=google and seed.py. The demo backend uses the standard library.
+google-api-python-client>=2.150
+google-auth-oauthlib>=1.2

@@ -147,3 +147,82 @@
     transform: scale(0.96);
   }
 }
+
+/* ── dock: the pill, or a thin line while it rests ─────────────────────────
+   Both sit in one grid cell, so collapsing never moves anything around them.
+   The line fades and grows out as the pill scales back in (and the reverse). */
+.k-dock {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+.k-dock > .k-line,
+.k-dock > .k-pill {
+  grid-area: 1 / 1;
+}
+.k-line {
+  width: 44px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(24, 24, 27, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  transform: scale(0.6);
+  pointer-events: none;
+  transition:
+    opacity 140ms var(--k-ease-out),
+    transform 200ms var(--k-ease-out);
+}
+.k-widget[data-orientation='vertical'] .k-line {
+  width: 6px;
+  height: 44px;
+}
+.k-dock > .k-pill {
+  transition:
+    opacity 140ms var(--k-ease-out),
+    transform 200ms var(--k-ease-out);
+}
+.k-dock[data-collapsed] > .k-pill {
+  opacity: 0;
+  transform: scale(0.8);
+  pointer-events: none;
+}
+.k-dock[data-collapsed] > .k-line {
+  opacity: 1;
+  transform: none;
+}
+.k-dock[data-collapsed] > .k-hint {
+  opacity: 0;
+}
+
+/* The hint beside the idle pill, e.g. "Talk ⌘⇧K" */
+.k-hint {
+  position: absolute;
+  right: calc(100% + 8px);
+  top: 50%;
+  translate: 0 -50%;
+  white-space: nowrap;
+  font-size: 13px;
+  color: var(--k-ink-1);
+  background: var(--k-surface);
+  border: 1px solid var(--k-hairline);
+  border-radius: 999px;
+  padding: 7px 12px;
+  box-shadow: var(--k-shadow);
+  pointer-events: none;
+  animation: k-body-in 160ms var(--k-ease-out) both;
+  transition: opacity 120ms var(--k-ease-out);
+}
+.k-hint b {
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .k-line,
+  .k-dock > .k-pill,
+  .k-dock[data-collapsed] > .k-pill {
+    transition: opacity 120ms linear;
+    transform: none;
+  }
+}

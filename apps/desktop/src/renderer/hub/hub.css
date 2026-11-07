@@ -1,0 +1,101 @@
+/*
+ * The desktop hub's own touches on top of @kian/hub's styles: the fonts the
+ * website loads in its base styles, room for the macOS window controls, a
+ * draggable sidebar, and the form pieces the settings tabs add.
+ */
+@font-face {
+  font-family: 'Inter';
+  src: url('../../../../web/public/fonts/Inter-Variable.ttf') format('truetype');
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+:root {
+  --display: 'Bricolage Grotesque', system-ui, sans-serif;
+}
+
+html,
+body {
+  height: 100%;
+  background: #f1ece4;
+  color: #1d1b18;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* macOS draws its traffic lights over the top left: leave room, and let the sidebar drag the window */
+html[data-platform='darwin'] .hub--desktop .hub__side {
+  padding-top: 44px;
+  -webkit-app-region: drag;
+}
+.hub--desktop .hub__side :is(button, a, input, kbd) {
+  -webkit-app-region: no-drag;
+}
+.hub--desktop {
+  height: 100vh;
+}
+.hub--desktop .hub__panel {
+  overflow: auto;
+}
+
+.set-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  align-items: start;
+  gap: 14px 16px;
+  padding: 14px 0 18px;
+}
+
+.set-note {
+  margin: 0 0 4px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #5d5850;
+}
+.set-note code {
+  font-size: 12px;
+  background: #fff;
+  border-radius: 6px;
+  padding: 1px 5px;
+}
+
+.set-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-bottom: 14px;
+}
+.set-result {
+  margin-right: auto;
+  font-size: 13px;
+  color: #b4472c;
+}
+.set-result[data-ok] {
+  color: #1f6f6b;
+}
+
+.hotkey-field {
+  min-width: 140px;
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 10px;
+  background: #e9e2d6;
+  font-size: 13px;
+  color: #1d1b18;
+  transition: background-color 160ms ease-out;
+}
+.hotkey-field[data-listening] {
+  background: #fff;
+  box-shadow: 0 0 0 2px #3d7bf2;
+}
+.hotkey-field kbd {
+  font: 600 13px/1 'Inter', system-ui, sans-serif;
+  letter-spacing: 0.04em;
+}
+
+/* Selects keep their label on one line */
+.hub--desktop .ds-select {
+  min-width: 176px;
+  white-space: nowrap;
+}

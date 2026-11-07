@@ -53,11 +53,11 @@ can give. You can also check in from Telegram, Slack, Teams or Discord, because 
 
 | Time | What happens | Switch feature it shows |
 |---|---|---|
-| 9:00 | Yukti says “morning, Kian”. kian posts the ranked brief, one item per message. | Bridged chat apps |
-| 9:02 | Priya at Lumen Health wants Tuesday. kian hands it to **@kian-scribe** in the Lumen room, which leaves a Gmail draft. Not sent. | Agents addressing agents, rooms |
-| 9:04 | Priya also asked for 15% off. kian posts in #approvals; the sales lead holds to approve; it becomes a room decision. | Human sign-off, decisions, permissions |
-| 11:15 | A recorded call becomes notes, two tasks and a proposed Sheet change that waits for a yes. | Tasks, proposed writes |
-| 2:30 | A new sender emails. kian opens a room for Harbor Foods and asks whether to add a lead row. | Agents opening rooms |
+| 9:00 | Yukti says “morning, Kian”. kian posts the ranked brief, one item per message. | Room instructions, the answer line |
+| 9:02 | Priya at Lumen Health wants Tuesday. kian hands it to **@kian-scribe** in the Lumen room, which leaves a Gmail draft. Not sent. | Agents addressing agents, deal rooms |
+| 9:04 | Priya also asked for 15% off. kian posts in #approvals; the sales lead holds to approve; kian writes it into the Decisions document. | Private rooms, room documents |
+| 11:15 | A recorded call becomes notes, next steps in the deal summary and a proposed Sheet change that waits for a yes. | Room documents, proposed writes |
+| 2:30 | A new sender emails. kian opens a room for Harbor Foods and asks whether to add a lead row. | Agents opening rooms (`create_room`) |
 | 5:00 | kian-studio asks four questions; Yukti answers by voice; a LinkedIn post and an X thread come back. | A third agent with its own room |
 
 ## Meet the cast
@@ -69,7 +69,7 @@ can give. You can also check in from Telegram, Slack, Teams or Discord, because 
 | Agent | Job | Who can address it | Rooms |
 |---|---|---|---|
 | **kian** | Coordinator. Reads Gmail, Calendar and the lead Sheet, ranks the day, opens a room per deal, routes work by name, asks for sign-off. | Anyone in its rooms | Desk, every deal room, Approvals |
-| **kian-scribe** | Writer. Drafts replies in the rep’s voice, turns calls into notes and tasks, proposes Sheet changes. | The rep and kian only | Every deal room |
+| **kian-scribe** | Writer. Drafts replies in the rep’s voice, turns calls into notes and next steps, proposes Sheet changes. | The rep and kian only | Every deal room |
 | **kian-studio** | Content. Turns four spoken answers into a LinkedIn post, an X thread and a short video brief. | Anyone in Content | Content |
 
 ## How Kian uses Switch
@@ -79,17 +79,18 @@ can give. You can also check in from Telegram, Slack, Teams or Discord, because 
 </p>
 
 Kian has no backend of its own for the work. **The rooms are the interface, room history is the memory, and room
-decisions are the audit trail.** Take Switch away and there is no product left.
+documents are the audit trail.** Take Switch away and there is no product left.
 
 | Switch feature | What Kian does with it |
 |---|---|
 | **Rooms** | One per active deal, opened by kian. kian-scribe reads the room before it writes a word. |
 | **Agents with roles** | Three agents with one job each, so every message in a room is easy to trace. |
 | **Agents addressing agents** | kian hands drafting to @kian-scribe by name, in the deal room, where everyone can see it. |
-| **Rules, tasks, decisions** | Room rules hold “never send, only draft”. Next steps become tasks. An approved price becomes a decision with a name on it. |
+| **Room instructions** | The four rules live on the rooms, so they hold for every agent and person in them. |
+| **Room documents** | Each deal room keeps a “Deal summary” with next steps, owners and dates. Approvals keeps a “Decisions” document with a name and date on every yes. Only the agent that wrote a document can change it. |
 | **Who can talk to whom** | Only the rep and kian can brief kian-scribe. Only the sales lead can approve in #approvals. |
-| **Bridges** | The desk room is on Telegram and Mattermost at once: the brief reaches the phone and the desk together. |
-| **Templates** | One `kian.template.yaml` creates every agent and room, so anyone can reproduce the desk in one import. |
+| **Bridges** | The rooms live on Mattermost, and kian also answers in a Telegram group, so the brief reaches your phone. |
+| **Templates** | One `kian.template.yaml` creates the agents, the room group and its links. A second opens a deal room by hand. |
 
 **The four rules every agent follows**
 
@@ -109,9 +110,11 @@ Kian is built for talking, and it was built by talking.
 ## What’s in this repo
 
 ```
+apps/desktop      the Electron app for macOS and Windows: the widget and the hub
 apps/web          kian website: live self-playing demo, dashboard, components, blog, contact
 packages/ui       @kian/ui: the widget (pill, cards, waveform, hold to approve), the cast, dashboard parts
 packages/designs  the design system: buttons, sidebar, rows, tokens and brand marks
+switch/           the Switch templates, the agents' toolkit and the demo data
 docs/             research, design and architecture notes, and the README art
 scripts/          render-art.sh renders the README art; check-files.mjs enforces the house rules
 ```
@@ -124,14 +127,38 @@ scripts/          render-art.sh renders the README art; check-files.mjs enforces
 - [x] Website with a live, self-playing demo of the morning (scripted, synthetic data)
 - [x] Widget components shared by the website and the desktop app
 - [x] Team dashboard prototype (Wispr Flow style) and the component gallery
-- [ ] `kian.template.yaml`: the three agents and five rooms
-- [ ] `kian_tools.py`: brief, deal, draft and update-row, with no send command
-- [ ] `seed.py`: synthetic leads, emails and meetings in a fresh Google account
-- [ ] Desktop widget for macOS and Windows (Electron, on `@kian/ui`)
+- [x] `kian.template.yaml`: the three agents, the desk, approvals and content rooms, and their links
+- [x] `kian_tools.py`: brief, deal, meetings, draft and row, with no send command, and tests
+- [x] `seed.py`: synthetic leads, emails and meetings in a fresh Google account
+- [x] Desktop app for macOS and Windows: the widget, the hub, and dmg and NSIS installers
 
 All people and companies in the demo are synthetic. No real customer data lives in this repo.
 
 ## Run it
+
+**The desk.** Install Switch Console, import `switch/kian.template.yaml`, and say “morning” in kian-desk. It runs on
+synthetic data until you connect a Google account. Every step is in [switch/README.md](switch/README.md).
+
+```bash
+cd switch/toolkit
+python3 kian_tools.py brief      # the morning, from the demo data
+python3 -m unittest -v           # ranking and safety rules
+```
+
+**The desktop app.** [Download it](https://github.com/rahulsainlll/kian/releases/latest) for macOS or Windows, or run
+it from source. It plays a demo morning until you connect it to Switch in Settings. More in
+[apps/desktop/README.md](apps/desktop/README.md).
+
+```bash
+pnpm install
+pnpm desktop
+```
+
+<p align="center">
+  <img src="docs/assets/desktop.png" alt="The Kian hub with a live feed of the agents' work, and the widget showing a brief item" width="100%" />
+</p>
+
+**The website.**
 
 ```bash
 pnpm install

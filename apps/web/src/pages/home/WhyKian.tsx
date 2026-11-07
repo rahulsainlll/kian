@@ -84,7 +84,7 @@ export function WhyKian() {
             <Mascot size={96} shape="flower" color="#b07cff" mood="happy" />
           </div>
           <b>Yukti shared the Kian desk with Ravi</b>
-          <small>Three agents, five rooms and the rules, from one template.</small>
+          <small>Three agents, their rooms and the rules, from one template.</small>
         </div>
       </article>
     </section>
