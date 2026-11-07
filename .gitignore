@@ -9,3 +9,7 @@ switch/toolkit/credentials.json
 switch/toolkit/token*.json
 switch/toolkit/.demo/
 __pycache__/
+
+# Electron build output
+apps/desktop/out
+apps/desktop/release
